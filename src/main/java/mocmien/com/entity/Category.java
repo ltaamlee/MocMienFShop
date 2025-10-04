@@ -25,10 +25,10 @@ public class Category {
 	@Column(name = "CategoryID")
 	private Integer categoryId;
 
-	@Column(name = "CategoryName", nullable = false, length = 100)
+	@Column(name = "CategoryName", nullable = false, length = 100, columnDefinition = "nvarchar(100)")
 	private String categoryName;
 
-	@Column(name = "Description", length = 255)
+	@Column(name = "Description", length = 255, columnDefinition = "nvarchar(MAX)")
 	private String description;
 
 	@Column(name = "CreatedAt")

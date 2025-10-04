@@ -28,10 +28,10 @@ public class User {
 	@Column(name = "UserID")
 	private Integer userId;
 
-	@Column(name = "Username", nullable = false, unique = true, length = 100)
+	@Column(name = "Username", nullable = false, unique = true, length = 100, columnDefinition = "nvarchar(100)")
 	private String username;
 	
-	@Column(name = "FullName", nullable = false, length = 100)
+	@Column(name = "FullName", nullable = false, length = 100, columnDefinition = "nvarchar(100)")
 	private String fullName;
 
 	@Column(name = "Email", nullable = false, unique = true, length = 100)

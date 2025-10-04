@@ -33,7 +33,7 @@ public class Product {
 	@JoinColumn(name = "CategoryID")
 	private Category category;
 
-	@Column(name = "ProductName", nullable = false, length = 200)
+	@Column(name = "ProductName", nullable = false, length = 200, columnDefinition = "nvarchar(200)")
 	private String productName;
 
 	@Column(name = "ProductCode", unique = true, length = 50)

@@ -21,7 +21,7 @@ public class Role {
 	@Column(name = "RoleID")
 	private Integer roleId;
 
-	@Column(name = "RoleName", nullable = false, unique = true, length = 50)
+	@Column(name = "RoleName", nullable = false, unique = true, length = 50, columnDefinition = "nvarchar(50)")
 	private String roleName;
 	
 	//Getter và Setter
