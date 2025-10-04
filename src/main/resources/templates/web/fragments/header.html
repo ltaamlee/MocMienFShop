@@ -1,0 +1,48 @@
+<!-- templates/fragments/header.html -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="/styles/css/customer.css">
+</head>
+<body>
+	<div th:fragment="header">
+		<header>
+			<div class="header-top">
+				<div class="logo">
+					<img th:src="@{/images/logo.png}" alt="Logo 4Petals Shop">
+				</div>
+
+				<div class="search-box">
+					<input type="text" placeholder="Tìm kiếm sản phẩm...">
+					<button type="submit">
+						<i class="fa-solid fa-magnifying-glass"></i>
+					</button>
+				</div>
+
+				<div class="user-actions">
+					<a th:href="@{/login.html}"><i
+						class="fa-solid fa-right-to-bracket"></i> Đăng nhập</a> <a
+						href="/login" class="cart-icon disabled"
+						title="Vui lòng đăng nhập để sử dụng giỏ hàng"> <i
+						class="fa-solid fa-cart-shopping"></i> Giỏ hàng
+					</a>
+				</div>
+			</div>
+
+			<nav class="header-nav">
+				<ul class="nav-links">
+					<li><a th:href="@{/customer/home.html}"><i
+							class="fa-solid fa-house"></i> Trang chủ</a></li>
+					<li><a th:href="@{/customer/products.html}"><i
+							class="fa-solid fa-box-open"></i> Sản phẩm</a></li>
+					<li><a th:href="@{/customer/about.html}"><i
+							class="fa-solid fa-circle-info"></i> Giới thiệu</a></li>
+					<li><a th:href="@{/cú/contact.html}"><i
+							class="fa-solid fa-envelope"></i> Liên hệ</a></li>
+				</ul>
+			</nav>
+		</header>
+	</div>
+</body>
+</html>
