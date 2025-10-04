@@ -1,27 +1,46 @@
 <!DOCTYPE html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Đăng nhập</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Đăng nhập | Mộc Miên Flower Shop</title>
+<link
+	href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap"
+	rel="stylesheet">
+<link rel="stylesheet" th:href="@{/styles/css/auth.css}">
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" />
 </head>
 <body>
-    <header>
+	<div class="login-container">
+		<div class="login-card">
+			<h2>Mộc Miên</h2>
+			<form action="/login" method="post">
+				<div class="form-group">
+					<label for="username">Tên đăng nhập</label> <input type="text"
+						id="username" name="username" required>
+				</div>
+				<div class="form-group">
+					<label for="password">Mật khẩu</label> <input type="password"
+						id="password" name="password" required>
+				</div>
+				<button type="submit" class="btn">Đăng nhập</button>
+			</form>
 
-    </header>
-    <h2>Đăng nhập</h2>
-    <form action="/login" method="post">
-        <div>
-            <label for="username">Tên đăng nhập:</label>
-            <input type="text" id="username" name="username" required>
-        </div>
-        <div>
-            <label for="password">Mật khẩu:</label>
-            <input type="password" id="password" name="password" required>
-        </div>
-        <button type="submit">Đăng nhập</button>
-        <p>Chưa có tài khoản? </p>
-        <a href="/register.html">Đăng ký</a>
-    </form>
+			<div class="divider">hoặc</div>
+
+			<div class="social-login">
+				<a href="/oauth2/authorization/google" class="btn-google"> <i
+					class="fab fa-google"></i> Đăng nhập với Google
+				</a> <a href="/oauth2/authorization/facebook" class="btn-facebook">
+					<i class="fab fa-facebook-f"></i> Đăng nhập với Facebook
+				</a>
+			</div>
+
+			<p class="register-link">
+				Chưa có tài khoản? <a th:href="@{/register}">Đăng ký</a>
+			</p>
+		</div>
+	</div>
 </body>
 </html>
