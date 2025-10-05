@@ -1,0 +1,74 @@
+.about-container {
+  max-width: 1000px;
+  margin: 50px auto;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  padding: 0 20px;
+}
+
+.about-card {
+  background-color: #fff;
+  border-radius: 20px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  padding: 40px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  
+  width: 100%;
+  min-height: 200px;  /* cao ít nhất 400px */
+  overflow: visible;  /* cho phép dài ra nếu nội dung nhiều */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; /* Giữ bố cục đều */
+}
+
+.about-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+}
+
+.about-card h2,
+.about-card h3 {
+  color: var(--primary-color);
+  text-align: left;
+  margin-bottom: 20px;
+  font-weight: 600;
+}
+
+.about-card p {
+  color: var(--text-color);
+  text-align: justify;
+  line-height: 1.8;
+  font-size: 1rem;
+}
+
+.about-card ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.about-card li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 0;
+  font-size: 1rem;
+  color: var(--text-color);
+}
+
+.about-card i {
+  color: var(--primary-color);
+  font-size: 1.1rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .about-card {
+    padding: 25px;
+  }
+  .about-card h2,
+  .about-card h3 {
+    font-size: 1.2rem;
+  }
+}
