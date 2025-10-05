@@ -15,17 +15,6 @@ public class AdminController {
 		return "admin/dashboard";
 	}
 
-	@GetMapping("/users")
-	public String users(Model model) {
-		model.addAttribute("pageTitle", "Quản lý User");
-		return "admin/users";
-	}
-
-	@GetMapping("/products")
-	public String products(Model model) {
-		model.addAttribute("pageTitle", "Quản lý Sản phẩm");
-		return "admin/products";
-	}
 
 	@GetMapping("/categories")
 	public String categories(Model model) {

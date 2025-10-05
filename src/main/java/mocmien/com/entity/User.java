@@ -43,9 +43,6 @@ public class User {
 	@Column(name = "Phone", length = 15)
 	private String phone;
 
-	@Column(name = "Address", length = 255)
-	private String address;
-
 	@ManyToOne
 	@JoinColumn(name = "RoleID")
 	private Role role;
@@ -124,14 +121,6 @@ public class User {
 		this.phone = phone;
 	}
 
-	public String getAddress() {
-		return address;
-	}
-
-	public void setAddress(String address) {
-		this.address = address;
-	}
-
 	public Role getRole() {
 		return role;
 	}
@@ -192,7 +181,7 @@ public class User {
 	}
 
 	public User(Integer userId, String username, String fullName, String email, String passwordHash, String phone,
-			String address, Role role, Integer status, String code, LocalDateTime createdAt, LocalDateTime updatedAt) {
+			Role role, Integer status, String code, LocalDateTime createdAt, LocalDateTime updatedAt) {
 		super();
 		this.userId = userId;
 		this.username = username;
@@ -200,7 +189,6 @@ public class User {
 		this.email = email;
 		this.passwordHash = passwordHash;
 		this.phone = phone;
-		this.address = address;
 		this.role = role;
 		this.status = status;
 		this.code = code;
