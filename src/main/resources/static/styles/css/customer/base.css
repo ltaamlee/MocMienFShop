@@ -1,11 +1,15 @@
 :root {
     --primary-color: #CA4C59;
     --secondary-color: #650D1B;
+    --third-color: #FFD0D5;
+    --fourth-color: #F9BEBD;
+    --fifth-color: #AEB182;
     --accent-color: #FFC75F;
     --background-color: rgba(255, 208, 213, 0.25);
     --text1-color: #000000;
     --text2-color: #ffffff;
     --font-family: 'Montserrat', sans-serif;
+   
     
     --font-h1: clamp(2rem, 5vw, 3.5rem);      
     --font-h2: clamp(1.5rem, 4vw, 2.5rem);   
@@ -14,6 +18,7 @@
     --font-small: clamp(0.85rem, 1.8vw, 1rem);
     --font-brand: clamp(2.5rem, 6vw, 5rem);  
     --font-subtitle: clamp(1rem, 2.5vw, 1.3rem);
+    
 }
 
 * {
@@ -401,6 +406,23 @@ a.disabled {
     }
 }
 
+@media (max-width: 992px) {
+  .filters-section {
+    grid-template-columns: 1fr;
+  }
+
+  .banner {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .banner-image img {
+    margin-top: 1rem;
+    max-width: 80%;
+  }
+}
+
+
 @media (max-width: 768px) {
     .glass-card {
         padding: 50px 40px;
@@ -438,6 +460,15 @@ a.disabled {
         gap: 1.5rem;
         flex-wrap: wrap;
     }
+    
+    .footer-container {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .footer-logo {
+        justify-content: center;
+    }
 }
 
 @media (max-width: 480px) {
@@ -456,4 +487,97 @@ a.disabled {
     .nav-links a {
         font-size: 0.85rem;
     }
+}
+
+
+/* ===== FOOTER ===== */
+footer {
+    background-color: #e3c2c3;
+    padding: 50px 80px 20px;
+    color: var(--text1-color);
+    font-family: var(--font-family);
+}
+
+.footer-container {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 50px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* Cột chung */
+.footer-column {
+    flex: 1;
+    min-width: 250px;
+}
+
+/* Logo + tên shop */
+.footer-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.footer-logo img {
+    width: 80px;
+    height: auto;
+}
+
+.footer-title h2 {
+    font-size: var(--font-h2);
+    line-height: 1.2;
+    font-weight: 600;
+    color: var(--text1-color);
+}
+
+.footer-description {
+    margin-top: 15px;
+    line-height: 1.7;
+    font-weight: 300;
+    color: #000;
+}
+
+.footer-hotline {
+    margin-top: 15px;
+    font-weight: 600;
+}
+
+/* Thông tin chung và liên lạc */
+.footer-column h3 {
+    font-weight: 600;
+    margin-bottom: 15px;
+    color: var(--secondary-color);
+}
+
+.footer-column ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.footer-column ul li {
+    margin-bottom: 10px;
+    font-size: var(--font-small);
+}
+
+.footer-column a {
+    color: var(--text1-color);
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.footer-column a:hover {
+    color: var(--secondary-color);
+}
+
+/* Dòng cuối */
+.footer-bottom {
+    text-align: center;
+    margin-top: 40px;
+    padding-top: 15px;
+    border-top: 1px solid rgba(0, 0, 0, 0.2);
+    font-size: 0.9rem;
+    color: #333;
 }
