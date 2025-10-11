@@ -61,4 +61,5 @@ public class Seller {
 	protected void onUpdate() {
 		updatedAt = LocalDateTime.now();
 	}
+
 }

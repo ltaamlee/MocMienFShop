@@ -1,0 +1,60 @@
+<div th:fragment="sidebar">
+  <nav class="sidebar">
+    <ul class="sidebar-menu">
+      <li>
+        <a th:href="@{/seller/dashboard}">
+          <span class="icon"><i class="fas fa-home"></i></span>
+          <span class="text">Dashboard</span>
+        </a>
+      </li>
+      <li>
+        <a th:href="@{/seller/register}">
+          <span class="icon"><i class="fa-solid fa-square-plus"></i></span>
+          <span class="text">Đăng ký Shop</span>
+        </a>
+      </li>
+      <li>
+        <a th:href="@{/seller/shop}">
+          <span class="icon"><i class="fa-solid fa-shop"></i></span>
+          <span class="text">Quản lý Shop</span>
+        </a>
+      </li>
+      <li>
+        <a th:href="@{/seller/products}">
+          <span class="icon"><i class="fa-solid fa-boxes-stacked"></i></span>
+          <span class="text">Quản lý Sản phẩm</span>
+        </a>
+      </li>
+      <li>
+        <a th:href="@{/seller/orders}">
+          <span class="icon"><i class="fa-solid fa-cart-shopping"></i></span>
+          <span class="text">Quản lý Đơn hàng</span>
+        </a>
+      </li>
+      <li>
+        <a th:href="@{/seller/promotions}">
+          <span class="icon"><i class="fa-solid fa-tags"></i></span>
+          <span class="text">Quản lý Khuyến mãi</span>
+        </a>
+      </li>
+      <li>
+        <a th:href="@{/seller/revenue}">
+          <span class="icon"><i class="fa-solid fa-sack-dollar"></i></span>
+          <span class="text">Quản lý Doanh thu</span>
+        </a>
+      </li>
+      <li>
+        <a th:href="@{/seller/settings}">
+          <span class="icon"><i class="fas fa-cog"></i></span>
+          <span class="text">Cài đặt</span>
+        </a>
+      </li>
+      <li>
+        <a th:href="@{/logout}">
+          <span class="icon"><i class="fas fa-sign-out-alt"></i></span>
+          <span class="text">Đăng xuất</span>
+        </a>
+      </li>
+    </ul>
+  </nav>
+</div>

@@ -25,6 +25,7 @@ public class SecurityConfig {
 						"/contact", "/about",
 						"/guest/**").permitAll()
 				.requestMatchers("/admin/**").permitAll()
+				.requestMatchers("/seller/**").permitAll()
 				.anyRequest().authenticated()
 			)
 			.formLogin(form -> form
