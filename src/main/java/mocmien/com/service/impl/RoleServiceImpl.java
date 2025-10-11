@@ -3,9 +3,11 @@ package mocmien.com.service.impl;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import mocmien.com.entity.Role;
+import mocmien.com.enums.RoleName;
 import mocmien.com.repository.RoleRepository;
 import mocmien.com.service.RoleService;
 
@@ -18,29 +20,33 @@ public class RoleServiceImpl implements RoleService {
 		this.roleRepository = roleRepository;
 	}
 
-	@Override
-	public List<Role> getAllRoles() {
-		return roleRepository.findAll();
-	}
+    @Override
+    public List<Role> findAll() {
+        return roleRepository.findAll();
+    }
 
-	@Override
-	public Role getRoleById(Integer id) {
-		Optional<Role> role = roleRepository.findById(id);
-		return role.orElse(null);
-	}
+    @Override
+    public Optional<Role> findById(Integer id) {
+        return roleRepository.findById(id);
+    }
 
-	@Override
-	public Role saveRole(Role role) {
-		return roleRepository.save(role);
-	}
+    @Override
+    public Optional<Role> findByRoleName(RoleName roleName) {
+        return roleRepository.findByRoleName(roleName);
+    }
 
-	@Override
-	public void deleteRole(Integer id) {
-		roleRepository.deleteById(id);
-	}
+    @Override
+    public boolean existsByRoleName(RoleName roleName) {
+        return roleRepository.existsByRoleName(roleName);
+    }
 
-	@Override
-	public Role getRoleByName(String roleName) {
-		return roleRepository.findByRoleName(roleName);
-	}
+    @Override
+    public Role save(Role role) {
+        return roleRepository.save(role);
+    }
+
+    @Override
+    public void deleteById(Integer id) {
+        roleRepository.deleteById(id);
+    }
 }

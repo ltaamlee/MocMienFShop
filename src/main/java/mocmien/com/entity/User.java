@@ -31,17 +31,17 @@ public class User {
 	@Column(name = "Username", nullable = false, unique = true, length = 100, columnDefinition = "nvarchar(100)")
 	private String username;
 	
-	@Column(name = "FullName", nullable = false, length = 100, columnDefinition = "nvarchar(100)")
-	private String fullName;
-
 	@Column(name = "Email", nullable = false, unique = true, length = 100)
 	private String email;
 
-	@Column(name = "PasswordHash", nullable = false, length = 255)
-	private String passwordHash;
+	@Column(name = "Password", nullable = false, length = 255)
+	private String password;
 
-	@Column(name = "Phone", length = 15)
+	@Column(name = "Phone", unique = true, length = 15)
 	private String phone;
+	
+	@Column(name = "ImageUrl", length = 255)
+    private String imageUrl;
 
 	@ManyToOne
 	@JoinColumn(name = "RoleID")
@@ -89,14 +89,6 @@ public class User {
 		this.username = username;
 	}
 
-	public String getFullName() {
-		return fullName;
-	}
-
-	public void setFullName(String fullName) {
-		this.fullName = fullName;
-	}
-
 	public String getEmail() {
 		return email;
 	}
@@ -105,12 +97,13 @@ public class User {
 		this.email = email;
 	}
 
-	public String getPasswordHash() {
-		return passwordHash;
+
+	public String getPassword() {
+		return password;
 	}
 
-	public void setPasswordHash(String passwordHash) {
-		this.passwordHash = passwordHash;
+	public void setPassword(String password) {
+		this.password = password;
 	}
 
 	public String getPhone() {
@@ -119,6 +112,15 @@ public class User {
 
 	public void setPhone(String phone) {
 		this.phone = phone;
+	}
+
+	
+	public String getImageUrl() {
+		return imageUrl;
+	}
+
+	public void setImageUrl(String imageUrl) {
+		this.imageUrl = imageUrl;
 	}
 
 	public Role getRole() {
@@ -166,34 +168,18 @@ public class User {
 	}
 
 	
-	public User(Integer userId, String username, String passwordHash) {
+	public User(Integer userId, String username, String password) {
 		super();
 		this.userId = userId;
 		this.username = username;
-		this.passwordHash = passwordHash;
+		this.password = password;
 	}
 
 		
-	public User(String username, String passwordHash) {
+	public User(String username, String password) {
 		super();
 		this.username = username;
-		this.passwordHash = passwordHash;
-	}
-
-	public User(Integer userId, String username, String fullName, String email, String passwordHash, String phone,
-			Role role, Integer status, String code, LocalDateTime createdAt, LocalDateTime updatedAt) {
-		super();
-		this.userId = userId;
-		this.username = username;
-		this.fullName = fullName;
-		this.email = email;
-		this.passwordHash = passwordHash;
-		this.phone = phone;
-		this.role = role;
-		this.status = status;
-		this.code = code;
-		this.createdAt = createdAt;
-		this.updatedAt = updatedAt;
+		this.password = password;
 	}
 
 }

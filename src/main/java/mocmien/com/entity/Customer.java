@@ -33,12 +33,15 @@ public class Customer {
 	@OneToOne
 	@JoinColumn(name = "UserID", nullable = false, unique = true)
 	private User user; // Liên kết với User (role = USER)
+	
+	@Column(name = "FullName", nullable = false, length = 100, columnDefinition = "nvarchar(100)")
+	private String fullName;
 
 	@Column(name = "Phone", length = 15)
 	private String phone; // Số điện thoại chính (nếu muốn lưu riêng)
 
 	@OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
-	private List<CustomerAddress> addresses; // Danh sách địa chỉ
+	private List<Address> addresses; // Danh sách địa chỉ
 
 	@OneToMany(mappedBy = "customer")
 	private List<Order> orders; // Danh sách đơn hàng

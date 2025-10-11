@@ -29,7 +29,7 @@ public class Seller {
 
 	@OneToOne
 	@JoinColumn(name = "UserID", nullable = false, unique = true)
-	private User user; // Liên kết với User
+	private User user; 
 
 	@Column(name = "ShopName", nullable = false, length = 100, columnDefinition = "nvarchar(100)")
 	private String shopName;
@@ -38,13 +38,13 @@ public class Seller {
 	private String shopAddress;
 
 	@Column(name = "ShopPhone", length = 15)
-	private String shopPhone; // Số điện thoại chính (nếu muốn lưu riêng)
+	private String shopPhone; 
 	
 	@Column(name = "Status")
-	private Integer status = 1; // 1: active, 0: inactive, -1: blocked. Có thể đồng bộ với User.status
+	private Integer status = 1; // 1: active, 0: inactive, -1: blocked
 
 	@Column(name = "Rating")
-	private Double rating = 0.0; // đánh giá trung bình của shop
+	private Double rating = 0.0;
 
 	@Column(name = "CreatedAt")
 	private LocalDateTime createdAt;

@@ -49,7 +49,7 @@ public class Order {
 
 	@ManyToOne
 	@JoinColumn(name = "ShippingAddressID", nullable = false)
-	private CustomerAddress shippingAddress; // địa chỉ nhận hàng
+	private Customer shippingAddress; // địa chỉ nhận hàng
 
 	@Column(name = "OrderStatus")
 	private String orderStatus;

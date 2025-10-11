@@ -181,29 +181,5 @@ public class Product {
 	public void setUpdatedAt(LocalDateTime updatedAt) {
 		this.updatedAt = updatedAt;
 	}
-
-	public Product() {
-		super();
-	}
-
-	public Product(Integer productId, Category category, String productName, String productCode, String description,
-			BigDecimal price, Integer stock, String imageUrl, Integer views, Integer likes, Integer status,
-			LocalDateTime createdAt, LocalDateTime updatedAt) {
-		super();
-		this.productId = productId;
-		this.category = category;
-		this.productName = productName;
-		this.productCode = productCode;
-		this.description = description;
-		this.price = price;
-		this.stock = stock;
-		this.imageUrl = imageUrl;
-		this.views = views;
-		this.likes = likes;
-		this.status = status;
-		this.createdAt = createdAt;
-		this.updatedAt = updatedAt;
-	}
-	
 	
 }

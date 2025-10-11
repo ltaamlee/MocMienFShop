@@ -1,18 +1,22 @@
 package mocmien.com.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import mocmien.com.entity.Role;
+import mocmien.com.enums.RoleName;
 
 public interface RoleService {
 
-	List<Role> getAllRoles();
+	List<Role> findAll();
 
-    Role getRoleById(Integer id);
+    Optional<Role> findById(Integer id);
 
-    Role saveRole(Role role);
+    Optional<Role> findByRoleName(RoleName roleName);
 
-    void deleteRole(Integer id);
+    boolean existsByRoleName(RoleName roleName);
 
-    Role getRoleByName(String roleName);
+    Role save(Role role);
+
+    void deleteById(Integer id);
 }

@@ -1,7 +1,10 @@
 package mocmien.com.entity;
 
+import mocmien.com.enums.RoleName;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -21,8 +24,9 @@ public class Role {
 	@Column(name = "RoleID")
 	private Integer roleId;
 
-	@Column(name = "RoleName", nullable = false, unique = true, length = 50, columnDefinition = "nvarchar(50)")
-	private String roleName;
+	@Enumerated(EnumType.STRING)
+    @Column(name = "RoleName", nullable = false, unique = true, length = 50)
+    private RoleName roleName;
 	
 	//Getter và Setter
 
@@ -34,22 +38,12 @@ public class Role {
 		this.roleId = roleId;
 	}
 
-	public String getRoleName() {
+	public RoleName getRoleName() {
 		return roleName;
 	}
 
-	public void setRoleName(String roleName) {
+	public void setRoleName(RoleName roleName) {
 		this.roleName = roleName;
 	}
 
-	public Role() {
-		super();
-	}
-
-	public Role(Integer roleId, String roleName) {
-		super();
-		this.roleId = roleId;
-		this.roleName = roleName;
-	}
-	
 }
