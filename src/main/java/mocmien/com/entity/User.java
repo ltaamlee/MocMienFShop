@@ -45,6 +45,9 @@ public class User {
 
 	@Column(name = "Address", length = 255)
 	private String address;
+	
+	@Column(name = "ImageUrl", length = 255)
+    private String imageUrl;
 
 	@ManyToOne
 	@JoinColumn(name = "RoleID")
@@ -130,6 +133,14 @@ public class User {
 
 	public void setAddress(String address) {
 		this.address = address;
+	}
+	
+	public String getImageUrl() {
+		return imageUrl;
+	}
+
+	public void setImageUrl(String imageUrl) {
+		this.imageUrl = imageUrl;
 	}
 
 	public Role getRole() {

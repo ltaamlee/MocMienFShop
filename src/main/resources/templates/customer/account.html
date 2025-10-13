@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{customer/layout}">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>4Petals - Tài khoản</title>
+
+<th:block layout:fragment="styles">
+	<link rel="stylesheet" href="/styles/css/customer/base.css">
+	<link rel="stylesheet" href="/styles/css/customer/account.css">
+	<link rel="stylesheet"
+		href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
+</th:block>
+</head>
+<body>
+	<div layout:fragment="content">
+		<main class="account-page">
+			<section class="container account-container">
+				<div class="account-layout">
+
+					<!-- Sidebar -->
+					<aside class="account-sidebar">
+						<h3>Tài khoản</h3>
+						<ul>
+							<li class="active"><a th:href="@{/account}">Thông tin
+									tài khoản</a></li>
+							<li><a th:href="@{/account/change-password}">Đổi mật
+									khẩu</a></li>
+							<li><a th:href="@{/account/orders}">Xem lại đơn hàng</a></li>
+							<li><a th:href="@{/logout}">Đăng xuất</a></li>
+						</ul>
+					</aside>
+
+					<!-- Nội dung chính -->
+					<div class="account-content">
+						<h2>Hồ sơ cá nhân</h2>
+						<div class="profile-section">
+
+							<!-- Cột bên trái: Avatar -->
+							<div class="profile-avatar">
+								<div class="avatar-frame">
+									<img
+										th:src="${customer.user.imageUrl != null ? customer.user.imageUrl : '/images/avatar-default.png'}"
+										alt="Avatar" id="avatar-preview">
+								</div>
+								<form method="post" enctype="multipart/form-data"
+									th:action="@{/account/avatar/upload}">
+									<input type="file" id="avatar-input" name="file"
+										accept="image/*" style="display: none;">
+									<div class="avatar-buttons">
+										<button type="button" class="btn-upload"
+											onclick="document.getElementById('avatar-input').click()">Tải
+											ảnh mới</button>
+									</div>
+								</form>
+
+								<!-- ✅ Popup đặt ngoài form -->
+								<div id="preview-popup" class="preview-popup"
+									style="display: none;">
+									<div class="preview-overlay" onclick="closePreviewPopup()"></div>
+									<div class="preview-box">
+										<button class="close-btn" onclick="closePreviewPopup()">&times;</button>
+										<h3>Xem trước ảnh đại diện</h3>
+										<div class="preview-image-wrapper">
+											<img id="preview-image" src="" alt="Xem trước">
+										</div>
+										<div class="preview-actions">
+
+											<button id="confirm-upload" class="btn-save">Lưu</button>
+										</div>
+									</div>
+								</div>
+
+							</div>
+							<div class="profile-info">
+								<div class="info-display">
+									<div class="form-group">
+										<label>Họ và tên:</label> <input type="text"
+											id="display-hoTen" readonly th:value="${customer.hoTen}">
+									</div>
+
+									<div class="form-group">
+										<label>Ngày sinh:</label> <input type="text"
+											id="display-ngaySinh" readonly
+											th:value="${customer.ngaySinh}">
+									</div>
+
+									<div class="form-group">
+										<label>Email:</label> <input type="email" id="display-email"
+											readonly th:value="${customer.user.email}">
+									</div>
+
+									<div class="form-group">
+										<label>Số điện thoại:</label> <input type="text"
+											id="display-sdt" readonly th:value="${customer.sdt}">
+									</div>
+
+									<div class="form-group">
+										<label>Địa chỉ:</label>
+										<textarea id="display-diaChi" rows="3" readonly
+											th:text="${customer.diaChi}"></textarea>
+									</div>
+								</div>
+
+								<button type="button" id="btn-edit-info" class="btn-edit">Cập
+									nhật thông tin cá nhân</button>
+							</div>
+
+							<!-- Popup sửa thông tin -->
+
+							<div id="editInfoPopup" class="popup-overlay">
+								<div class="popup-content popup-wide">
+									<button class="close-btn" onclick="closeEditPopup()">&times;</button>
+									<h3>Chỉnh sửa thông tin cá nhân</h3>
+
+									<form id="editInfoForm" th:action="@{/account/update}"
+										method="post">
+										<div class="form-group">
+											<label>Họ và tên:</label> <input type="text" id="edit-hoTen"
+												name="hoTen" th:value="${customer.hoTen}" required>
+										</div>
+
+										<div class="form-group">
+											<label>Ngày sinh:</label> <input type="date"
+												id="edit-ngaySinh" name="ngaySinh"
+												th:value="${customer.ngaySinh}">
+
+										</div>
+
+
+										<div class="form-group">
+											<label>Email:</label> <input type="email" id="edit-email"
+												name="email" th:value="${customer.user.email}" readonly>
+										</div>
+
+										<div class="form-group">
+											<label>Số điện thoại:</label> <input type="text"
+												id="edit-sdt" name="sdt" th:value="${customer.sdt}">
+										</div>
+
+										<div class="form-group">
+											<label>Địa chỉ:</label>
+											<textarea id="edit-diaChi" name="diaChi" rows="3"
+												th:text="${customer.diaChi}"
+												placeholder="Nhập địa chỉ của bạn..."></textarea>
+										</div>
+
+										<div class="popup-buttons" style="justify-content: center;">
+											<button type="submit" class="btn-save">Lưu thay đổi</button>
+										</div>
+									</form>
+								</div>
+							</div>
+
+						</div>
+					</div>
+			</section>
+		</main>
+	</div>
+
+
+	<th:block layout:fragment="scripts">
+		<script src="/styles/js/customer/header.js"></script>
+		<script th:src="@{/styles/js/customer/avatar.js}"></script>
+		<script th:src="@{/styles/js/customer/info.js}"></script>
+	</th:block>
+
+</body>
+</html>

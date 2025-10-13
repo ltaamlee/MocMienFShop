@@ -1,118 +1,117 @@
 .contact-container {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 40px;
-  padding: 60px 100px;
-  font-family: var(--font-family);
-  color: var(--text1-color);
-
+	display: flex;
+	justify-content: flex-start; align-items : flex-start; gap : 100px;
+	padding : 60px 80px;
+	width: 1400px;
+	font-family: var(--font-family);
+	color: var(--text1-color);
+	align-items: flex-start;
+	gap: 100px;
+	padding: 60px 80px;
 }
 
 /* --- Thông tin liên hệ bên trái --- */
 .contact-info {
-  flex: 1;
-  max-width: 40%;
+	flex: 1;
+	max-width: 40%;
 }
 
 .contact-info h2 {
-  font-size: var(--font-h2);
-  color: var(--secondary-color);
-  margin-bottom: 20px;
-  font-weight: 600;
+	font-size: var(--font-h2);
+	color: var(--secondary-color);
+	margin-bottom: 20px;
+	font-weight: 600;
 }
 
 .contact-info ul {
-  list-style: none;
-  padding: 0;
-  line-height: 2;
+	list-style: none;
+	padding: 0;
+	line-height: 2;
 }
 
 .contact-info li {
-  font-size: var(--font-body);
-  margin-bottom: 10px;
-  color: var(--text1-color);
+	font-size: var(--font-body);
+	margin-bottom: 10px;
+	color: var(--text1-color);
 }
 
 .contact-info i {
-  color: var(--primary-color);
-  margin-right: 10px;
+	color: var(--primary-color);
+	margin-right: 10px;
 }
 
 /* --- Form liên hệ bên phải --- */
 .contact-form {
-  flex: 1.5;
-  background-color: #fff;
-  border-radius: 12px;
-  padding: 30px 40px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+	flex: 2;
+	background-color: #fff;
+	border-radius: 12px;
+	padding: 30px 40px;
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
 .contact-form h2 {
-  font-size: var(--font-h2);
-  color: var(--secondary-color);
-  margin-bottom: 25px;
-  font-weight: 600;
+	font-size: var(--font-h2);
+	color: var(--secondary-color);
+	margin-bottom: 25px;
+	font-weight: 600;
 }
 
 .form-group {
-  display: flex;
-  flex-direction: column;
-  margin-bottom: 20px;
+	display: flex;
+	flex-direction: column;
+	margin-bottom: 20px;
 }
 
 .form-group label {
-  font-weight: 500;
-  margin-bottom: 8px;
-  color: var(--text1-color);
+	font-weight: 500;
+	margin-bottom: 8px;
+	color: var(--text1-color);
 }
 
-.form-group input,
-.form-group textarea {
-  padding: 12px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  font-size: var(--font-small);
-  transition: all 0.3s ease;
-  font-family: var(--font-family);
-  color: var(--text1-color);
-  background-color: #fff;
+.form-group input, .form-group textarea {
+	padding: 12px;
+	border: 1px solid #ccc;
+	border-radius: 8px;
+	font-size: var(--font-small);
+	transition: all 0.3s ease;
+	font-family: var(--font-family);
+	color: var(--text1-color);
+	background-color: #fff;
 }
 
-.form-group input:focus,
-.form-group textarea:focus {
-  border-color: var(--primary-color);
-  outline: none;
-  box-shadow: 0 0 0 3px rgba(202, 76, 89, 0.15);
+.form-group input:focus, .form-group textarea:focus {
+	border-color: var(--primary-color);
+	outline: none;
+	box-shadow: 0 0 0 3px rgba(202, 76, 89, 0.15);
 }
 
 /* --- Nút gửi --- */
 .btn-submit {
-  background-color: var(--primary-color);
-  color: var(--text2-color);
-  padding: 12px 30px;
-  border: none;
-  border-radius: 8px;
-  font-size: var(--font-small);
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
+	display: block;
+	margin: 0 auto;
+	background-color: var(--primary-color);
+	color: var(--text2-color);
+	padding: 12px 30px;
+	border: none;
+	border-radius: 8px;
+	font-size: var(--font-small);
+	font-weight: 600;
+	cursor: pointer;
+	transition: all 0.3s ease;
 }
 
 .btn-submit:hover {
-  background-color: var(--secondary-color);
-  transform: translateY(-2px);
+	background-color: var(--secondary-color);
+	transform: translateY(-2px);
 }
 
 /* --- Responsive --- */
-@media (max-width: 900px) {
-  .contact-container {
-    flex-direction: column;
-    padding: 40px 20px;
-  }
-
-  .contact-info,
-  .contact-form {
-    max-width: 100%;
-  }
+@media ( max-width : 900px) {
+	.contact-container {
+		flex-direction: column;
+		padding: 40px 20px;
+	}
+	.contact-info, .contact-form {
+		max-width: 100%;
+	}
 }

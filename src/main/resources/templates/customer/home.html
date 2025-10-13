@@ -1,108 +1,101 @@
+
 <!DOCTYPE html>
-<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{customer/layout}">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Mộc Miên Flower Shop</title>
-<link
-	href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap"
-	rel="stylesheet">
-<link rel="stylesheet" href="/styles/css/customer/base.css">
-<link rel="stylesheet" href="/styles/css/customer/home.css">
-<link rel="stylesheet"
-	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" />
+<th:block layout:fragment="styles">
+	<link rel="stylesheet" href="/styles/css/customer/base.css">
+	<link rel="stylesheet" href="/styles/css/customer/home.css">
+	<link rel="stylesheet" href="/styles/css/customer/banner.css">
+	<link rel="stylesheet"
+		href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
+</th:block>
 </head>
 <body>
-	<div th:insert="~{customer/fragments/header :: header}"></div>
-
-	<section class="banner"></section>
-	
-	<main class="home-page">
-
-		<!-- Bộ lọc & danh mục -->
-		<section class="filters-section">
-			<aside class="category">
-				<h3>Danh mục hoa</h3>
-				<ul>
-					<li><input type="checkbox" checked> Hoa sinh nhật</li>
-					<li><input type="checkbox"> Hoa tình yêu</li>
-					<li><input type="checkbox"> Mẫu hoa mới</li>
-					<li><input type="checkbox"> Hoa chúc mừng</li>
-					<li><input type="checkbox"> Hoa chia buồn</li>
-					<li><input type="checkbox"> Hoa cao cấp</li>
-					<li><input type="checkbox"> Hoa theo mùa</li>
-					<li><input type="checkbox"> Hoa sự kiện</li>
-				</ul>
-
-				<h3>Màu sắc</h3>
-				<ul>
-					<li><input type="checkbox"> Xanh</li>
-					<li><input type="checkbox"> Đỏ</li>
-					<li><input type="checkbox"> Vàng</li>
-				</ul>
-			</aside>
-
-			<div class="product-area">
-
-				<!-- Thanh Sort & Filter -->
-				<div class="product-toolbar">
-					<div class="sort">
-						Sort by <select>
-							<option>Giá tăng dần</option>
-							<option>Giá giảm dần</option>
-							<option>Mới nhất</option>
-						</select>
-					</div>
-					<div class="filter">
-						Filter <i class="fa-solid fa-filter"></i>
-					</div>
+	<div layout:fragment="content" class="home-page">
+		<!-- Banner Slider -->
+		<section class="banner-slider">
+			<div class="slides">
+				<div class="slide active">
+					<img src="/styles/image/customer/banner1.jpg" alt="Banner 1">
 				</div>
-
-				<!-- Danh sách sản phẩm -->
-				<div class="product-section">
-					<h3>Khuyến mãi</h3>
-					<div class="product-list">
-						<div class="product-card">
-							<img th:src="@{/styles/image/product/sp1.jpg}" alt="Hoa 1">
-							<h4>Victo rose</h4>
-							<p class="price">300.000 ₫</p>
-						</div>
-						<div class="product-card">
-							<img th:src="@{/styles/image/product/sp1.jpg}" alt="Hoa 2">
-							<h4>Love you more</h4>
-							<p class="price">
-								<span class="old">450.000 ₫</span> 400.000 ₫
-							</p>
-						</div>
-						<div class="product-card">
-							<img th:src="@{/images/flower3.jpg}" alt="Hoa 3">
-							<h4>Hồng nhánh</h4>
-							<p class="price">700.000 ₫</p>
-						</div>
-					</div>
+				<div class="slide">
+					<img src="/styles/image/customer/banner2.png" alt="Banner 2">
 				</div>
-
-				<div class="product-section">
-					<h3>Sản phẩm đề cử</h3>
-					<div class="product-list">
-						<div class="product-card">
-							<img th:src="@{/images/flower4.jpg}" alt="Hoa 4">
-							<h4>Bình Yên</h4>
-							<p class="price">1.200.000 ₫</p>
-						</div>
-						<div class="product-card">
-							<img th:src="@{/images/flower5.jpg}" alt="Hoa 5">
-							<h4>My Universe</h4>
-							<p class="price">1.750.000 ₫</p>
-						</div>
-					</div>
+				<div class="slide">
+					<img src="/styles/image/customer/banner3.png" alt="Banner 3">
 				</div>
+			</div>
 
+			<!-- Nút điều hướng -->
+			<button class="prev">
+				<i class="fa-solid fa-chevron-left"></i>
+			</button>
+			<button class="next">
+				<i class="fa-solid fa-chevron-right"></i>
+			</button>
+
+			<!-- Chấm chuyển slide -->
+			<div class="dots">
+				<span class="dot active"></span> <span class="dot"></span> <span
+					class="dot"></span>
 			</div>
 		</section>
-	</main>
+		<!-- Khuyến mãi -->
+		<section class="product-section promo">
+			<h3>Khuyến mãi</h3>
+			<div class="product-list">
+				<!-- 5 sản phẩm -->
+				<div class="product-card">
+					<img th:src="@{/styles/image/product/sp1.jpg}" alt="Hoa 1">
+					<h4>Victo rose</h4>
+					<p class="price">300.000 ₫</p>
+				</div>
+				<div class="product-card">
+					<img th:src="@{/styles/image/product/sp2.jpg}" alt="Hoa 2">
+					<h4>Love you more</h4>
+					<p class="price">
+						<span class="old">450.000 ₫</span> 400.000 ₫
+					</p>
+				</div>
+				<div class="product-card">
+					<img th:src="@{/styles/image/product/sp3.jpg}" alt="Hoa 3">
+					<h4>Hồng nhánh</h4>
+					<p class="price">700.000 ₫</p>
+				</div>
+				<div class="product-card">
+					<img th:src="@{/styles/image/product/sp4.jpg}" alt="Hoa 4">
+					<h4>Sunshine</h4>
+					<p class="price">550.000 ₫</p>
+				</div>
+				<div class="product-card">
+					<img th:src="@{/styles/image/product/sp5.jpg}" alt="Hoa 5">
+					<h4>My Love</h4>
+					<p class="price">480.000 ₫</p>
+				</div>
+			</div>
+		</section>
 
+		<!-- Sản phẩm đề cử -->
+		<section class="product-section promo">
+			<h3>Sản phẩm đề cử</h3>
+			<div class="product-list">
+				<div class="product-card">
+					<img th:src="@{/styles/image/product/sp1.jpg}" alt="Hoa 1">
+					<h4>Victo rose</h4>
+					<p class="price">300.000 ₫</p>
+				</div>
+			</div>
+		</section>
+	</div>
+	<th:block layout:fragment="scripts">
+		<script src="/styles/js/customer/header.js"></script>
+		<script th:src="@{/styles/js/customer/avatar.js}"></script>
+	</th:block>
 
-	<div th:insert="~{customer/fragments/footer :: footer}"></div>
 </body>
 </html>
