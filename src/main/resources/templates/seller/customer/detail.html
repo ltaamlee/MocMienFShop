@@ -1,0 +1,43 @@
+<!-- templates/manager/customer/detail.html -->
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <title th:text="${pageTitle}">Chi tiết khách hàng</title>
+  <link rel="stylesheet" href="/styles/css/manager/header.css"/>
+  <link rel="stylesheet" href="/styles/css/manager/sidebar.css"/>
+  <link rel="stylesheet" href="/styles/css/manager/main.css"/>
+</head>
+<body>
+<div th:insert="~{manager/fragments/header :: header}"></div>
+<main class="main-content show">
+  <div th:insert="~{manager/fragments/sidebar :: sidebar}"></div>
+
+  <section class="page-header">
+    <h1 th:text="${customer.hoTen}">Chi tiết khách hàng</h1>
+    <div class="actions">
+      <a class="btn outline" th:href="@{/manager/customers}">⟵ Danh sách</a>
+      <a class="btn" th:href="@{|/manager/customers/${customer.maKH}/edit|}">
+        <i class="fa fa-pen"></i> Sửa
+      </a>
+    </div>
+  </section>
+
+  <section class="grid cards" style="grid-template-columns:repeat(auto-fit,minmax(260px,1fr))">
+    <div class="card"><div class="card-body">
+      <h3>Thông tin liên hệ</h3>
+      <p><b>SĐT:</b> <span th:text="${customer.sdt}">-</span></p>
+      <p><b>Email:</b> <span th:text="${row.email()}">-</span></p>
+      <p><b>Địa chỉ:</b> <span th:text="${customer.diaChi}">-</span></p>
+      <p><b>Ngày sinh:</b> <span th:text="${customer.ngaySinh}">-</span></p>
+    </div></div>
+
+    <div class="card"><div class="card-body">
+      <h3>Tổng quan mua hàng</h3>
+      <p><b>Tổng đơn:</b> <span th:text="${row.tongDon()}">0</span></p>
+      <p><b>Ngày tạo (đơn đầu):</b> <span th:text="${row.ngayTao()}">--</span></p>
+    </div></div>
+  </section>
+</main>
+</body>
+</html>

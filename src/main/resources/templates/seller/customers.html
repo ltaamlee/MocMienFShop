@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{manager/layout}">
+<head>
+<title>Quản lý khách hàng</title>
+<th:block layout:fragment="styles">
+	<link rel="stylesheet" th:href="@{/styles/css/spinner.css}">
+</th:block>
+</head>
+<body>
+	<div layout:fragment="content">
+		<!-- THỐNG KÊ VÀ ĐÁNH GIÁ -->
+		<div class="stats-cards">
+			<div class="stat-card total" onclick="showNewCustomersChart()">
+				<h3>Tổng số khách hàng</h3>
+				<div class="value" id="totalCustomersStat"
+					th:text="${totalCustomers} ?: '0'">0</div>
+			</div>
+			<div class="stat-card new-month" onclick="showNewCustomersChart()">
+				<h3>Khách hàng mới trong tháng</h3>
+				<div class="value" id="newMonthCustomersStat"
+					th:text="${newMonthCustomers} ?: '0'">0</div>
+			</div>
+			<div class="stat-card female" onclick="showGenderChart()">
+				<h3>Tổng số khách hàng nữ</h3>
+				<div class="value" id="femaleCustomersStat"
+					th:text="${femaleCustomers} ?: '0'">0</div>
+			</div>
+			<div class="stat-card male" onclick="showGenderChart()">
+				<h3>Tổng số khách hàng nam</h3>
+				<div class="value" id="maleCustomersStat"
+					th:text="${maleCustomers} ?: '0'">0</div>
+			</div>
+		</div>
+
+		<!-- Biểu đồ -->
+		<section class="chart-section">
+			<div class="chart-header">
+				<h3 id="chartTitle">Thống kê khách hàng theo thời gian</h3>
+				<div class="filter-group">
+					<label for="timeRange">Chọn thời gian:</label> <select
+						id="timeRange" onchange="updateChart()">
+						<option value="month">Theo tháng</option>
+						<option value="quarter">Theo quý</option>
+						<option value="year">Theo năm</option>
+					</select>
+				</div>
+			</div>
+			<canvas id="customerChart" height="100"></canvas>
+		</section>
+
+		<!-- Search + Filters -->
+		<div class="search-filter-container">
+			<form id="searchFilterForm" th:action="@{/manager/customers}"
+				method="get">
+				<div class="search-box">
+					<input type="text" name="keyword"
+						placeholder="Tìm kiếm theo tên, SĐT hoặc Email..."
+						th:value="${keyword}">
+					<button type="submit">
+						<i class="fas fa-search"></i> Tìm kiếm
+					</button>
+				</div>
+
+				<div class="filter-group">
+					<div class="filter-item">
+						<label for="genderFilter">Giới tính:</label> <select
+							id="genderFilter" name="gender">
+							<option value="">Tất cả</option>
+							<option th:each="g : ${genders}" th:value="${g}"
+								th:text="${g.displayName}" th:selected="${gender == g}"></option>
+						</select>
+					</div>
+					<div class="filter-item">
+						<label for="rankFilter">Hạng KH:</label> <select id="rankFilter"
+							name="rank">
+							<option value="">Tất cả</option>
+							<option th:each="r : ${ranks}" th:value="${r}"
+								th:text="${r.displayName}" th:selected="${rank == r}"></option>
+						</select>
+					</div>
+				</div>
+			</form>
+		</div>
+
+
+		<!-- Bảng khách hàng -->
+		<div class="table-customers">
+			<table>
+				<thead>
+					<tr>
+						<th>ID</th>
+						<th>Họ tên</th>
+						<th>SĐT</th>
+						<th>Email</th>
+						<th>Giới tính</th>
+						<th>Hạng KH</th>
+						<th>Tổng đơn</th>
+						<th>Ngày tạo</th>
+						<th>Hành động</th>
+					</tr>
+				</thead>
+				<tbody id="customerTableBody">
+					<tr th:each="r : ${rows}">
+						<td th:text="${r.maKH()}">1</td>
+						<td th:text="${r.hoTen()}">Nguyễn Văn A</td>
+						<td th:text="${r.sdt()}">0123456789</td>
+						<td th:text="${r.email()}">a@gmail.com</td>
+						<td th:text="${r.gioiTinh().displayName}">Nam</td>
+						<td th:text="${r.hangThanhVien().displayName}">Thành viên</td>
+						<td th:text="${r.tongDon()}">5</td>
+						<td th:text="${#temporals.format(r.ngayTao(), 'dd/MM/yyyy')}">12/10/2025</td>
+						<td class="center"><a class="icon"
+							th:href="@{|/manager/customers/${r.maKH()}|}" title="Chi tiết"><i
+								class="fa fa-eye"></i></a> <a class="icon"
+							th:href="@{|/manager/customers/${r.maKH()}/edit|}" title="Sửa"><i
+								class="fa fa-pen"></i></a></td>
+					</tr>
+					<tr th:if="${#lists.isEmpty(rows)}">
+						<td colspan="9" style="text-align: center;">Không có dữ liệu</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+
+	<th:block layout:fragment="scripts">
+		<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+		<script>
+        let chart;
+        let chartType = 'bar';
+
+        // Khi click vào card Tổng/Nam/Nữ
+        function showNewCustomersChart() { chartType = 'bar'; updateChart(); }
+        function showGenderChart() { chartType = 'pie'; updateChart(); }
+
+        async function updateChart() {
+            const timeRange = document.getElementById('timeRange').value;
+            const startDate = document.querySelector('input[name="startDate"]').value;
+            const endDate = document.querySelector('input[name="endDate"]').value;
+
+            const response = await fetch(`/api/customers/stats?range=${timeRange}&start=${startDate}&end=${endDate}`);
+            const data = await response.json();
+
+            const ctx = document.getElementById('customerChart').getContext('2d');
+            if(chart) chart.destroy();
+
+            if(chartType === 'bar') {
+                chart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: data.labels,
+                        datasets: [{
+                            label: 'Khách hàng mới',
+                            data: data.values,
+                            backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                            borderColor: 'rgba(54, 162, 235, 1)',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        scales: {
+                            y: { beginAtZero: true, title: { display: true, text: 'Số lượng' } }
+                        }
+                    }
+                });
+            } else if(chartType === 'pie') {
+                chart = new Chart(ctx, {
+                    type: 'pie',
+                    data: {
+                        labels: ['Nam', 'Nữ'],
+                        datasets: [{
+                            data: [data.male, data.female],
+                            backgroundColor: ['rgba(54, 162, 235, 0.6)','rgba(255, 99, 132, 0.6)'],
+                            borderColor: ['rgba(54, 162, 235, 1)','rgba(255, 99, 132, 1)']
+                        }]
+                    },
+                    options: { responsive: true }
+                });
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => updateChart());
+    </script>
+	</th:block>
+</body>
+</html>

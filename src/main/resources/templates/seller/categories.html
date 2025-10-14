@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{manager/layout}">
+<head>
+<title>Quản lý danh mục</title>
+<th:block layout:fragment="styles">
+	<link rel="stylesheet" th:href="@{/styles/css/spinner.css}">
+</th:block>
+</head>
+<body>
+	<div layout:fragment="content">
+	Thêm danh mục
+	<br>
+		Mã | Tên Danh mục | Ngày cập nhật | Mô tả | Thao tác 
+	
+	</div>
+	<th:block layout:fragment="scripts">
+		<script th:src="@{/styles/js/spinner.js}"></script>
+	</th:block>
+</body>
+</html>

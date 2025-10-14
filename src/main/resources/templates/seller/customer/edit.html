@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Chỉnh sửa khách hàng</title>
+
+<link rel="stylesheet" href="/styles/css/manager/header.css" />
+<link rel="stylesheet" href="/styles/css/manager/sidebar.css" />
+<link rel="stylesheet" href="/styles/css/manager/main.css" />
+
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+</head>
+<body>
+	<div th:insert="~{manager/fragments/header :: header}"></div>
+
+	<main class="main-content show">
+		<div th:insert="~{manager/fragments/sidebar :: sidebar}"></div>
+
+		<section class="page-header">
+    <h1 th:text="${pageTitle}">Cập nhật Khách hàng</h1>
+    <a class="btn outline" th:href="@{/manager/customers}">⟵ Danh sách</a>
+  </section>
+
+  <section class="card">
+    <div class="card-body">
+      <form th:action="@{|/manager/customers/${customer.maKH}/edit|}" method="post" th:object="${customer}" class="form-grid">
+        <input type="hidden" th:if="${_csrf != null}" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+
+        <label>Mã KH</label>
+        <input type="text" th:value="${customer.maKH}" disabled/>
+
+        <label>Họ tên *</label>
+        <input type="text" th:field="*{hoTen}" required/>
+
+        <label>Ngày sinh</label>
+        <input type="date" th:field="*{ngaySinh}"/>
+
+        <label>Số điện thoại</label>
+        <input type="text" th:field="*{sdt}"/>
+
+        <label>Địa chỉ</label>
+        <input type="text" th:field="*{diaChi}"/>
+
+        <div class="form-actions">
+          <a th:href="@{/manager/customers}" class="btn outline">Hủy</a>
+          <button class="btn" type="submit">Cập nhật</button>
+        </div>
+      </form>
+    </div>
+  </section>
+</main>
+</body>
+</html>

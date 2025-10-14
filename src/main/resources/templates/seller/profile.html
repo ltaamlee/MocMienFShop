@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{manager/layout}">
+<head>
+<title>Profile</title>
+<th:block layout:fragment="styles">
+	<link rel="stylesheet" th:href="@{/styles/css/spinner.css}">
+</th:block>
+</head>
+<body>
+	<div layout:fragment="content">
+		<div class="account-content">
+			<h2>Manager Profile</h2>
+
+			<div id="alertBox" class="alert" style="display: none;">
+				<i class="fa-solid" id="alertIcon"></i> <span id="alertMessage"></span>
+			</div>
+
+			<form id="profileForm" class="account-form"
+				enctype="multipart/form-data">
+
+				<!-- Avatar -->
+				<div class="profile-avatar">
+					<img th:src="@{/images/{path}(path=${user.imageUrl})}" alt="Avatar"
+						class="avatar-preview" id="avatarPreview">
+
+					<div class="upload-btn">
+						<label for="file" class="btn-upload"> <i
+							class="fa-solid fa-camera"></i> Thay ảnh
+						</label> <input type="file" id="file" name="file" accept="image/*"
+							onchange="previewAvatar(event)">
+					</div>
+				</div>
+
+				<!-- Cột thông tin -->
+				<div class="form-fields-wrapper form-col">
+					<div class="form-group">
+						<label>Họ và tên:</label> <input type="text" name="name"
+							th:value="${user.nhanVien != null ? user.nhanVien.hoTen : ''}">
+					</div>
+
+					<div class="form-group">
+						<label>Email:</label> <input type="email" name="email"
+							th:value="${user.email}">
+					</div>
+
+					<div class="form-group">
+						<label>Số điện thoại:</label> <input type="text" name="phone"
+							th:value="${user.nhanVien != null ? user.nhanVien.sdt : ''}">
+					</div>
+				</div>
+
+				<div class="form-fields-wrapper form-col">
+					<div class="form-group">
+						<label>Vai trò:</label> <input type="text"
+							th:value="${user.role.roleName}" readonly>
+					</div>
+
+					<div class="form-group">
+						<label>Mật khẩu mới (nếu muốn đổi):</label> <input type="password"
+							name="password">
+					</div>
+				</div>
+
+				<div class="form-save">
+					<button type="submit" class="btn-save">Lưu thay đổi</button>
+				</div>
+			</form>
+
+		</div>
+	</div>
+
+	<th:block layout:fragment="scripts">
+		<script th:src="@{/styles/js/manager/profile.js}"></script>
+	</th:block>
+</body>
+</html>

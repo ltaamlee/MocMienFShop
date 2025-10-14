@@ -1,0 +1,31 @@
+<!-- templates/manager/customer/detail.html -->
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <title th:text="${pageTitle}">Chi tiết nhân viên</title>
+
+<link rel="stylesheet" href="/styles/css/manager/header.css" />
+<link rel="stylesheet" href="/styles/css/manager/sidebar.css" />
+<link rel="stylesheet" href="/styles/css/manager/main.css" />
+
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+</head>
+<body>
+<div th:insert="~{manager/fragments/header :: header}"></div>
+<main class="main-content show">
+  <div th:insert="~{manager/fragments/sidebar :: sidebar}"></div>
+</head>
+<body>
+	<div class="page-header">
+		<h1>Chi tiết nhân viên</h1>
+		<div>
+			<a th:href="@{/manager/employees}" class="btn outline">Quay lại</a> <a
+				th:href="@{|/manager/employees/${employee.maNV}/edit|}" class="btn">Chỉnh
+				sửa</a>
+		</div>
+	</div>
+
+</body>
+</html>

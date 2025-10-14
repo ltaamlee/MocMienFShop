@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <title>Quản lý đơn hàng</title>
+  <link rel="stylesheet" href="/styles/css/manager/main.css"/>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+<div th:insert="~{manager/fragments/header :: header}"></div>
+<main class="main-content show">
+  <div th:insert="~{manager/fragments/sidebar :: sidebar}"></div>
+
+  <header>
+    <div class="header-top">
+      <div class="logo"><h2>4Petals</h2></div>
+      <div class="search-box">
+        <form method="get" th:action="@{/manager/orders}" style="display:flex; gap:8px; width:100%">
+          <input type="text" name="q" th:value="${q}" placeholder="Tìm khách/nhân viên..."/>
+          <button type="submit"><i class="fa fa-search"></i></button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Cards -->
+    <section class="stats-cards">
+      <div class="stat-card total">
+        <h3>Tổng đơn hôm nay</h3>
+        <div class="value" th:text="${today}">0</div>
+      </div>
+      <div class="stat-card pending">
+        <h3>Đang xử lý</h3>
+        <div class="value" th:text="${processing}">0</div>
+      </div>
+      <div class="stat-card active">
+        <h3>Đã hoàn thành</h3>
+        <div class="value" th:text="${completed}">0</div>
+      </div>
+      <div class="stat-card blocked">
+        <h3>Bị huỷ</h3>
+        <div class="value" th:text="${canceled}">0</div>
+      </div>
+    </section>
+
+    <div class="card" style="max-width:560px; margin:0 auto 16px">
+      <div class="card-body">
+        <canvas id="ordersChart"></canvas>
+      </div>
+    </div>
+  </header>
+
+  <!-- Filter -->
+  <section class="filters">
+    <form method="get" th:action="@{/manager/orders}" class="d-flex gap-2" style="width:100%;flex-wrap:wrap;">
+      <input type="text" name="q" th:value="${q}" placeholder="Từ khoá..."/>
+      <select name="status">
+        <option th:value="${null}" th:selected="${status==null}">Trạng thái</option>
+        <option th:each="s: ${statuses}" th:value="${s}" th:selected="${s==status}" th:text="${s.displayName}">...</option>
+      </select>
+      <input type="date" name="from" th:value="${from}"/>
+      <input type="date" name="to" th:value="${to}"/>
+      <button class="btn" type="submit">Lọc</button>
+      <a class="btn outline" th:href="@{/manager/orders/add}">+ Thêm</a>
+    </form>
+  </section>
+
+  <!-- Table -->
+  <section class="card">
+    <div class="card-body">
+      <table class="table">
+        <thead>
+        <tr>
+          <th>MaDH</th>
+          <th>Tên khách hàng</th>
+          <th>Ngày đặt hàng</th>
+          <th>Tổng tiền</th>
+          <th>Trạng thái</th>
+          <th>Nhân viên phụ trách</th>
+          <th class="center">Thao tác</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="o: ${rows}">
+          <td th:text="${o.maDH}">1</td>
+          <td th:text="${o.khachHang != null ? o.khachHang.hoTen : '-'}">-</td>
+          <td th:text="${#temporals.format(o.ngayDat, 'dd/MM/yyyy HH:mm')}">-</td>
+          <td th:text="${#numbers.formatDecimal(o.tongTien?:0, 0, 'POINT', 0, 'COMMA')} + 'đ'">0đ</td>
+          <td th:text="${o.trangThai.displayName}">-</td>
+          <td th:text="${o.nhanVien != null ? o.nhanVien.ho_ten : '-'}">-</td>
+          <td class="center">
+            <a class="icon" th:href="@{|/manager/orders/${o.maDH}|}" title="Xem"><i class="fa fa-eye"></i></a>
+            <a class="icon" th:href="@{|/manager/orders/${o.maDH}/edit|}" title="Sửa"><i class="fa fa-pen"></i></a>
+            <form th:action="@{|/manager/orders/${o.maDH}/delete|}" method="post" class="inline">
+              <button class="icon danger" type="submit" onclick="return confirm('Xoá đơn này?')">
+                <i class="fa fa-trash"></i>
+              </button>
+            </form>
+          </td>
+        </tr>
+        <tr th:if="${#lists.isEmpty(rows)}"><td colspan="7" class="empty">Không có dữ liệu</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+</main>
+
+<script th:inline="javascript">
+/*<![CDATA[*/
+const labels = /*[[${chartLabelsStr}]]*/ [];
+const values = /*[[${chartValues}]]*/ [];
+new Chart(document.getElementById('ordersChart'), {
+    type: 'bar',
+    data: { labels, datasets: [{ label: 'Số đơn theo ngày', data: values }] },
+    options: { responsive: true, scales: { y: { beginAtZero: true } } }
+});
+/*]]>*/
+</script>
+
+</body>
+</html>

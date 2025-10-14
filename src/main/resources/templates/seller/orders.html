@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{manager/layout}">
+<head>
+<title>Quản lý sản phẩm</title>
+<th:block layout:fragment="styles">
+	<link rel="stylesheet" th:href="@{/styles/css/spinner.css}">
+	<link rel="stylesheet" href="/styles/css/manager/main.css">
+</th:block>
+</head>
+<body>
+	<div layout:fragment="content">
+		<!-- THỐNG KÊ VÀ ĐÁNH GIÁ -->
+		<div class="stats-cards">
+			<div class="stat-card total">
+				<h3>Tổng số đơn hàng hôm nay</h3>
+				<div class="value" id="totalOrdersStat"
+					th:text="${totalOrders} ?: '0'">0</div>
+			</div>
+
+			<div class="stat-card pending">
+				<h3>Đơn hàng chưa xử lý</h3>
+				<div class="value" id="pendingOrdersStat"
+					th:text="${pendingOrders} ?: '0'">0</div>
+			</div>
+			<div class="stat-card processing">
+				<h3>Đang xử lý</h3>
+				<div class="value" id="processingOrdersStat"
+					th:text="${processingOrders} ?: '0'">0</div>
+			</div>
+			<div class="stat-card delivered">
+				<h3>Đã giao thành công</h3>
+				<div class="value" id="deliveredOrdersStat"
+					th:text="${deliveredOrders} ?: '0'">0</div>
+			</div>
+			<div class="stat-card cancelled">
+				<h3>Bị hủy</h3>
+				<div class="value" id="cancelOrdersStat"
+					th:text="${cancelOrders} ?: '0'">0</div>
+			</div>
+		</div>
+
+
+		Tổng số đơn hàng <br> Đơn hàng đang xử lý <br> Đơn hàng đã
+		phân công shipper <br> Đơn hàng chưa phân công <br> Filters:
+		<br> Thời gian: start – end <br> Trạng thái: Chưa xử lý /
+		Đang xử lý / Hoàn thành / Huỷ <br> Khách hàng <br> Tables: <br>
+		Danh sách đơn hàng chi tiết: ID, khách hàng, tổng tiền, trạng thái,
+		ngày tạo <br> Action: xem chi tiết, sửa trạng thái <br>
+		Charts (tùy chọn): <br> Line chart: Số đơn hàng theo
+		ngày/tháng/quý <br> Pie chart: Phân bố trạng thái đơn hàng phân
+		trang và tùy chọn số lượng hiển thị như 10 : 15 : 20 : 25
+
+	</div>
+</body>
+</html>

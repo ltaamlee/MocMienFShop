@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title th:text="${product.maSP}!=null? 'Sửa sản phẩm' : 'Thêm sản phẩm'">Sản phẩm</title>
+  <link rel="stylesheet" href="/styles/css/manager/header.css"/>
+  <link rel="stylesheet" href="/styles/css/manager/sidebar.css"/>
+  <link rel="stylesheet" href="/styles/css/manager/main.css"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+</head>
+<body>
+<div th:insert="~{manager/fragments/header :: header}"></div>
+<main class="main-content show">
+  <div th:insert="~{manager/fragments/sidebar :: sidebar}"></div>
+
+  <section class="page-header">
+    <h1 th:text="${product.maSP}!=null? 'Cập nhật sản phẩm' : 'Thêm sản phẩm'">Sản phẩm</h1>
+    <a class="btn outline" th:href="@{/manager/products}">
+      <i class="fa-solid fa-angles-left"></i> Quay lại
+    </a>
+  </section>
+
+  <section class="card">
+    <div class="card-body">
+      <form th:action="${product.maSP}!=null? @{|/manager/products/${product.maSP}|} : @{/manager/products}"
+            th:object="${product}" method="post" enctype="multipart/form-data">
+
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Tên sản phẩm <span class="required">*</span></label>
+            <input th:field="*{tenSP}" required placeholder="VD: Bó hoa Tulip hồng"/>
+          </div>
+          <div class="form-group">
+            <label>Đơn vị tính</label>
+            <input th:field="*{donViTinh}" placeholder="bó / hộp / chậu ..."/>
+          </div>
+          <div class="form-group">
+            <label>Giá (VND)</label>
+            <input type="number" step="1000" min="0" th:field="*{gia}" placeholder="100000"/>
+          </div>
+          <div class="form-group">
+            <label>Tồn kho</label>
+            <input type="number" min="0" th:field="*{soLuongTon}" placeholder="0"/>
+          </div>
+          <div class="form-group" style="grid-column:1/-1;">
+            <label>Mô tả</label>
+            <textarea th:field="*{moTa}" rows="3" placeholder="Mô tả ngắn..."></textarea>
+          </div>
+
+          <div class="form-group">
+            <label>Ảnh</label>
+            <input type="file" name="imageFile" accept="image/*"/>
+          </div>
+          <div class="form-group">
+            <label>Preview</label>
+            <img th:if="${product.hinhAnh!=null}" th:src="${product.hinhAnh}" class="img-thumbnail" style="max-width:160px;">
+            <span th:if="${product.hinhAnh==null}" class="help-text">Chưa có ảnh</span>
+          </div>
+        </div>
+
+        <!-- BẢNG “BAO GỒM” -->
+        <h3 class="mt-3 mb-2">Bao gồm</h3>
+        <div class="table-stores">
+          <table id="includeTable">
+            <thead>
+            <tr>
+              <th>Nguyên liệu (chọn có sẵn hoặc gõ tên mới)</th>
+              <th style="width:140px">Số lượng</th>
+              <th style="width:80px" class="text-right">
+                <button type="button" class="btn" onclick="addRow()">
+                  <i class="fa-solid fa-plus"></i> Thêm dòng
+                </button>
+              </th>
+            </tr>
+            </thead>
+            <tbody id="includeBody">
+            <!-- dòng mẫu (nếu edit có thể render từ server; ở đây để JS thêm dòng) -->
+            </tbody>
+          </table>
+        </div>
+
+        <div class="form-actions">
+          <a class="btn btn-cancel outline" th:href="@{/manager/products}">Hủy</a>
+          <button class="btn btn-submit" type="submit">
+            <i class="fa-regular fa-floppy-disk"></i>
+            <span th:text="${product.maSP}!=null? 'Lưu thay đổi' : 'Tạo mới'">Lưu</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </section>
+</main>
+
+<!-- Datalist nguyên liệu sẵn có -->
+<datalist id="materialsDatalist">
+  <option th:each="m : ${materials}" th:value="${m.tenNL}" th:data-id="${m.maNL}"></option>
+</datalist>
+
+<script>
+  // map tên -> id từ datalist
+  const nameToId = (() => {
+    const map = {};
+    document.querySelectorAll('#materialsDatalist option').forEach(o => {
+      if (o.value) map[o.value.toLowerCase()] = o.getAttribute('data-id');
+    });
+    return map;
+  })();
+
+  function tplRow() {
+    return `
+      <tr>
+        <td>
+          <input list="materialsDatalist" class="matName" placeholder="Gõ tên, vd: Hoa hồng"
+                 oninput="syncMaterialId(this)" style="width:100%">
+          <input type="hidden" name="include.materialId">
+          <input type="hidden" name="include.materialNameNew">
+        </td>
+        <td><input type="number" min="1" value="1" name="include.qty" style="width:120px"></td>
+        <td class="text-right">
+          <button type="button" class="btn-delete" onclick="this.closest('tr').remove()">
+            <i class="fa-regular fa-trash-can"></i> Xoá
+          </button>
+        </td>
+      </tr>`;
+  }
+
+  function addRow() {
+    document.getElementById('includeBody').insertAdjacentHTML('beforeend', tplRow());
+  }
+
+  function syncMaterialId(input) {
+    const tr = input.closest('tr');
+    const hiddenId = tr.querySelector('input[name="include.materialId"]');
+    const hiddenNew = tr.querySelector('input[name="include.materialNameNew"]');
+    const name = (input.value || '').trim();
+    const id = nameToId[name.toLowerCase()];
+    if (id) {
+      hiddenId.value = id;
+      hiddenNew.value = '';
+    } else {
+      hiddenId.value = '';
+      hiddenNew.value = name; // tên mới -> BE sẽ auto-create Material tối thiểu
+    }
+  }
+
+  // khởi tạo 1 dòng mặc định
+  addRow();
+</script>
+</body>
+</html>

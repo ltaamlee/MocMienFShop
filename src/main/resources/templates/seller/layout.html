@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title layout:title-pattern="$CONTENT_TITLE - Manager Panel">Quản
+	lý cửa hàng</title>
+
+<link
+	href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap"
+	rel="stylesheet">
+<link rel="stylesheet" href="/styles/css/manager/fragments/header.css">
+<link rel="stylesheet" href="/styles/css/manager/product.css">
+<link rel="stylesheet" href="/styles/css/sidebar.css">
+<link rel="stylesheet" href="/styles/css/base.css">
+<link rel="stylesheet" href="/styles/css/components/card.css">
+<link rel="stylesheet" href="/styles/css/components/table.css">
+<link rel="stylesheet" href="/styles/css/components/form.css">
+<link rel="stylesheet" href="/styles/css/components/button.css">
+<link rel="stylesheet" href="/styles/css/responsive.css">
+
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" />
+<th:block layout:fragment="styles">
+</th:block>
+</head>
+<body>
+	<div th:replace="~{manager/fragments/header :: header}"></div>
+	<div th:replace="~{manager/fragments/sidebar :: sidebar}"></div>
+
+	<main>
+		<div layout:fragment="content">
+
+			<h1>Chào mừng đến với trang quản lý</h1>
+			<p>Đây là trang chủ dành cho chủ cửa hàng.</p>
+		</div>
+	</main>
+	<div th:replace="~{web/fragments/spinner :: spinner}"></div>
+
+
+	<script th:src="@{/styles/js/spinner.js}"></script>
+	<script th:src="@{/styles/js/sidebar.js}"></script>
+	<th:block layout:fragment="scripts"></th:block>
+</body>
+</html>
