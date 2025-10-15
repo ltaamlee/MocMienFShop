@@ -21,9 +21,6 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "Customers")
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
 public class Customer {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,19 +29,19 @@ public class Customer {
 
 	@OneToOne
 	@JoinColumn(name = "UserID", nullable = false, unique = true)
-	private User user; // Liên kết với User (role = USER)
+	private User user; 
 	
 	@Column(name = "FullName", nullable = false, length = 100, columnDefinition = "nvarchar(100)")
 	private String fullName;
 
 	@Column(name = "Phone", length = 15)
-	private String phone; // Số điện thoại chính (nếu muốn lưu riêng)
+	private String phone; 
 
 	@OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
-	private List<Address> addresses; // Danh sách địa chỉ
+	private List<Address> addresses; 
 
 	@OneToMany(mappedBy = "customer")
-	private List<Order> orders; // Danh sách đơn hàng
+	private List<Order> orders;
 
 	@Column(name = "CreatedAt")
 	private LocalDateTime createdAt;
@@ -61,4 +58,87 @@ public class Customer {
 	protected void onUpdate() {
 		updatedAt = LocalDateTime.now();
 	}
+
+	public Integer getCustomerId() {
+		return customerId;
+	}
+
+	public void setCustomerId(Integer customerId) {
+		this.customerId = customerId;
+	}
+
+	public User getUser() {
+		return user;
+	}
+
+	public void setUser(User user) {
+		this.user = user;
+	}
+
+	public String getFullName() {
+		return fullName;
+	}
+
+	public void setFullName(String fullName) {
+		this.fullName = fullName;
+	}
+
+	public String getPhone() {
+		return phone;
+	}
+
+	public void setPhone(String phone) {
+		this.phone = phone;
+	}
+
+	public List<Address> getAddresses() {
+		return addresses;
+	}
+
+	public void setAddresses(List<Address> addresses) {
+		this.addresses = addresses;
+	}
+
+	public List<Order> getOrders() {
+		return orders;
+	}
+
+	public void setOrders(List<Order> orders) {
+		this.orders = orders;
+	}
+
+	public LocalDateTime getCreatedAt() {
+		return createdAt;
+	}
+
+	public void setCreatedAt(LocalDateTime createdAt) {
+		this.createdAt = createdAt;
+	}
+
+	public LocalDateTime getUpdatedAt() {
+		return updatedAt;
+	}
+
+	public void setUpdatedAt(LocalDateTime updatedAt) {
+		this.updatedAt = updatedAt;
+	}
+	
+	public Customer() {
+		super();
+	}
+
+	public Customer(Integer customerId, User user, String fullName, String phone, List<Address> addresses,
+			List<Order> orders, LocalDateTime createdAt, LocalDateTime updatedAt) {
+		super();
+		this.customerId = customerId;
+		this.user = user;
+		this.fullName = fullName;
+		this.phone = phone;
+		this.addresses = addresses;
+		this.orders = orders;
+		this.createdAt = createdAt;
+		this.updatedAt = updatedAt;
+	}
+	
+	
 }

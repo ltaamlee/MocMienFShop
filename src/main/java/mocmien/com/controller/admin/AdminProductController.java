@@ -1,4 +1,4 @@
-package mocmien.com.controller.admin.products;
+package mocmien.com.controller.admin;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

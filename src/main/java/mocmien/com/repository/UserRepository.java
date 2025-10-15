@@ -66,25 +66,7 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 	List<User> findTop10ByStatusOrderByCreatedAtDesc(Integer status); // 10 user mới nhất theo status
 
 	List<User> findByUsernameContainingIgnoreCase(String keyword); // search username
+	
+	Page<User> findByUsernameContainingAndEmailContaining(String username, String email, Pageable pageable);
 
-	@Query(value = """
-			SELECT u FROM User u
-			LEFT JOIN FETCH u.role
-			LEFT JOIN FETCH u.khachHang
-			LEFT JOIN FETCH u.nhanVien
-			WHERE (:keyword IS NULL OR :keyword = '' OR
-			       LOWER(u.username) LIKE LOWER(CONCAT('%', :keyword, '%')) OR
-			       LOWER(u.email) LIKE LOWER(CONCAT('%', :keyword, '%')))
-			  AND (:status IS NULL OR :status = '' OR CAST(u.status AS string) = :status)
-			  AND (:roleId IS NULL OR u.role.roleId = :roleId)
-			""", countQuery = """
-			SELECT count(u) FROM User u
-			WHERE (:keyword IS NULL OR :keyword = '' OR
-			       LOWER(u.username) LIKE LOWER(CONCAT('%', :keyword, '%')) OR
-			       LOWER(u.email) LIKE LOWER(CONCAT('%', :keyword, '%')))
-			  AND (:status IS NULL OR :status = '' OR CAST(u.status AS string) = :status)
-			  AND (:roleId IS NULL OR u.role.roleId = :roleId)
-			""")
-	Page<User> searchUsers(@Param("keyword") String keyword, @Param("status") String status,
-			@Param("roleId") Integer roleId, Pageable pageable);
 }

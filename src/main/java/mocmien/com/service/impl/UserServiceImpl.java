@@ -240,10 +240,11 @@ public class UserServiceImpl implements UserService {
 	public List<User> findTop10ByStatusOrderByCreatedAtDesc(UserStatus status) {
 		return userRepository.findTop10ByStatusOrderByCreatedAtDesc(status.getValue());
 	}
-
-	@Override
-    public Page<User> searchUsers(String keyword, String status, Integer roleId, Pageable pageable) {
-        return userRepository.searchUsers(keyword, status, roleId, pageable);
-    }
 	
+	@Override
+	public Page<User> findByUsernameContainingAndEmailContaining(String username, String email, Pageable pageable){
+		return userRepository.findByUsernameContainingAndEmailContaining(username, email, pageable);
+	}
+
+
 }

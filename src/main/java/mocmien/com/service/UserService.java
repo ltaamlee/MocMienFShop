@@ -59,7 +59,6 @@ public interface UserService {
     List<User> searchByUsername(String keyword);
     List<User> findTop10ByStatusOrderByCreatedAtDesc(UserStatus status);
     
-       
-    Page<User> searchUsers(String keyword, String status, Integer roleId, Pageable pageable);
-    
+    Page<User> findByUsernameContainingAndEmailContaining(String username, String email, Pageable pageable);
+
 }
