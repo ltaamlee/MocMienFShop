@@ -1,15 +1,19 @@
 package mocmien.com.entity;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.PrePersist;
@@ -18,47 +22,43 @@ import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import mocmien.com.enums.Rank;
 
 @Entity
-@Table(name = "Customers")
+@Table(name = "Customer")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class Customer {
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "CustomerID")
-	private Integer customerId;
 
-	@OneToOne
-	@JoinColumn(name = "UserID", nullable = false, unique = true)
-	private User user; // Liên kết với User (role = USER)
-	
-	@Column(name = "FullName", nullable = false, length = 100, columnDefinition = "nvarchar(100)")
-	private String fullName;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
+    private Integer id;
 
-	@Column(name = "Phone", length = 15)
-	private String phone; // Số điện thoại chính (nếu muốn lưu riêng)
+    @OneToOne
+    @JoinColumn(name = "userId", nullable = false)
+    private User user;
+   
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "level", nullable = false)
+    private Level level;
 
-	@OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
-	private List<Address> addresses; // Danh sách địa chỉ
+    @Column(name = "fullName", nullable = false, columnDefinition = "nvarchar(500)" )
+    private String fullName;
 
-	@OneToMany(mappedBy = "customer")
-	private List<Order> orders; // Danh sách đơn hàng
+    @Column(name = "idCard", unique = true, columnDefinition = "varchar(20)" )
+    private String idCard;
 
-	@Column(name = "CreatedAt")
-	private LocalDateTime createdAt;
+    @Column(name = "dob", nullable = true)
+    private LocalDate dob;
 
-	@Column(name = "UpdatedAt")
-	private LocalDateTime updatedAt;
-
-	@PrePersist
-	protected void onCreate() {
-		createdAt = LocalDateTime.now();
-	}
-
-	@PreUpdate
-	protected void onUpdate() {
-		updatedAt = LocalDateTime.now();
-	}
+    @Column(name = "point", nullable = false, columnDefinition = "int default 0")
+    private Integer point = 0;
+    
+    @Column(name = "eWallet", nullable = false, precision = 15, scale = 2)
+    private BigDecimal eWallet = BigDecimal.ZERO;
+    
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<CustomerAddress> addresses;
 }

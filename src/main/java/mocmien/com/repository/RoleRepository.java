@@ -17,4 +17,5 @@ public interface RoleRepository extends JpaRepository<Role, Integer> {
 
 	// Tùy chọn: kiểm tra tồn tại theo RoleName
 	boolean existsByRoleName(RoleName roleName);
+
 }

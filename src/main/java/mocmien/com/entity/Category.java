@@ -15,21 +15,27 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "Categories")
+@Table(name = "Category")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class Category {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "CategoryID")
-	private Integer categoryId;
+	@Column(name = "id")
+	private Integer id;
 
-	@Column(name = "CategoryName", nullable = false, length = 100, columnDefinition = "nvarchar(100)")
+	@Column(name = "categoryName", nullable = false, length = 100, columnDefinition = "nvarchar(100)")
 	private String categoryName;
 
-	@Column(name = "Description", length = 255, columnDefinition = "nvarchar(MAX)")
-	private String description;
+    @Column(name = "slug", unique = true, columnDefinition = "nvarchar(500)")
+    private String slug;
+    
+    @Column(name = "image", columnDefinition = "varchar(MAX)", nullable = true)
+    private String image;
+	
+	@Column(name="isActive", nullable = false, columnDefinition="BIT DEFAULT 1")
+	private boolean isActive = true; 
 
 	@Column(name = "CreatedAt")
 	private LocalDateTime createdAt;
@@ -40,69 +46,14 @@ public class Category {
 	@PrePersist
 	protected void onCreate() {
 		createdAt = LocalDateTime.now();
+		updatedAt = LocalDateTime.now();
 	}
 
 	@PreUpdate
 	protected void onUpdate() {
 		updatedAt = LocalDateTime.now();
-	}
-
-	
+	}	
 	
 	//Getter và Setter
-	public Integer getCategoryId() {
-		return categoryId;
-	}
 
-	public void setCategoryId(Integer categoryId) {
-		this.categoryId = categoryId;
-	}
-
-	public String getCategoryName() {
-		return categoryName;
-	}
-
-	public void setCategoryName(String categoryName) {
-		this.categoryName = categoryName;
-	}
-
-	public String getDescription() {
-		return description;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
-	}
-
-	public LocalDateTime getCreatedAt() {
-		return createdAt;
-	}
-
-	public void setCreatedAt(LocalDateTime createdAt) {
-		this.createdAt = createdAt;
-	}
-
-	public LocalDateTime getUpdatedAt() {
-		return updatedAt;
-	}
-
-	public void setUpdatedAt(LocalDateTime updatedAt) {
-		this.updatedAt = updatedAt;
-	}
-
-	public Category() {
-		super();
-	}
-
-	public Category(Integer categoryId, String categoryName, String description, LocalDateTime createdAt,
-			LocalDateTime updatedAt) {
-		super();
-		this.categoryId = categoryId;
-		this.categoryName = categoryName;
-		this.description = description;
-		this.createdAt = createdAt;
-		this.updatedAt = updatedAt;
-	}
-	
-	
 }

@@ -1,9 +1,0 @@
-package mocmien.com.controller.auth;
-
-import org.springframework.stereotype.Controller;
-
-@Controller
-public class LogoutController {
-
-	
-}

@@ -3,133 +3,65 @@ package mocmien.com.service.impl;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import mocmien.com.entity.Role;
 import mocmien.com.entity.User;
-import mocmien.com.enums.RoleName;
 import mocmien.com.enums.UserStatus;
-import mocmien.com.repository.RoleRepository;
 import mocmien.com.repository.UserRepository;
 import mocmien.com.service.UserService;
 
-@Service
-@Transactional
-public class UserServiceImpl implements UserService {
+public class UserServiceImpl implements UserService{
 
-	private final UserRepository userRepository;
-	private final RoleRepository roleRepository;
-	private final PasswordEncoder passwordEncoder;
+	@Autowired
+	private UserRepository user;
+	@Autowired
+	private PasswordEncoder passwordEncoder;
 
-	public UserServiceImpl(UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder passwordEncoder) {
-		this.userRepository = userRepository;
-		this.roleRepository=roleRepository;
-		this.passwordEncoder=passwordEncoder;
-	}
-
-	// -----------------------
-	// Tìm kiếm
-	// -----------------------
 	@Override
-	public Optional<User> findById(Integer id) {
-		return userRepository.findById(id);
+	public User save(User user) {
+		return user.save(user);
 	}
 
 	@Override
-	public Optional<User> findByEmail(String email) {
-		return userRepository.findByEmail(email);
+	public User update(User user) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	@Override
-	public Optional<User> findByUsername(String username) {
-		return userRepository.findByUsername(username);
+	public Optional<User> login(String usernameOrEmail, String password) {
+		Optional<User> userOpt = user.findByUsernameOrEmail(usernameOrEmail)
+			
+
+		User user = userOpt.get();
+
+		boolean passwordMatch = passwordEncoder.matches(password, user.getPassword());
+		UserStatus status = UserStatus.fromValue(user.getStatus());
+
+		System.out.printf("[LOGIN] User: %s | Role: %s | Status: %s | Password match: %s%n", user.getUsername(),
+				user.getRole().getRoleName(), status, passwordMatch);
+
+		// Kiểm tra trạng thái
+		if (!status.canLogin()) {
+			System.out.println("[LOGIN] User không được phép đăng nhập (status = " + status + ")");
+			return Optional.empty();
+		}
+
+		// Kiểm tra mật khẩu
+		if (!passwordMatch) {
+			System.out.println("[LOGIN] Mật khẩu không đúng");
+			return Optional.empty();
+		}
+
+		return Optional.of(user);
 	}
 
 	@Override
-	public Optional<User> findByEmailAndStatus(String email, UserStatus status) {
-		return userRepository.findByEmailAndStatus(email, status.getValue());
-	}
-
-	@Override
-	public Optional<User> findByUsernameAndStatus(String username, UserStatus status) {
-		return userRepository.findByUsernameAndStatus(username, status.getValue());
-	}
-
-	@Override
-	public List<User> findAll() {
-		return userRepository.findAll();
-	}
-
-	@Override
-	public List<User> findByStatus(UserStatus status) {
-		return userRepository.findByStatus(status.getValue());
-	}
-
-	@Override
-	public List<User> findByRole(Role role) {
-		return userRepository.findByRole(role);
-	}
-
-	@Override
-	public List<User> findByRoleAndStatus(Role role, UserStatus status) {
-		return userRepository.findByRoleAndStatus(role, status.getValue());
-	}
-
-	// -----------------------
-	// Kiểm tra tồn tại
-	// -----------------------
-	@Override
-	public boolean existsByEmail(String email) {
-		return userRepository.existsByEmail(email);
-	}
-
-	@Override
-	public boolean existsByUsername(String username) {
-		return userRepository.existsByUsername(username);
-	}
-
-	@Override
-	public boolean existsByEmailAndStatus(String email, UserStatus status) {
-		return userRepository.existsByEmailAndStatus(email, status.getValue());
-	}
-
-	@Override
-	public boolean existsByUsernameAndStatus(String username, UserStatus status) {
-		return userRepository.existsByUsernameAndStatus(username, status.getValue());
-	}
-
-	// -----------------------
-	// Đếm
-	// -----------------------
-	@Override
-	public long countByStatus(UserStatus status) {
-		return userRepository.countByStatus(status.getValue());
-	}
-
-	@Override
-	public long countByRole(Role role) {
-		return userRepository.countByRole(role);
-	}
-
-	@Override
-	public long countByRoleAndStatus(Role role, UserStatus status) {
-		return userRepository.countByRoleAndStatus(role, status.getValue());
-	}
-
-	@Override
-	public long countAllUsers() {
-		return userRepository.count();
-	}
-
-	// -----------------------
-	// Đăng ký User mới
-	// -----------------------
-	@Override
-	public User registerUser(User user, String roleName) {
+	public User register(User user, Role roleName) {
 
 		if (existsByEmail(user.getEmail())) {
 			throw new RuntimeException("Email đã tồn tại");
@@ -158,92 +90,166 @@ public class UserServiceImpl implements UserService {
 		return userRepository.save(user);
 	}
 
-	// -----------------------
-	// Đăng nhập
-	// -----------------------
 	@Override
-	public Optional<User> login(String usernameOrEmail, String password) {
-		Optional<User> userOpt = userRepository.findByUsername(usernameOrEmail)
-				.or(() -> userRepository.findByEmail(usernameOrEmail));
-
-		if (userOpt.isEmpty()) {
-			System.out.println("[LOGIN] Không tìm thấy user: " + usernameOrEmail);
-			return Optional.empty();
-		}
-
-		User user = userOpt.get();
-
-		boolean passwordMatch = passwordEncoder.matches(password, user.getPassword());
-		UserStatus status = UserStatus.fromValue(user.getStatus());
-
-		System.out.printf("[LOGIN] User: %s | Role: %s | Status: %s | Password match: %s%n", user.getUsername(),
-				user.getRole().getRoleName(), status, passwordMatch);
-//
-//		// Kiểm tra trạng thái
-//		if (!status.canLogin()) {
-//			System.out.println("[LOGIN] User không được phép đăng nhập (status = " + status + ")");
-//			return Optional.empty();
-//		}
-//
-//		// Kiểm tra mật khẩu
-//		if (!passwordMatch) {
-//			System.out.println("[LOGIN] Mật khẩu không đúng");
-//			return Optional.empty();
-//		}
-
-		return Optional.of(user);
+	public void deleteByEmail(String email) {
+		// TODO Auto-generated method stub
+		
 	}
 
-	// -----------------------
-	// Cập nhật User
-	// -----------------------
 	@Override
-	public User updateUser(User user) {
-		return userRepository.save(user);
+	public void deleteByUsername(String username) {
+		// TODO Auto-generated method stub
+		
 	}
 
-	// -----------------------
-	// Đổi mật khẩu
-	// -----------------------
 	@Override
-	public void changePassword(User user, String newPassword) {
-		user.setPassword(passwordEncoder.encode(newPassword));
-		userRepository.save(user);
+	public void deleteByPhone(String phone) {
+		// TODO Auto-generated method stub
+		
 	}
 
-	// -----------------------
-	// Thay đổi trạng thái
-	// -----------------------
 	@Override
-	public void setStatus(User user, UserStatus status) {
-		user.setStatus(status.getValue());
-		userRepository.save(user);
+	public void blockUser(Integer userId) {
+		// TODO Auto-generated method stub
+		
 	}
 
-	// -----------------------
-	// Xóa User
-	// -----------------------
 	@Override
-	public void deleteUser(User user) {
-		userRepository.delete(user);
+	public void unblockUser(Integer userId) {
+		// TODO Auto-generated method stub
+		
 	}
 
-	// -----------------------
-	// Tìm kiếm nâng cao
-	// -----------------------
+	@Override
+	public void setStatus(Integer userId, UserStatus status) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public Optional<User> findByEmail(String email) {
+		// TODO Auto-generated method stub
+		return Optional.empty();
+	}
+
+	@Override
+	public Optional<User> findByUsername(String username) {
+		// TODO Auto-generated method stub
+		return Optional.empty();
+	}
+
+	@Override
+	public Optional<User> findByEmailAndStatus(String email, UserStatus status) {
+		// TODO Auto-generated method stub
+		return Optional.empty();
+	}
+
+	@Override
+	public Optional<User> findByUsernameAndStatus(String username, UserStatus status) {
+		// TODO Auto-generated method stub
+		return Optional.empty();
+	}
+
+	@Override
+	public Optional<User> findByUsernameOrEmail(String usernameOrEmail) {
+		// TODO Auto-generated method stub
+		return Optional.empty();
+	}
+
+	@Override
+	public List<User> findByStatus(UserStatus status) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<User> findByRole(Role role) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<User> findByRoleAndStatus(Role role, UserStatus status) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 	@Override
 	public List<User> searchByUsername(String keyword) {
-		return userRepository.findByUsernameContainingIgnoreCase(keyword);
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public boolean existsByUsername(String username) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean existsByEmail(String email) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean existsByPhone(String phone) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean existsByEmailAndStatus(String email, UserStatus status) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean existsByUsernameAndStatus(String username, UserStatus status) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public long countByStatus(UserStatus status) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public long countByRole(Role role) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public long countByRoleAndStatus(Role role, UserStatus status) {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 
 	@Override
 	public List<User> findTop10ByStatusOrderByCreatedAtDesc(UserStatus status) {
-		return userRepository.findTop10ByStatusOrderByCreatedAtDesc(status.getValue());
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	@Override
-    public Page<User> searchUsers(String keyword, String status, Integer roleId, Pageable pageable) {
-        return userRepository.searchUsers(keyword, status, roleId, pageable);
-    }
-	
+	public List<User> findByUsernameContainingIgnoreCase(String keyword) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Page<User> findByStatus(UserStatus status, Pageable pageable) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Page<User> findByUsernameContainingIgnoreCase(String keyword, Pageable pageable) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

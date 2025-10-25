@@ -20,7 +20,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "Orders")
+@Table(name = "Order")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -28,28 +28,21 @@ public class Order {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "OrderID")
+	@Column(name = "oderId")
 	private Integer orderId;
 
 	@ManyToOne
-	@JoinColumn(name = "CustomerID", nullable = false)
+	@JoinColumn(name = "customerId", nullable = false)
 	private Customer customer; // khách hàng
 
 	@ManyToOne
-	@JoinColumn(name = "SellerID", nullable = false)
+	@JoinColumn(name = "sellerId", nullable = false)
 	private Seller seller; // shop bán hàng
 
 	@ManyToOne
-	@JoinColumn(name = "ShippingCompanyID")
-	private ShippingCompany shippingCompany; // công ty vận chuyển
-
-	@ManyToOne
-	@JoinColumn(name = "ShipperID")
+	@JoinColumn(name = "ShipperId")
 	private Shipper shipper; // shipper phụ trách
 
-	@ManyToOne
-	@JoinColumn(name = "ShippingAddressID", nullable = false)
-	private Customer shippingAddress; // địa chỉ nhận hàng
 
 	@Column(name = "OrderStatus")
 	private String orderStatus;
