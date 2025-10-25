@@ -40,7 +40,7 @@ public class CustomUserDetails implements UserDetails{
 
     @Override
     public boolean isAccountNonLocked() {
-        return user.getStatus() != 0; // 0 = khóa
+        return user.isActive(); // 0 = khóa
     }
 
     @Override
@@ -50,7 +50,7 @@ public class CustomUserDetails implements UserDetails{
 
     @Override
     public boolean isEnabled() {
-        return user.getStatus() == 1; // 1 = active
+    	return user.isActive() && user.isEmailActive(); 
     }
 
     // Lấy đối tượng User gốc khi cần

@@ -14,18 +14,18 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "Roles")
+@Table(name = "Role")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class Role {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "RoleID")
+	@Column(name = "roleId")
 	private Integer roleId;
 
 	@Enumerated(EnumType.STRING)
-    @Column(name = "RoleName", nullable = false, unique = true, length = 50)
+    @Column(name = "roleName", nullable = false, unique = true, length = 50)
     private RoleName roleName;
 	
 	//Getter và Setter

@@ -7,16 +7,13 @@ import mocmien.com.entity.Role;
 import mocmien.com.enums.RoleName;
 
 public interface RoleService {
-
+	
 	List<Role> findAll();
 
-    Optional<Role> findById(Integer id);
+	// Tìm role theo tên RoleName (enum)
+	Optional<Role> findByRoleName(RoleName roleName);
 
-    Optional<Role> findByRoleName(RoleName roleName);
+	// Tùy chọn: kiểm tra tồn tại theo RoleName
+	boolean existsByRoleName(RoleName roleName);
 
-    boolean existsByRoleName(RoleName roleName);
-
-    Role save(Role role);
-
-    void deleteById(Integer id);
 }

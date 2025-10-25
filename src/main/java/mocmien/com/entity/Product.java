@@ -18,7 +18,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "Products")
+@Table(name = "Product")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -26,11 +26,11 @@ public class Product {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "ProductID")
+	@Column(name = "productId")
 	private Integer productId;
 
 	@ManyToOne
-	@JoinColumn(name = "CategoryID")
+	@JoinColumn(name = "categoryId")
 	private Category category;
 
 	@Column(name = "ProductName", nullable = false, length = 200, columnDefinition = "nvarchar(200)")

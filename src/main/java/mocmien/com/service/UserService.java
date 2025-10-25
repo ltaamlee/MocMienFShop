@@ -12,53 +12,64 @@ import mocmien.com.enums.UserStatus;
 
 public interface UserService {
 
-	// Tìm kiếm
-    Optional<User> findById(Integer id);
-    Optional<User> findByEmail(String email);
-    Optional<User> findByUsername(String username);
+	// -----------------------
+	// CRUD
+	// -----------------------
+	User save(User user);          
+    User update(User user);    
+    Optional<User> login(String usenameOrEmail, String password);
+    Optional<User> register(User user, Role role);
     
-    Optional<User> findByEmailAndStatus(String email, UserStatus status);
-    Optional<User> findByUsernameAndStatus(String username, UserStatus status);
-    List<User> findAll();
-    List<User> findByStatus(UserStatus status);
-    List<User> findByRole(Role role);
-    List<User> findByRoleAndStatus(Role role, UserStatus status);
+    void deleteByEmail(String email);
+	void deleteByUsername(String username);
+	void deleteByPhone(String phone);
+	
+	// -----------------------
+    // Thay đổi trạng thái / active
+    // -----------------------
+    void blockUser(Integer userId);
+    void unblockUser(Integer userId);
+    void setStatus(Integer userId, UserStatus status);
+	
+	// -----------------------
+	// Tìm kiếm User
+	// -----------------------
+	Optional<User> findByEmail(String email);
+	Optional<User> findByUsername(String username);
+	Optional<User> findByEmailAndStatus(String email, UserStatus status);
+	Optional<User> findByUsernameAndStatus(String username, UserStatus status);
+	Optional<User> findByUsernameOrEmail (String usernameOrEmail);
+	
+	
+	List<User> findByStatus(UserStatus status);
+	List<User> findByRole(Role role);
+	List<User> findByRoleAndStatus(Role role, UserStatus status);
+	List<User> searchByUsername(String keyword);
+	// -----------------------
+	// Kiểm tra tồn tại
+	// -----------------------
+	boolean existsByUsername(String username);
+	boolean existsByEmail(String email);
+	boolean existsByPhone(String phone);
+	boolean existsByEmailAndStatus(String email, UserStatus status);
+	boolean existsByUsernameAndStatus(String username, UserStatus status);
 
-    // Kiểm tra tồn tại
-    boolean existsByEmail(String email);
-    boolean existsByUsername(String username);
-    boolean existsByEmailAndStatus(String email, UserStatus status);
-    boolean existsByUsernameAndStatus(String username, UserStatus status);
+	// -----------------------
+	// Đếm số lượng
+	// -----------------------
+	long countByStatus(UserStatus status);
+	long countByRole(Role role);
+	long countByRoleAndStatus(Role role, UserStatus status);
 
-    // Đếm
-    long countByStatus(UserStatus status);
-    long countByRole(Role role);
-    long countByRoleAndStatus(Role role, UserStatus status);
-    long countAllUsers();
+	// -----------------------
+	// Optional nâng cao
+	// -----------------------
+	List<User> findTop10ByStatusOrderByCreatedAtDesc(UserStatus status); // 10 user mới nhất theo status
+	List<User> findByUsernameContainingIgnoreCase(String keyword); // search username
+
+
+	//Tìm kiếm phân trang
+	Page<User> findByStatus(UserStatus status, Pageable pageable);
+	Page<User> findByUsernameContainingIgnoreCase(String keyword, Pageable pageable);
     
-
-    // Đăng ký
-    User registerUser(User user, String roleName);
-    
-    //Đăng nhập
-    Optional<User> login(String usernameOrEmail, String password);
-
-    // Cập nhật
-    User updateUser(User user);
-
-    // Đổi mật khẩu
-    void changePassword(User user, String newPassword);
-
-    // Thay đổi trạng thái
-    void setStatus(User user, UserStatus status);
-
-    // Xóa
-    void deleteUser(User user);
-
-    // Tìm kiếm nâng cao
-    List<User> searchByUsername(String keyword);
-    List<User> findTop10ByStatusOrderByCreatedAtDesc(UserStatus status);
-    
-    Page<User> findByUsernameContainingAndEmailContaining(String username, String email, Pageable pageable);
-
 }

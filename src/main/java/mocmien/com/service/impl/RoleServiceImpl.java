@@ -12,41 +12,24 @@ import mocmien.com.repository.RoleRepository;
 import mocmien.com.service.RoleService;
 
 @Service
-public class RoleServiceImpl implements RoleService {
+public class RoleServiceImpl implements RoleService{
 
-	private final RoleRepository roleRepository;
-
-	public RoleServiceImpl(RoleRepository roleRepository) {
-		this.roleRepository = roleRepository;
+	@Autowired
+	private RoleRepository role;
+	
+	@Override
+	public List<Role> findAll() {
+		return role.findAll();
 	}
 
-    @Override
-    public List<Role> findAll() {
-        return roleRepository.findAll();
-    }
+	@Override
+	public Optional<Role> findByRoleName(RoleName roleName) {
+		return role.findByRoleName(roleName);
+	}
 
-    @Override
-    public Optional<Role> findById(Integer id) {
-        return roleRepository.findById(id);
-    }
+	@Override
+	public boolean existsByRoleName(RoleName roleName) {
+		return role.existsByRoleName(roleName);
+	}
 
-    @Override
-    public Optional<Role> findByRoleName(RoleName roleName) {
-        return roleRepository.findByRoleName(roleName);
-    }
-
-    @Override
-    public boolean existsByRoleName(RoleName roleName) {
-        return roleRepository.existsByRoleName(roleName);
-    }
-
-    @Override
-    public Role save(Role role) {
-        return roleRepository.save(role);
-    }
-
-    @Override
-    public void deleteById(Integer id) {
-        roleRepository.deleteById(id);
-    }
 }
