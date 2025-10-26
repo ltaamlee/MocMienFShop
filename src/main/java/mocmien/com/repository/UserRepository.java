@@ -18,7 +18,7 @@ import mocmien.com.enums.UserStatus;
 public interface UserRepository extends JpaRepository<User, Integer> {
 	
 	// -----------------------
-    
+    User save(User user);
     void deleteByEmail(String email);
 	void deleteByUsername(String username);
 	void deleteByPhone(String phone);

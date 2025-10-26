@@ -11,24 +11,21 @@
 	rel="stylesheet">
 <link rel="stylesheet"
 	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" />
+<link rel="stylesheet" href="/styles/css/base.css">
+<link rel="stylesheet" href="/styles/css/sidebar.css">
 <th:block layout:fragment="styles">
 </th:block>
 </head>
 <body>
-	<div th:replace="~{manager/fragments/header :: header}"></div>
-	<div th:replace="~{manager/fragments/sidebar :: sidebar}"></div>
+	<div th:replace="~{admin/fragments/header :: header}"></div>
+	<div th:replace="~{admin/fragments/sidebar :: sidebar}"></div>
 
 	<main>
 		<div layout:fragment="content">
 		ADMIN
 		</div>
 	</main>
-	<div th:replace="~{web/fragments/spinner :: spinner}"></div>
-
-
-	<script th:src="@{/styles/js/spinner.js}"></script>
 	<script th:src="@{/styles/js/sidebar.js}"></script>
-	
 	
 	<th:block layout:fragment="scripts"></th:block>
 </body>

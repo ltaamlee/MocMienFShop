@@ -8,29 +8,36 @@
 <link
 	href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap"
 	rel="stylesheet">
-
 </head>
 <body>
-	<div th:fragment="header">
-		<header>
-			<div class="header-top">
-
-				<div class="search-box">
-					<input type="text" placeholder="Tìm kiếm...">
-					<button type="submit">
-						<i class="fa-solid fa-magnifying-glass"></i>
-					</button>
-				</div>
-
-				<div class="admin-info">Tên Admin, Logo</div>
-
-				<div class="noti">
-					<i class="fa-solid fa-bell"></i> <span class="noti-text"></span> <span
-						class="noti-count">3</span>
-				</div>
-
+	<header th:fragment="header">
+		<div class="header-top">
+			<!-- Logo -->
+			<div class="logo">
+				<a href="/home"> <img src="/styles/image/logo.png" alt="Logo">
+				</a>
 			</div>
-		</header>
-	</div>
+
+
+			<!-- Search Box -->
+			<div class="search-box">
+				<input type="text" placeholder="Tìm kiếm sản phẩm...">
+				<button type="submit">
+					<i class="fa-solid fa-magnifying-glass"></i>
+				</button>
+			</div>
+
+			<div class="user-info">
+				<div class="user-details">
+					<span class="user-name" >Admin</span>
+					<span class="user-role">Quản
+						trị viên</span>
+				</div>
+			
+			</div>
+
+		</div>
+	</header>
+
 </body>
 </html>

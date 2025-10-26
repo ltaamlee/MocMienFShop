@@ -54,7 +54,7 @@ public class CustomUserDetails implements UserDetails{
 
     @Override
     public boolean isEnabled() {
-    	return user.isActive() && user.isEmailActive(); 
+    	return user.isActive();
     }
 
     // Lấy đối tượng User gốc khi cần

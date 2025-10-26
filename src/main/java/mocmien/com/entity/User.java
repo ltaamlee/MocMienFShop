@@ -21,9 +21,6 @@ import mocmien.com.enums.UserStatus;
 
 @Entity
 @Table(name = "Users")
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
 public class User {
 
 	@Id
@@ -42,16 +39,10 @@ public class User {
 
 	@Column(name = "email", nullable = false, unique = true, columnDefinition = "varchar(100)")
 	private String email;
-	
-	@Column(name = "isEmailActive", columnDefinition="BIT DEFAULT 1")
-	private boolean isEmailActive = false;
 
 	@Column(name = "phone", nullable = false, unique = true, columnDefinition = "varchar(20)")
 	private String phone;
-	
-	@Column(name = "isPhoneActive", columnDefinition="BIT DEFAULT 1")
-	private boolean isPhoneActive = false;
-	
+		
     @Enumerated(EnumType.STRING)
 	@Column(name = "status")
 	private UserStatus status = UserStatus.OFFLINE;
@@ -129,29 +120,12 @@ public class User {
 	public void setEmail(String email) {
 		this.email = email;
 	}
-
-	public boolean isEmailActive() {
-		return isEmailActive;
-	}
-
-	public void setEmailActive(boolean isEmailActive) {
-		this.isEmailActive = isEmailActive;
-	}
-
 	public String getPhone() {
 		return phone;
 	}
 
 	public void setPhone(String phone) {
 		this.phone = phone;
-	}
-
-	public boolean isPhoneActive() {
-		return isPhoneActive;
-	}
-
-	public void setPhoneActive(boolean isPhoneActive) {
-		this.isPhoneActive = isPhoneActive;
 	}
 
 	public UserStatus getStatus() {
@@ -223,5 +197,8 @@ public class User {
 		this.username = username;
 		this.password = password;
 	}
-    
+
+	public User() {
+		super();
+	}
 }

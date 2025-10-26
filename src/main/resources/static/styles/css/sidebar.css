@@ -1,0 +1,119 @@
+.sidebar {
+	position: fixed;
+	top: 50%;
+	left: 1.5rem;
+	transform: translateY(-50%);
+	height: auto;
+	width: var(--sidebar-width);
+	background-color: rgba(255, 255, 255, 0.95);
+	backdrop-filter: blur(10px);
+	box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+	transition: width 0.3s ease;
+	overflow: hidden;
+	z-index: 1400;
+	border-radius: 1rem;
+}
+
+.sidebar:hover {
+	width: 14rem;
+	cursor: pointer;
+}
+
+.sidebar-menu {
+	list-style: none;
+	padding: 1.25rem 0.5rem;
+	margin: 0;
+}
+
+.sidebar-menu li {
+	margin-bottom: 0.4rem;
+}
+
+.sidebar-menu li a {
+	display: flex;
+	align-items: center;
+	text-decoration: none;
+	color: var(--text1-color);
+	font-weight: 600;
+	font-size: 0.9rem;
+	padding: 0.6rem;
+	border-radius: 10px;
+	transition: all 0.3s ease;
+	position: relative;
+	min-height: 2.75rem;
+	white-space: nowrap;
+	background-color: transparent;
+}
+
+.sidebar-menu li a:hover {
+	background-color: var(--fifth-color);
+	color: var(--text2-color);
+	box-shadow: 0 4px 12px rgba(174, 177, 130, 0.3);
+}
+
+.sidebar-menu li a.active {
+	color: var(--text2-color);
+	background-color: transparent;
+	box-shadow: none;
+}
+
+.sidebar-menu li a.active::before {
+	content: '';
+	position: absolute;
+	top: 50%;
+	left: 0.6rem;
+	transform: translateY(-50%);
+	width: 2.8rem;
+	height: 2.8rem;
+	border-radius: 50%;
+	background-color: var(--fifth-color);
+	box-shadow: 0 4px 12px rgba(174, 177, 130, 0.3);
+	z-index: -1;
+	transition: opacity 0.3s ease;
+	opacity: 1;
+}
+
+.sidebar-menu li a.active:hover {
+	background-color: var(--fifth-color);
+	box-shadow: 0 6px 16px rgba(174, 177, 130, 0.5);
+}
+
+.sidebar-menu li a.active:hover::before {
+	opacity: 0;
+	color: var(--text1-color);
+}
+
+.sidebar:hover .sidebar-menu li a.active {
+	background-color: var(--fifth-color);
+	box-shadow: 0 4px 12px rgba(174, 177, 130, 0.3);
+}
+
+.sidebar:hover .sidebar-menu li a.active::before {
+	opacity: 0;
+}
+
+.sidebar-menu .icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 2.8rem;
+	min-width: 2.8rem;
+	height: 2.8rem;
+	font-size: 1.1rem;
+	flex-shrink: 0;
+	margin: 0;
+	z-index: 1;
+}
+
+.sidebar-menu .text {
+	opacity: 0;
+	margin-left: 0.5rem;
+	transition: opacity 0.3s ease;
+	white-space: nowrap;
+	line-height: 1.2;
+	z-index: 1;
+}
+
+.sidebar:hover .text {
+	opacity: 1;
+}

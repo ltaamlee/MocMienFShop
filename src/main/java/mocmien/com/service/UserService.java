@@ -17,9 +17,12 @@ public interface UserService {
 
 	// -----------------------
 	// CRUD
-	// -----------------------    
+	// -----------------------
+    User save(User user);
+
     Optional<User> login(String usenameOrEmail, String password);
-    Optional<User> register(User user, RoleName roleName);
+    Optional<User> register(User user, RoleName roleName, String fullName);
+    User createOAuthUser(String email, String fullName);
     
     void deleteByEmail(String email);
 	void deleteByUsername(String username);

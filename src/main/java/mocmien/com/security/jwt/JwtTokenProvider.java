@@ -14,11 +14,14 @@ import io.jsonwebtoken.security.Keys;
 @Component
 public class JwtTokenProvider {
 
-    @Value("${app.jwtSecret}")
+	@Value("${app.jwtSecret}")
     private String jwtSecret;
 
     @Value("${app.jwtExpirationMs}")
     private int jwtExpirationMs;
+
+    @Value("${app.jwtRefreshExpirationMs}")
+    private int jwtRefreshExpirationMs;
 
     private SecretKey getSigningKey() {
         return Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8));
@@ -34,6 +37,19 @@ public class JwtTokenProvider {
                 .setIssuedAt(now)
                 .setExpiration(expiryDate)
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256) // dùng key hợp lệ
+                .compact();
+    }
+
+    //Refesh token
+    public String generateRefreshToken(String username) {
+        Date now = new Date();
+        Date expiryDate = new Date(now.getTime() + jwtRefreshExpirationMs);
+
+        return Jwts.builder()
+                .setSubject(username)
+                .setIssuedAt(now)
+                .setExpiration(expiryDate)
+                .signWith(getSigningKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
 
@@ -53,6 +69,21 @@ public class JwtTokenProvider {
         } catch (JwtException | IllegalArgumentException ex) {
             System.out.println("JWT validation failed: " + ex.getMessage());
             return false;
+        }
+    }
+    
+    //Kiểm tra token
+    public boolean isTokenExpired(String token) {
+        try {
+            Date expiration = Jwts.parserBuilder()
+                    .setSigningKey(getSigningKey())
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody()
+                    .getExpiration();
+            return expiration.before(new Date());
+        } catch (JwtException ex) {
+            return true;
         }
     }
 }
