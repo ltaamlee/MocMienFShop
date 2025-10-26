@@ -71,10 +71,10 @@ public class Store {
     @Column(name = "point", nullable = false, columnDefinition = "int default 0")
     private Integer point = 0;
 
-    @Column(name = "eWallet", nullable = false, precision = 15, scale = 2)
+    @Column(name = "eWallet", nullable = false, columnDefinition = "DECIMAL(18,2)")
     private BigDecimal eWallet = BigDecimal.ZERO;
 
-    @Column(name = "rating", nullable = false, precision = 2, scale = 1)
+    @Column(name = "rating", nullable = false, columnDefinition = "DECIMAL(2,1)")
     private BigDecimal rating = BigDecimal.ZERO;
 
 	@Column(name="isActive", nullable = false, columnDefinition="BIT DEFAULT 1")

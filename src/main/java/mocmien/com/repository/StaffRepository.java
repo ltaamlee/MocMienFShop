@@ -19,7 +19,7 @@ public interface StaffRepository extends JpaRepository<Staff, Integer>{
     // Tìm kiếm theo User
     // -----------------------
     Optional<Staff> findByUser(User user);
-    Optional<Staff> findByUserId(Integer userId);
+    Optional<Staff> findByUserUserId(Integer userId);
 
     // -----------------------
     // Tìm kiếm theo Store

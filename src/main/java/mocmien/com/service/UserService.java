@@ -5,20 +5,21 @@ import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
 
 import mocmien.com.entity.Role;
 import mocmien.com.entity.User;
+import mocmien.com.enums.RoleName;
 import mocmien.com.enums.UserStatus;
+
 
 public interface UserService {
 
 	// -----------------------
 	// CRUD
-	// -----------------------
-	User save(User user);          
-    User update(User user);    
+	// -----------------------    
     Optional<User> login(String usenameOrEmail, String password);
-    Optional<User> register(User user, Role role);
+    Optional<User> register(User user, RoleName roleName);
     
     void deleteByEmail(String email);
 	void deleteByUsername(String username);

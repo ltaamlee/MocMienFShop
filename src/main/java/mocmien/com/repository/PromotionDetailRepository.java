@@ -22,9 +22,6 @@ public interface PromotionDetailRepository extends JpaRepository<PromotionDetail
     // -----------------------
     // CRUD cơ bản
     // -----------------------
-    PromotionDetail save(PromotionDetail promotionDetail);
-    void deleteById(Integer id);
-    Optional<PromotionDetail> findById(Integer id);
 
     // -----------------------
     // Tìm kiếm theo Promotion

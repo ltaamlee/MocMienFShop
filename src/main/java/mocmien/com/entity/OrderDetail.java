@@ -32,10 +32,10 @@ public class OrderDetail {
     @Column(name = "quantity", nullable = false)
     private Integer quantity;
 
-    @Column(name = "price", nullable = false, precision = 18, scale = 2)
+    @Column(name = "price", nullable = false, columnDefinition = "DECIMAL(18,2)")
     private BigDecimal price;
 
-    @Column(name = "promotionalPrice", precision = 18, scale = 2)
+    @Column(name = "promotionalPrice", columnDefinition = "DECIMAL(18,2)")
     private BigDecimal promotionalPrice;
 
     @Column(name = "createAt")

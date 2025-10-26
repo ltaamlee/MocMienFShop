@@ -54,13 +54,13 @@ public class Shipper {
     @Column(name = "license", length = 100)
     private String license; // Số bằng lái hoặc đường dẫn ảnh bằng lái
 
-    @Column(name = "rating", precision = 2, scale = 1, nullable = false)
+    @Column(name = "rating", columnDefinition = "DECIMAL(2,1)", nullable = false)
     private BigDecimal rating = BigDecimal.ZERO; // Điểm đánh giá trung bình
 
     @Column(name = "totalDelivery")
     private Integer totalDelivery = 0; // Tổng số đơn hàng đã giao
 
-    @Column(name = "eWallet", precision = 12, scale = 2)
+    @Column(name = "eWallet", columnDefinition = "DECIMAL(18,2)")
     private BigDecimal eWallet = BigDecimal.ZERO; // Số dư ví điện tử
 
     @Column(name = "isActive", nullable = false)

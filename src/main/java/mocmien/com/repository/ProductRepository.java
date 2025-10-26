@@ -21,14 +21,10 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
 	 // ============================================================
     // 🔹 CRUD cơ bản
     // ============================================================
-    @Override
-    @EntityGraph(attributePaths = {"images", "store", "category"})
-    Optional<Product> findById(Integer id);
-
     @EntityGraph(attributePaths = {"images", "productFlowers", "store", "category"})
     Optional<Product> findBySlug(String slug);
 
-    void deleteById(Integer id);
+
 
     // ============================================================
     // 🔹 TÌM KIẾM / LỌC CƠ BẢN

@@ -24,10 +24,6 @@ public interface CustomerRepository extends JpaRepository<Customer, Integer> {
 	// =====================================================
 	// 🧩 CRUD cơ bản
 	// =====================================================
-	Customer save(Customer customer);
-	Customer update(Customer customer);
-
-	void deleteById(Integer id);
 	void deleteByUser_UserId(Integer userId);
 	void deleteByIdCard(String idCard);
 
@@ -85,12 +81,5 @@ public interface CustomerRepository extends JpaRepository<Customer, Integer> {
 	Page<Customer> findByFullNameContainingIgnoreCase(String keyword, Pageable pageable);
 	Page<Customer> findByPointBetween(Integer min, Integer max, Pageable pageable);
 
-	// =====================================================
-	// 🌟 CUSTOM QUERIES KHÁC 
-	// =====================================================
-	List<Customer> findTopCustomersByPoint();
-
-	@Query("SELECT c FROM Customer c ORDER BY c.eWallet DESC")
-	List<Customer> findTopCustomersByEWallet();
 
 }

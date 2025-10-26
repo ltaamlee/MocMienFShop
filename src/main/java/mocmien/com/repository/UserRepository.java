@@ -18,23 +18,11 @@ import mocmien.com.enums.UserStatus;
 public interface UserRepository extends JpaRepository<User, Integer> {
 	
 	// -----------------------
-	// CRUD
-	// -----------------------
-	User save(User user);          
-    User update(User user);    
-    
     
     void deleteByEmail(String email);
 	void deleteByUsername(String username);
 	void deleteByPhone(String phone);
-	
-	// -----------------------
-    // Thay đổi trạng thái / active
-    // -----------------------
-    void blockUser(Integer userId);
-    void unblockUser(Integer userId);
-    void setStatus(Integer userId, UserStatus status);
-	
+		
 	// -----------------------
 	// Tìm kiếm User
 	// -----------------------
@@ -42,7 +30,6 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 	Optional<User> findByUsername(String username);
 	Optional<User> findByEmailAndStatus(String email, UserStatus status);
 	Optional<User> findByUsernameAndStatus(String username, UserStatus status);
-	Optional<User> findByUsernameOrEmail (String usernameOrEmail);
 	
 	
 	List<User> findByStatus(UserStatus status);
@@ -72,12 +59,8 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 	List<User> findByUsernameContainingIgnoreCase(String keyword); // search username
 	
 	Page<User> findByUsernameContainingAndEmailContaining(String username, String email, Pageable pageable);
-
-<<<<<<< HEAD
-=======
 	//Tìm kiếm phân trang
 	Page<User> findByStatus(UserStatus status, Pageable pageable);
 	Page<User> findByUsernameContainingIgnoreCase(String keyword, Pageable pageable);
-	
->>>>>>> 02e4df5
+
 }

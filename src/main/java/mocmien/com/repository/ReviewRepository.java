@@ -20,9 +20,6 @@ public interface ReviewRepository extends JpaRepository<Review, Integer> {
     // -----------------------
     // CRUD cơ bản
     // -----------------------
-    Review save(Review review);
-    void deleteById(Integer id);
-    Optional<Review> findById(Integer id);
 
     // -----------------------
     // Tìm kiếm theo User

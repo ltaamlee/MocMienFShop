@@ -42,7 +42,7 @@ public class AuthController {
 		}
 
 		User user = userOpt.get();
-		if (user.getStatus() == -1) {
+		if (!user.isActive()) {
 			model.addAttribute("error", "Tài khoản của bạn đã bị khóa. Vui lòng liên hệ quản trị viên.");
 			return "auth/login";
 		}
@@ -57,7 +57,7 @@ public class AuthController {
 
 		return switch (user.getRole().getRoleName()) {
 		case ADMIN -> "redirect:/admin/dashboard";
-		case SELLER -> "redirect:/seller/dashboard";
+		case VENDOR -> "redirect:/seller/dashboard";
 		case SHIPPER -> "redirect:/shipper/dashboard";
 		case CUSTOMER -> "redirect:/home";
 		default -> "redirect:/auth/login";

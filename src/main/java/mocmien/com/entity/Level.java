@@ -33,7 +33,7 @@ public class Level {
     @Column(name = "minPoint", nullable = false, columnDefinition = "int default 0")
     private Integer minPoint = 0;
 
-    @Column(name = "discount", precision = 10, scale = 2)
+    @Column(name = "discount", columnDefinition = "DECIMAL(18,2)")
     private BigDecimal discount = BigDecimal.ZERO;
 
     @Column(name = "createAt")

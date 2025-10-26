@@ -1,5 +1,7 @@
 package mocmien.com.entity;
 
+import java.math.BigDecimal;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -28,11 +30,12 @@ public class CustomerAddress {
 	@JoinColumn(name = "customerId", nullable = false)
 	private Customer customer;
 	
-	@Column(name = "latitude", precision = 10, scale = 7)
-	private Double latitude;
+	@Column(name = "latitude", columnDefinition = "DECIMAL(10,7)")
+	private BigDecimal latitude;
 
-	@Column(name = "longitude", precision = 10, scale = 7)
-	private Double longitude;
+	@Column(name = "longitude", columnDefinition = "DECIMAL(10,7)")
+	private BigDecimal longitude;
+
 
 	@Column(name = "line", columnDefinition = "varchar(200)")
 	private String line; // số nhà

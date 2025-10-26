@@ -70,16 +70,16 @@ public class Orders {
     @Column(name = "paymentMethod", columnDefinition = "NVARCHAR(50)", nullable = false)
     private PaymentMethod paymentMethod;
 
-    @Column(name = "amountFromCustomer", nullable = false, precision = 15, scale = 2)
+    @Column(name = "amountFromCustomer", nullable = false, columnDefinition = "DECIMAL(18,2)")
     private BigDecimal amountFromCustomer = BigDecimal.ZERO; // khách trả
 
-    @Column(name = "amountFromStore", nullable = false, precision = 15, scale = 2)
+    @Column(name = "amountFromStore", nullable = false, columnDefinition = "DECIMAL(18,2)")
     private BigDecimal amountFromStore = BigDecimal.ZERO; // phí cửa hàng trả hệ thống
 
-    @Column(name = "amountToStore", nullable = false, precision = 15, scale = 2)
+    @Column(name = "amountToStore", nullable = false, columnDefinition = "DECIMAL(18,2)")
     private BigDecimal amountToStore = BigDecimal.ZERO; // tiền cửa hàng nhận lại
 
-    @Column(name = "amountToSys", nullable = false, precision = 15, scale = 2)
+    @Column(name = "amountToSys", nullable = false, columnDefinition = "DECIMAL(18,2)")
     private BigDecimal amountToSys = BigDecimal.ZERO; // tiền hệ thống thu được
 
     // Ghi chú đơn hàng
@@ -88,7 +88,7 @@ public class Orders {
 
     // Quan hệ với OrderItem
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<OrderItem> orderItems;
+    private List<OrderDetail> orderDetails;
 
     // Thời gian
     @Column(name = "createAt", nullable = false)

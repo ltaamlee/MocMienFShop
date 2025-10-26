@@ -32,10 +32,10 @@ public class Delivery {
 	@Column(name = "description", columnDefinition = "NVARCHAR(MAX)")
 	private String description;
 
-	@Column(name = "basePrice", nullable = false, precision = 18, scale = 2)
+	@Column(name = "basePrice", nullable = false, columnDefinition = "DECIMAL(18,2)")
 	private BigDecimal basePrice;
 
-	@Column(name = "pricePerKM", precision = 18, scale = 2)
+	@Column(name = "pricePerKM", columnDefinition = "DECIMAL(18,2)")
 	private BigDecimal pricePerKM = BigDecimal.ZERO;
 
 	@Column(name = "maxDistance")

@@ -25,9 +25,6 @@ public interface CustomerAddressRepository extends JpaRepository<CustomerAddress
 	// =====================================================
     // CRUD cơ bản
     // =====================================================
-    CustomerAddress save(CustomerAddress address);
-    CustomerAddress update(CustomerAddress address);
-    void deleteById(Integer id);
     void deleteByCustomer(Customer customer);
 
     // =====================================================

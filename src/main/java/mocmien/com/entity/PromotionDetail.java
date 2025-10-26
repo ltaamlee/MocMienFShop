@@ -51,7 +51,7 @@ public class PromotionDetail {
     @Column(name = "type", nullable = false, columnDefinition = "NVARCHAR(50)")
     private PromotionType type; // PERCENT, AMOUNT, FREESHIP,...
 
-    @Column(name = "value", precision = 10, scale = 2)
+    @Column(name = "value", columnDefinition = "DECIMAL(18,2)")
     private BigDecimal value = BigDecimal.ZERO;
 
     // Banner và Ribbon (tùy chọn)

@@ -25,9 +25,6 @@ public interface LevelRepository extends JpaRepository<Level, Integer> {
 	// =====================================================
     // CRUD cơ bản
     // =====================================================
-    Level save(Level level);
-    Level update(Level level);
-    void deleteById(Integer id);
     void deleteByName(Rank name);
 
     // =====================================================

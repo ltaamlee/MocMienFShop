@@ -49,10 +49,10 @@ public class Product {
 	@Column(name = "slug", unique = true, length = 500, columnDefinition = "NVARCHAR(500)")
 	private String slug;
 
-	@Column(name = "price", nullable = false, precision = 10, scale = 2)
+	@Column(name = "price", nullable = false, columnDefinition = "DECIMAL(18,2)")
 	private BigDecimal price; // Giá gốc
 
-	@Column(name = "promotionalPrice", precision = 10, scale = 2)
+	@Column(name = "promotionalPrice", columnDefinition = "DECIMAL(18,2)")
 	private BigDecimal promotionalPrice; // Giá sau khuyến mãi
 
 	@Column(name = "size", nullable = false, length = 100, columnDefinition = "NVARCHAR(100)")
@@ -64,7 +64,7 @@ public class Product {
 	@Column(name = "sold", nullable = false)
 	private Integer sold = 0; // Số lượng đã bán
 
-	@Column(name = "rating", nullable = false, precision = 2, scale = 1)
+	@Column(name = "rating", nullable = false, columnDefinition = "DECIMAL(2,1)")
 	private BigDecimal rating = BigDecimal.ZERO; // trung bình đánh giá (0–5)
 
 	@Column(name = "isActive", nullable = false)

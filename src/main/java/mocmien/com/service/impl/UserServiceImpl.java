@@ -7,47 +7,40 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
 
 import mocmien.com.entity.Role;
 import mocmien.com.entity.User;
 import mocmien.com.enums.RoleName;
 import mocmien.com.enums.UserStatus;
+import mocmien.com.repository.RoleRepository;
 import mocmien.com.repository.UserRepository;
 import mocmien.com.service.UserService;
 
-public class UserServiceImpl implements UserService{
+@Service
+public class UserServiceImpl implements UserService {
 
 	@Autowired
-	private UserRepository user;
+	private RoleRepository roleRepository;
+	@Autowired
+	private UserRepository userRepository;
 	@Autowired
 	private PasswordEncoder passwordEncoder;
 
 	@Override
-	public User save(User user) {
-		return user.save(user);
-	}
-
-	@Override
-	public User update(User user) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Optional<User> login(String usernameOrEmail, String password) {
-		Optional<User> userOpt = user.findByUsernameOrEmail(usernameOrEmail)
-			
+	public Optional<User> login(String Username, String password) {
+		Optional<User> userOpt = userRepository.findByUsername(Username);
 
 		User user = userOpt.get();
 
 		boolean passwordMatch = passwordEncoder.matches(password, user.getPassword());
-		UserStatus status = UserStatus.fromValue(user.getStatus());
+		UserStatus status = user.getStatus();
 
 		System.out.printf("[LOGIN] User: %s | Role: %s | Status: %s | Password match: %s%n", user.getUsername(),
 				user.getRole().getRoleName(), status, passwordMatch);
 
 		// Kiểm tra trạng thái
-		if (!status.canLogin()) {
+		if (!user.isActive()) {
 			System.out.println("[LOGIN] User không được phép đăng nhập (status = " + status + ")");
 			return Optional.empty();
 		}
@@ -62,7 +55,7 @@ public class UserServiceImpl implements UserService{
 	}
 
 	@Override
-	public Optional<User> register(User user, Role roleName) {
+	public Optional<User> register(User user, RoleName roleName) {
 
 		if (existsByEmail(user.getEmail())) {
 			throw new RuntimeException("Email đã tồn tại");
@@ -76,54 +69,57 @@ public class UserServiceImpl implements UserService{
 		user.setPassword(passwordEncoder.encode(user.getPassword()));
 
 		// Gán role
-		Role role = role.findByRoleName(RoleName.valueOf(roleName))
-				.orElseThrow(() -> new RuntimeException("Role không tồn tại"));
-		user.setRole(role);
+		Role role = roleRepository.findByRoleName(roleName)
+	            .orElseThrow(() -> new RuntimeException("Role không tồn tại"));
+	    user.setRole(role);
 
 		// Trạng thái ACTIVE mặc định
-		user.setStatus(UserStatus.ACTIVE.getValue());
+		user.setActive(true);
+		user.setStatus(UserStatus.OFFLINE);
 
 		// Avatar mặc định
 		if (user.getAvatar() == null || user.getAvatar().isEmpty()) {
 			user.setAvatar("profile/customer/default.png");
 		}
 
-		return user.save(user);
+		User savedUser = userRepository.save(user);
+		return Optional.of(savedUser);
+
 	}
 
 	@Override
 	public void deleteByEmail(String email) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void deleteByUsername(String username) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void deleteByPhone(String phone) {
-		
+
 	}
 
 	@Override
 	public void blockUser(Integer userId) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void unblockUser(Integer userId) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void setStatus(Integer userId, UserStatus status) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -212,12 +208,12 @@ public class UserServiceImpl implements UserService{
 
 	@Override
 	public long countByStatus(UserStatus status) {
-		return user.countByStatus(status);
+		return userRepository.countByStatus(status);
 	}
 
 	@Override
 	public long countByRole(Role role) {
-		return user.countByRole(role);
+		return userRepository.countByRole(role);
 	}
 
 	@Override
@@ -232,7 +228,6 @@ public class UserServiceImpl implements UserService{
 		return null;
 	}
 
-
 	@Override
 	public List<User> findByUsernameContainingIgnoreCase(String keyword) {
 		// TODO Auto-generated method stub
@@ -241,7 +236,7 @@ public class UserServiceImpl implements UserService{
 
 	@Override
 	public Page<User> findByStatus(UserStatus status, Pageable pageable) {
-		return user.findByStatus(status, pageable);
+		return userRepository.findByStatus(status, pageable);
 	}
 
 	@Override
@@ -251,4 +246,3 @@ public class UserServiceImpl implements UserService{
 	}
 
 }
-

@@ -20,7 +20,7 @@ import lombok.NoArgsConstructor;
 import mocmien.com.enums.UserStatus;
 
 @Entity
-@Table(name = "User")
+@Table(name = "Users")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -89,9 +89,6 @@ public class User {
     protected void onUpdate() {
         updatedAt = LocalDateTime.now();
     }
-    
-    
-	//Getter và Setter
 
 	public Integer getUserId() {
 		return userId;
@@ -181,14 +178,6 @@ public class User {
 		this.role = role;
 	}
 
-	public String getCode() {
-		return code;
-	}
-
-	public void setCode(String code) {
-		this.code = code;
-	}
-	
 	public Store getStore() {
 		return store;
 	}
@@ -197,12 +186,12 @@ public class User {
 		this.store = store;
 	}
 
-	public LocalDateTime getLastLoginAt() {
-		return lastLoginAt;
+	public String getCode() {
+		return code;
 	}
 
-	public void setLastLoginAt(LocalDateTime lastLoginAt) {
-		this.lastLoginAt = lastLoginAt;
+	public void setCode(String code) {
+		this.code = code;
 	}
 
 	public LocalDateTime getCreatedAt() {
@@ -221,5 +210,18 @@ public class User {
 		this.updatedAt = updatedAt;
 	}
 
+	public LocalDateTime getLastLoginAt() {
+		return lastLoginAt;
+	}
+
+	public void setLastLoginAt(LocalDateTime lastLoginAt) {
+		this.lastLoginAt = lastLoginAt;
+	}
+
+	public User(String username, String password) {
+		super();
+		this.username = username;
+		this.password = password;
+	}
     
 }

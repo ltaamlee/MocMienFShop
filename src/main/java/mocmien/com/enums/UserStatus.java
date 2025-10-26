@@ -44,4 +44,9 @@ public enum UserStatus {
     public String toString() {
         return displayName;
     }
+
+	boolean canLogin() {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }

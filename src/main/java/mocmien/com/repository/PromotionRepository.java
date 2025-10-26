@@ -21,17 +21,6 @@ public interface PromotionRepository extends JpaRepository<Promotion, Integer>{
 	// -----------------------
     // CRUD cơ bản
     // -----------------------
-    @Override
-    <S extends Promotion> S save(S promotion);
-
-    @Override
-    void delete(Promotion promotion);
-
-    @Override
-    Optional<Promotion> findById(Integer id);
-
-    @Override
-    List<Promotion> findAll();
 
     // -----------------------
     // Tìm kiếm nâng cao
