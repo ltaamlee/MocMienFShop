@@ -84,8 +84,8 @@ public class UserServiceImpl implements UserService{
 		user.setStatus(UserStatus.ACTIVE.getValue());
 
 		// Avatar mặc định
-		if (user.getImageUrl() == null || user.getImageUrl().isEmpty()) {
-			user.setImageUrl("profile/customer/default.png");
+		if (user.getAvatar() == null || user.getAvatar().isEmpty()) {
+			user.setAvatar("profile/customer/default.png");
 		}
 
 		return user.save(user);
@@ -105,7 +105,6 @@ public class UserServiceImpl implements UserService{
 
 	@Override
 	public void deleteByPhone(String phone) {
-		// TODO Auto-generated method stub
 		
 	}
 
@@ -213,14 +212,12 @@ public class UserServiceImpl implements UserService{
 
 	@Override
 	public long countByStatus(UserStatus status) {
-		// TODO Auto-generated method stub
-		return 0;
+		return user.countByStatus(status);
 	}
 
 	@Override
 	public long countByRole(Role role) {
-		// TODO Auto-generated method stub
-		return 0;
+		return user.countByRole(role);
 	}
 
 	@Override
@@ -244,8 +241,7 @@ public class UserServiceImpl implements UserService{
 
 	@Override
 	public Page<User> findByStatus(UserStatus status, Pageable pageable) {
-		// TODO Auto-generated method stub
-		return null;
+		return user.findByStatus(status, pageable);
 	}
 
 	@Override

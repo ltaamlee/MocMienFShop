@@ -1,5 +1,6 @@
 package mocmien.com.entity;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
@@ -16,36 +17,51 @@ import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import mocmien.com.enums.PromotionType;
 
 @Entity
-@Table(name = "ProductFlower")
-@Data
+@Table(name = "Promotion")
+@Data 
 @NoArgsConstructor
 @AllArgsConstructor
-public class ProductFlower {
+public class Promotion {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    // 🔗 Khóa ngoại Product
+    // FK: Cửa hàng áp dụng khuyến mãi
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "productId", nullable = false)
-    private Product product;
+    @JoinColumn(name = "storeId", referencedColumnName = "id")
+    private Store store;
 
-    // 🔗 Khóa ngoại Flower
+    // FK: Người tạo khuyến mãi (admin)
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "flowerId", referencedColumnName = "id", nullable = false)
-    private Flower flower;
+    @JoinColumn(name = "userId", referencedColumnName = "userId")
+    private User user;
 
-    @Column(name = "name", nullable = false, unique = true, length = 100, columnDefinition = "NVARCHAR(100)")
+    @Column(name = "name", nullable = false, unique = true, columnDefinition = "NVARCHAR(500)")
     private String name;
 
-    @Column(name = "quantity", nullable = false)
-    private Integer quantity = 1;
+    @Column(name = "type", nullable = false, columnDefinition = "NVARCHAR(50)")
+    private PromotionType type; 
+    // Ví dụ: "PERCENT", "GIFT", "FREESHIP"
+
+    @Column(name = "value", nullable = false, precision = 10, scale = 2)
+    private BigDecimal value; 
+    
+    // Banner và Ribbon (tùy chọn)
+    @Column(name = "banner", columnDefinition = "VARCHAR(MAX)")
+    private String banner;
+
+    @Column(name = "startDate")
+    private LocalDateTime startDate;
+
+    @Column(name = "endDate")
+    private LocalDateTime endDate;
 
     @Column(name = "isActive", nullable = false)
-    private Boolean isActive = true;
+    private Boolean isActive = false; // Khuyến mãi đang được kích hoạt hay không
 
     @Column(name = "createAt", nullable = false)
     private LocalDateTime createAt;

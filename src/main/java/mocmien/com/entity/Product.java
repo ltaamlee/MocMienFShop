@@ -2,14 +2,19 @@ package mocmien.com.entity;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OrderBy;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
@@ -26,160 +31,80 @@ public class Product {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "productId")
-	private Integer productId;
+	private Integer id;
 
-	@ManyToOne
-	@JoinColumn(name = "categoryId")
+	// Khóa ngoại: Category
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "categoryId", referencedColumnName = "id", nullable = false)
 	private Category category;
 
-	@Column(name = "ProductName", nullable = false, length = 200, columnDefinition = "nvarchar(200)")
+	// Khóa ngoại: Store
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "storeId", referencedColumnName = "id",  nullable = false)
+	private Store store;
+
+	@Column(name = "productName", nullable = false, unique = true, length = 500, columnDefinition = "NVARCHAR(500)")
 	private String productName;
 
-	@Column(name = "ProductCode", unique = true, length = 50)
-	private String productCode;
+	@Column(name = "slug", unique = true, length = 500, columnDefinition = "NVARCHAR(500)")
+	private String slug;
 
-	@Column(name = "Description", columnDefinition = "NVARCHAR(MAX)")
-	private String description;
+	@Column(name = "price", nullable = false, precision = 10, scale = 2)
+	private BigDecimal price; // Giá gốc
 
-	@Column(name = "Price", nullable = false, precision = 10, scale = 2)
-	private BigDecimal price;
+	@Column(name = "promotionalPrice", precision = 10, scale = 2)
+	private BigDecimal promotionalPrice; // Giá sau khuyến mãi
 
-	@Column(name = "Stock")
-	private Integer stock = 0;
+	@Column(name = "size", nullable = false, length = 100, columnDefinition = "NVARCHAR(100)")
+	private String size;
 
-	@Column(name = "ImageUrl", length = 500)
-	private String imageUrl;
+	@Column(name = "stock", nullable = false)
+	private Integer stock = 0; // Số lượng sản phẩm còn lại
 
-	@Column(name = "Views")
-	private Integer views = 0;
+	@Column(name = "sold", nullable = false)
+	private Integer sold = 0; // Số lượng đã bán
 
-	@Column(name = "Likes")
-	private Integer likes = 0;
+	@Column(name = "rating", nullable = false, precision = 2, scale = 1)
+	private BigDecimal rating = BigDecimal.ZERO; // trung bình đánh giá (0–5)
 
-	@Column(name = "Status")
-	private Integer status = 1; // 1: Available, 0: Out of stock, -1: Discontinued
+	@Column(name = "isActive", nullable = false)
+	private Boolean isActive = true; // Được cấp phép bán hay không
 
-	@Column(name = "CreatedAt")
-	private LocalDateTime createdAt;
+	@Column(name = "isSelling", nullable = false)
+	private Boolean isSelling = true; // Đang mở bán hay ẩn
 
-	@Column(name = "UpdatedAt")
-	private LocalDateTime updatedAt;
+	@Column(name = "isAvailable", nullable = false)
+	private Boolean isAvailable = true; // Còn hàng hay hết hàng
+
+	@Column(name = "createAt", nullable = false)
+	private LocalDateTime createAt;
+
+	@Column(name = "updateAt")
+	private LocalDateTime updateAt;
+
+	
+	// ProductImage
+	@OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OrderBy("index ASC")
+	private List<ProductImage> images;
+	
+	// Review
+	@OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<Review> reviews;
+	
+	@OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<ProductFlower> productFlowers;
 
 	@PrePersist
 	protected void onCreate() {
-		createdAt = LocalDateTime.now();
+		createAt = LocalDateTime.now();
+		updateAt = LocalDateTime.now();
+		if (promotionalPrice == null)
+			promotionalPrice = price;
 	}
 
 	@PreUpdate
 	protected void onUpdate() {
-		updatedAt = LocalDateTime.now();
+		updateAt = LocalDateTime.now();
 	}
-
-	
-	//Getter và Setter
-	public Integer getProductId() {
-		return productId;
-	}
-
-	public void setProductId(Integer productId) {
-		this.productId = productId;
-	}
-
-	public Category getCategory() {
-		return category;
-	}
-
-	public void setCategory(Category category) {
-		this.category = category;
-	}
-
-	public String getProductName() {
-		return productName;
-	}
-
-	public void setProductName(String productName) {
-		this.productName = productName;
-	}
-
-	public String getProductCode() {
-		return productCode;
-	}
-
-	public void setProductCode(String productCode) {
-		this.productCode = productCode;
-	}
-
-	public String getDescription() {
-		return description;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
-	}
-
-	public BigDecimal getPrice() {
-		return price;
-	}
-
-	public void setPrice(BigDecimal price) {
-		this.price = price;
-	}
-
-	public Integer getStock() {
-		return stock;
-	}
-
-	public void setStock(Integer stock) {
-		this.stock = stock;
-	}
-
-	public String getImageUrl() {
-		return imageUrl;
-	}
-
-	public void setImageUrl(String imageUrl) {
-		this.imageUrl = imageUrl;
-	}
-
-	public Integer getViews() {
-		return views;
-	}
-
-	public void setViews(Integer views) {
-		this.views = views;
-	}
-
-	public Integer getLikes() {
-		return likes;
-	}
-
-	public void setLikes(Integer likes) {
-		this.likes = likes;
-	}
-
-	public Integer getStatus() {
-		return status;
-	}
-
-	public void setStatus(Integer status) {
-		this.status = status;
-	}
-
-	public LocalDateTime getCreatedAt() {
-		return createdAt;
-	}
-
-	public void setCreatedAt(LocalDateTime createdAt) {
-		this.createdAt = createdAt;
-	}
-
-	public LocalDateTime getUpdatedAt() {
-		return updatedAt;
-	}
-
-	public void setUpdatedAt(LocalDateTime updatedAt) {
-		this.updatedAt = updatedAt;
-	}
-	
 }

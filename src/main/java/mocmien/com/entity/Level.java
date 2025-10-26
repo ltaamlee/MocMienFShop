@@ -17,7 +17,7 @@ import lombok.NoArgsConstructor;
 import mocmien.com.enums.Rank;
 
 @Entity
-@Table(name = "CustomerLevel")
+@Table(name = "Level")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

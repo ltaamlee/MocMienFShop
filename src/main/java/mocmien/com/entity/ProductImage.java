@@ -18,35 +18,36 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "Cart")
+@Table(name = "ProductImage")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Cart {
+public class ProductImage {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    // Liên kết tới User
+    // Khóa ngoại: tham chiếu đến bảng PRODUCT
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "userId", referencedColumnName = "userId", nullable = false)
-    private User user;
+    @JoinColumn(name = "productId", nullable = false)
+    private Product product;
 
-    // Liên kết tới Store
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "storeId", referencedColumnName = "id", nullable = false)
-    private Store store;
+    @Column(name = "imageUrl", columnDefinition = "VARCHAR(MAX)")
+    private String imageUrl;
 
-    @Column(name = "createAt")
+    @Column(name = "isDefault", nullable = false)
+    private Boolean isDefault = false; // Mặc định = 0 (false)
+
+    @Column(name = "imageIndex", nullable = false)
+    private Integer imageIndex = 0; // Thứ tự hiển thị ảnh
+
+    @Column(name = "createAt", nullable = false)
     private LocalDateTime createAt;
 
     @Column(name = "updateAt")
     private LocalDateTime updateAt;
 
-    // ==============================
-    // Callback tự động cập nhật ngày
-    // ==============================
     @PrePersist
     protected void onCreate() {
         createAt = LocalDateTime.now();

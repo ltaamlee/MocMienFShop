@@ -8,9 +8,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("api/admin/users")
+@RequestMapping("api/admin/category")
 @PreAuthorize("hasRole('ADMIN')")
-public class AdminUserController {
+public class AdminCategoryController {
 	@GetMapping
 	public String users(Model model) {
 		model.addAttribute("pageTitle", "Quản lý User");

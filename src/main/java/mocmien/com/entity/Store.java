@@ -44,17 +44,12 @@ public class Store {
 
     // Chủ cửa hàng
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "sellerId", nullable = false)
-    private User seller;
+    @JoinColumn(name = "vendorId", nullable = false)
+    private User vendor;
 
     // Danh sách nhân viên
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(
-        name = "Staff",
-        joinColumns = @JoinColumn(name = "storeId"),
-        inverseJoinColumns = @JoinColumn(name = "userId")
-    )
-    private List<Staff> staff;
+    @OneToMany(mappedBy = "store", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Staff> staff; // staff là các user có vai trò nhân viên
 
     @Column(name = "storeName", nullable = false, unique = true, columnDefinition = "nvarchar(500)")
     private String storeName;

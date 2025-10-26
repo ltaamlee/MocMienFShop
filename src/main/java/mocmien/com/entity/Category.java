@@ -25,15 +25,12 @@ public class Category {
 	@Column(name = "id")
 	private Integer id;
 
-	@Column(name = "categoryName", nullable = false, length = 100, columnDefinition = "nvarchar(100)")
+	@Column(name = "categoryName", nullable = false, columnDefinition = "nvarchar(100)")
 	private String categoryName;
 
     @Column(name = "slug", unique = true, columnDefinition = "nvarchar(500)")
     private String slug;
     
-    @Column(name = "image", columnDefinition = "varchar(MAX)", nullable = true)
-    private String image;
-	
 	@Column(name="isActive", nullable = false, columnDefinition="BIT DEFAULT 1")
 	private boolean isActive = true; 
 
