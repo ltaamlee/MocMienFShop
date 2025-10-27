@@ -16,44 +16,39 @@ import mocmien.com.security.jwt.JwtTokenProvider;
 
 @Configuration
 public class SecurityConfig {
-		
-	private final CustomUserDetailsService customUserDetailsService;
-    private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
-    private final JwtTokenProvider tokenProvider;
 
-    public SecurityConfig(CustomUserDetailsService customUserDetailsService,
-                          JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint,
-                          JwtTokenProvider tokenProvider) {
-        this.customUserDetailsService = customUserDetailsService;
-        this.jwtAuthenticationEntryPoint = jwtAuthenticationEntryPoint;
-        this.tokenProvider = tokenProvider;
-    }
-    
-    @Bean
-    public JwtAuthenticationFilter jwtAuthenticationFilter() {
-        return new JwtAuthenticationFilter(tokenProvider, customUserDetailsService);
-    }
+	private final CustomUserDetailsService customUserDetailsService;
+	private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+	private final JwtTokenProvider tokenProvider;
+
+	public SecurityConfig(CustomUserDetailsService customUserDetailsService,
+			JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint, JwtTokenProvider tokenProvider) {
+		this.customUserDetailsService = customUserDetailsService;
+		this.jwtAuthenticationEntryPoint = jwtAuthenticationEntryPoint;
+		this.tokenProvider = tokenProvider;
+	}
 
 	@Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.csrf(csrf -> csrf.disable())
-            .authorizeHttpRequests(auth -> auth
-            	
-                .requestMatchers("/", "/web/**", "/api/**", "/api/chat-ai","/api/auth/register", "/api/auth/login/", 
-                                 "/index", "/home", "/register", "/login", "/logout", "/product/**", 
-                                 "/about", "/contact", "/error", "/styles/**", "/css/**", "/js/**", 
-                                 "/images/**", "/image/**", "/webjars/**", "/forgot-password/**", 
-                                 "/verify-otp/**", "/api/payment/momo/callback")
-                .permitAll()
-                .requestMatchers("/admin/**").hasRole("ADMIN")
-                .anyRequest().authenticated()
-            )
-            // 🔹 Stateless session cho JWT
-            .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            .logout(logout -> logout.disable());
+	public JwtAuthenticationFilter jwtAuthenticationFilter() {
+		return new JwtAuthenticationFilter(tokenProvider, customUserDetailsService);
+	}
 
-        http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+	@Bean
+	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+		http.csrf(csrf -> csrf.disable()).authorizeHttpRequests(auth -> auth
 
-        return http.build();
-    }
+				.requestMatchers("/", "/web/**", "/api/**", "/api/chat-ai", "/api/auth/register", "/api/auth/login/",
+						"/index", "/home", "/register", "/login", "/logout", "/product/**", "/about", "/contact",
+						"/error", "/styles/**", "/css/**", "/js/**", "/images/**", "/image/**", "/webjars/**",
+						"/forgot-password/**", "/return-policy", "/delivery-policy", "/payment-guide", "/verify-otp/**",
+						"/api/payment/momo/callback")
+				.permitAll().requestMatchers("/admin/**").hasRole("ADMIN").anyRequest().authenticated())
+				// 🔹 Stateless session cho JWT
+				.sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+				.logout(logout -> logout.disable());
+
+		http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+
+		return http.build();
+	}
 }

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="/styles/css/customer/customer.css">
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" />
+<link
+	href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap"
+	rel="stylesheet">
+</head>
+<body>
+	<div th:fragment="header">
+		<header>
+			<div class="header-top">
+				<div class="logo">
+					<img th:src="@{/images/logo.png}" alt="Logo MocMien Shop's">
+				</div>
+
+				<div class="search-box">
+					<input type="text" placeholder="Tìm kiếm sản phẩm...">
+					<button type="submit">
+						<i class="fa-solid fa-magnifying-glass"></i>
+					</button>
+				</div>
+
+				<div class="user-actions">
+					<a th:href="@{/login}"><i class="fa-solid fa-right-to-bracket"></i>
+						Đăng nhập</a> <a href="/login" class="cart-icon disabled"
+						title="Vui lòng đăng nhập để sử dụng giỏ hàng"> <i
+						class="fa-solid fa-cart-shopping"></i> Giỏ hàng
+					</a>
+				</div>
+			</div>
+
+			<nav class="header-nav">
+				<ul class="nav-links">
+					<li><a th:href="@{/home}"><i class="fa-solid fa-house"></i>
+							Trang chủ</a></li>
+					<li><a th:href="@{/products}"><i
+							class="fa-solid fa-box-open"></i> Sản phẩm</a></li>
+					<li><a th:href="@{/about}"><i
+							class="fa-solid fa-circle-info"></i> Giới thiệu</a></li>
+					<li><a th:href="@{/contact}"><i
+							class="fa-solid fa-envelope"></i> Liên hệ</a></li>
+				</ul>
+			</nav>
+		</header>
+	</div>
+</body>
+</html>

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title layout:title-pattern="$CONTENT_TITLE - Vendor"></title>
+<link
+	href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap"
+	rel="stylesheet">
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" />
+<th:block layout:fragment="styles">
+</th:block>
+</head>
+<body>
+	<div th:replace="~{manager/fragments/header :: header}"></div>
+	<div th:replace="~{manager/fragments/sidebar :: sidebar}"></div>
+
+	<main>
+		<div layout:fragment="content">
+		hihiiihihihihih
+		</div>
+	</main>
+	<div th:replace="~{web/fragments/spinner :: spinner}"></div>
+
+
+	<script th:src="@{/styles/js/spinner.js}"></script>
+	<script th:src="@{/styles/js/sidebar.js}"></script>
+	
+	
+	<th:block layout:fragment="scripts"></th:block>
+</body>
+</html>
