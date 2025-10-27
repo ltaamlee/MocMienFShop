@@ -18,21 +18,12 @@
 				</a>
 			</div>
 
-
-			<!-- Search Box -->
-			<div class="search-box">
-				<input type="text" placeholder="Tìm kiếm sản phẩm...">
-				<button type="submit">
-					<i class="fa-solid fa-magnifying-glass"></i>
-				</button>
-			</div>
-
 			<div class="user-info">
 				<div class="user-details">
-					<span class="user-name" >vendor</span>
-					<span class="user-role">Quản lý cửa hàng</span>
+					<span class="user-name">vendor</span> <span class="user-role">Quản
+						lý cửa hàng</span>
 				</div>
-			
+				<img th:src="${user.avatar != null} ? ${user.avatar}" alt="Avatar" class="user-avatar">
 			</div>
 
 		</div>
