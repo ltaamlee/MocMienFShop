@@ -338,4 +338,16 @@ public class UserServiceImpl implements UserService {
 		return null;
 	}
 
+	@Override
+	public Optional<User> findById(Integer userId) {
+		// TODO Auto-generated method stub
+		return Optional.empty();
+	}
+
+	@Override
+	public boolean existsById(Integer userId) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 }

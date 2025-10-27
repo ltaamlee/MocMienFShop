@@ -115,13 +115,19 @@ public interface StoreRepository extends JpaRepository<Store, Integer>{
     // -----------------------
     // Cập nhật ví điện tử + rating + điểm trong 1 transaction
     // -----------------------
-    @Modifying
     @Transactional
-    @Query("UPDATE Store s SET s.eWallet = s.eWallet + :revenue, s.rating = s.rating + :rating, s.point = s.point + :points WHERE s.id = :storeId")
+    @Modifying
+    @Query("""
+        UPDATE Store s 
+        SET s.eWallet = s.eWallet + :revenue,
+            s.rating  = s.rating  + :rating,
+            s.point   = s.point   + :points
+        WHERE s.id = :storeId
+    """)
     int updateAfterOrder(
-        @Param("storeId") Integer storeId,
-        @Param("revenue") BigDecimal revenue,
-        @Param("rating") BigDecimal rating,
-        @Param("points") Integer points
+            @Param("storeId") Integer storeId,
+            @Param("revenue") BigDecimal revenue,
+            @Param("rating") BigDecimal rating,
+            @Param("points") Integer points
     );
 }

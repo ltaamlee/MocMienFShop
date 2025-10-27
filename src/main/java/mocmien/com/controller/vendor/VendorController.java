@@ -35,10 +35,10 @@ public class VendorController {
 	}
 
 	// Đăng ký Shop
-	@GetMapping("/register-shop")
+	@GetMapping("/store")
 	public String registerShop(@AuthenticationPrincipal CustomUserDetails userDetails, Model model) {
 		addUserToModel(userDetails, model);
-		return "vendor/register-shop";
+		return "vendor/store";
 	}
 
 	// Quản lý Sản phẩm

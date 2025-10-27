@@ -15,6 +15,9 @@ import mocmien.com.entity.Store;
 import mocmien.com.entity.User;
 
 public interface StoreService {
+	// CRUD cơ bản
+    Store save(Store store);
+	
 	// -----------------------
     // Tìm kiếm theo chủ cửa hàng (vendor)
     // -----------------------

@@ -180,6 +180,56 @@ main {
   8. TABLE STYLES
   ==========================================
 */
+
+/* ---- Section khung trắng gọn gàng ---- */
+.store-section{
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 6px 24px rgba(0,0,0,.06);
+  margin-top: 12px;           /* tránh dính vào stats-cards */
+  padding: 0 0 16px 0;        /* header có padding riêng */
+  position: relative;
+}
+
+/* ---- Header của section: tách hẳn khỏi bảng ---- */
+.section-header{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px 20px 8px 20px;
+  position: relative;
+  z-index: 2;                 /* nằm trên thead sticky */
+  background: #fff;
+  border-top-left-radius: 16px;
+  border-top-right-radius: 16px;
+}
+
+.section-title{ margin: 0; font-size: 28px; line-height: 1.2; }
+.section-subtitle{ margin: 6px 0 0; color: #6b7280; }
+
+/* ---- Bảng: bọc overflow và chỉnh sticky header ---- */
+.table-wrapper{
+  overflow: auto;
+  border-top: 1px solid #eee; /* ngăn tiêu đề dính vào bảng */
+}
+
+/* Nếu main.css đang cho thead sticky mà đè lên header, hạ top và z-index */
+.table-wrapper thead th{
+  position: sticky; 
+  top: 0;                     /* bám ngay mép trên của table-wrapper */
+  z-index: 1;                 /* thấp hơn .section-header (z-index:2) */
+  background: #f8fafc;        /* nền để không thấy chữ trôi */
+}
+
+/* Đôi khi main.css đặt margin âm cho .table-stores; đưa về 0 để khỏi lệch */
+.table-stores{ margin-top: 0 !important; }
+
+/* Nút “Đăng ký Shop” gọn góc phải, không che thead */
+.section-header .btn-add{ white-space: nowrap; }
+
+
+
 .table-stores {
     background: white;
     border-radius: 8px;
@@ -1312,3 +1362,26 @@ input:checked + .slider:before {
 .stat-card.pending {
     border-left: 4px solid #ffc107;
 }
+
+.stats-cards.push-up-1{ 
+	margin-top:-9rem; 
+	margin-bottom: 12px; 
+}
+.stats-cards.nudge-up { 
+	transform: translateY(-12px); 
+}
+
+.btn-submit.is-disabled,
+
+.btn-submit:disabled{
+  opacity: .55;
+  cursor: not-allowed;
+  filter: grayscale(10%);
+  pointer-events: none; /* chặn hover/click */
+}
+
+.toggle-cell .switch input:disabled + .slider {
+  opacity: .55;
+  cursor: not-allowed;
+}
+

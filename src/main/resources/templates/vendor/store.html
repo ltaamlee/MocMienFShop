@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{vendor/layout}">
+<head>
+<title>Quản lý Cửa hàng</title>
+<th:block layout:fragment="styles">
+	<!-- CSS chung của vendor (nếu có) -->
+	<link rel="stylesheet" href="/styles/css/vendor/header.css">
+	<!-- File main.css em đã gửi -->
+	<link rel="stylesheet" href="/styles/css/vendor/main.css">
+	<!-- Icon -->
+	<link rel="stylesheet"
+		href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+</th:block>
+</head>
+<body>
+	<div layout:fragment="content">
+
+		<!-- STATS -->
+		<div class="stats-cards push-up-1">
+			<div class="stat-card total">
+				<h3>Số dư ví</h3>
+				<div class="value" id="statWallet">0</div>
+			</div>
+			<div class="stat-card active">
+				<h3>Điểm tích lũy</h3>
+				<div class="value" id="statPoint">0</div>
+			</div>
+			<div class="stat-card pending">
+				<h3>Đánh giá ★</h3>
+				<div class="value" id="statRating">0.0</div>
+			</div>
+			<div class="stat-card inactive">
+				<h3>Trạng thái</h3>
+				<div class="value" id="statStatus">Chưa đăng ký</div>
+			</div>
+		</div>
+
+		<!-- SECTION: Cửa hàng của tôi -->
+		<section class="store-section">
+			<div class="section-header">
+				<div>
+					<h2 class="section-title">Cửa hàng của tôi</h2>
+					<p class="section-subtitle">Quản lý thông tin cửa hàng, trạng
+						thái mở cửa và ví tích lũy.</p>
+				</div>
+
+				<button class="btn-add" id="openRegisterModalBtn" type="button">
+					<i class="fa fa-store"></i><span>Đăng ký Shop</span>
+				</button>
+			</div>
+
+			<div class="table-wrapper table-stores">
+				<table>
+					<thead>
+						<tr>
+							<th>Shop</th>
+							<th>Chủ cửa hàng</th>
+							<th>Liên hệ</th>
+							<th>Hạng</th>
+							<th>Điểm / Ví</th>
+							<th>Hoạt động</th>
+							<th>Mở cửa</th>
+						</tr>
+					</thead>
+					<tbody id="storeTableBody">
+						<!-- JS render -->
+					</tbody>
+				</table>
+			</div>
+
+			<div class="empty-state mt-4" id="emptyStateBlock">
+				<i class="fa-solid fa-store-slash"></i>
+				<h3>Chưa có cửa hàng</h3>
+				<p>Nhấn “Đăng ký Shop” để tạo cửa hàng đầu tiên của bạn.</p>
+			</div>
+		</section>
+
+
+		<!-- MODAL ĐĂNG KÝ -->
+		<div class="modal" id="storeModal" aria-hidden="true">
+			<div class="modal-content" role="dialog" aria-modal="true"
+				aria-labelledby="storeModalTitle">
+				<div class="modal-header">
+					<h2 id="storeModalTitle">Đăng ký cửa hàng</h2>
+					<button class="close-modal" id="closeModalBtn" type="button"
+						aria-label="Đóng">&times;</button>
+				</div>
+
+				<div class="modal-body">
+					<form id="storeRegisterForm">
+						<!-- Lấy từ phiên đăng nhập: có thể binding thẳng hoặc để JS đọc -->
+						<input type="hidden" id="vendorId"
+							th:value="${#authentication?.principal?.userId}" />
+
+						<div class="form-group">
+							<label for="storeName">Tên cửa hàng <span
+								class="required">*</span></label> <input type="text" id="storeName"
+								required placeholder="VD: Tiệm Hoa Mộc Miên">
+						</div>
+
+						<div class="form-group">
+							<label for="address">Địa chỉ <span class="required">*</span></label>
+							<input type="text" id="address" required
+								placeholder="Số nhà, đường, quận/huyện, tỉnh/thành">
+						</div>
+
+						<div class="form-row">
+							<div class="form-group">
+								<label for="avatarFile">Logo / Avatar shop</label> <input
+									type="file" id="avatarFile" accept="image/*"> <span
+									class="help-text">Ô vuông nhỏ dùng làm logo hiển thị.</span>
+							</div>
+
+							<div class="form-group">
+								<label for="coverFile">Ảnh bìa shop</label> <input type="file"
+									id="coverFile" accept="image/*"> <span
+									class="help-text">Ảnh ngang dùng cho trang cửa hàng công
+									khai.</span>
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label for="featureFiles">Ảnh nổi bật</label> <input type="file"
+								id="featureFiles" accept="image/*" multiple> <span
+								class="help-text">Chọn ảnh đẹp nhất (best seller).</span>
+						</div>
+
+						<div class="form-group">
+							<label>Shop mở cửa ngay?</label> <label class="switch"> <input
+								type="checkbox" id="isOpenToggle"> <span class="slider"></span>
+							</label> <span class="help-text">Admin vẫn cần duyệt trước khi
+								khách thấy shop.</span>
+						</div>
+					</form>
+				</div>
+
+				<div class="modal-footer">
+					<small id="registerLockNote"
+						style="display: none; margin-right: auto; color: #ef4444;"></small>
+					<button class="btn-cancel" id="cancelModalBtn" type="button">Hủy</button>
+					<button class="btn-submit" id="submitRegisterBtn" type="button">
+						<span class="btn-text">Gửi đăng ký</span> <span
+							class="loading d-none" id="submitLoading"></span>
+					</button>
+				</div>
+
+			</div>
+		</div>
+
+
+	</div>
+
+	<th:block layout:fragment="scripts">
+		<script src="/styles/js/vendor/store.js"></script>
+	</th:block>
+</body>
+</html>

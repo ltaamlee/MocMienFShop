@@ -17,7 +17,7 @@ import mocmien.com.security.CustomUserDetails;
 import mocmien.com.service.UserService;
 
 @RestController
-@RequestMapping("/vendor/profile")
+@RequestMapping("/api/vendor/profile")
 @PreAuthorize("hasRole('VENDOR')")
 public class VendorProfileController {
 	@Autowired
