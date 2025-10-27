@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
 	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
@@ -20,14 +21,15 @@
 			</div>
 
 			<div class="stat-card pending">
-				<h3>Đơn hàng cần xử lý</h3>
-				<div class="value" id="pendingOrdersStat"
-					th:text="${pendingOrders} ?: '0'">0</div>
+				<h3>Đơn hàng đã đóng đơn</h3>
+				<div class="value" id="closedOrdersStat"
+					th:text="${closedOrders} ?: '0'">0</div>
 			</div>
+
 			<div class="stat-card active">
-				<h3>Đơn hàng đã duyệt</h3>
-				<div class="value" id="completedOrdersStat"
-					th:text="${completedOrders} ?: '0'">0</div>
+				<h3>Đơn hàng đang giao</h3>
+				<div class="value" id="deliveringOrdersStat"
+					th:text="${deliveringOrders} ?: '0'">0</div>
 			</div>
 
 			<div class="stat-card active">
@@ -36,6 +38,7 @@
 					th:text="${cancelledOrders} ?: '0'">0</div>
 			</div>
 		</div>
+
 
 
 		<div class="search-filter-container">
@@ -48,7 +51,6 @@
 						<i class="fas fa-search"></i> Tìm kiếm
 					</button>
 				</div>
-
 				<div class="filter-group">
 					<div class="filter-item">
 						<label for="statusFilter">Trạng thái:</label> <select
@@ -62,8 +64,10 @@
 
 					</div>
 				</div>
+
 			</form>
 		</div>
+
 
 		<div class="table-orders">
 			<table>
@@ -169,79 +173,44 @@
 							<td id="detailTotal"></td>
 						</tr>
 					</table>
-					<table class="table-detail">
-						<tr>
-							<th>Ghi chú</th>
-							<td><textarea id="detailNotes" rows="3" maxlength="500"
-									placeholder="Nhập ghi chú cho đơn hàng..."></textarea></td>
-						</tr>
-					</table>
 				</div>
 
-				<div class="modal-footer">
-					<button type="button" class="btn-submit" onclick="saveOrderNote()">Lưu
-						ghi chú</button>
-
-					<button type="button" class="btn-cancel"
-						onclick="closeModal('viewOrderModal')">Đóng</button>
-				</div>
+				<button type="button" class="btn-cancel"
+					onclick="closeModal('viewOrderModal')">Đóng</button>
 			</div>
-		</div>
 
-		<!-- DUYỆT ĐƠN HÀNG -->
-		<div id="confirmApproveModal" class="modal">
-			<div class="modal-content"
-				style="max-width: 800px; text-align: center;">
+		</div>
+		<!-- PHÂN CÔNG SHIPPER -->
+		<div id="assignShipperModal" class="modal">
+			<div class="modal-content">
 				<div class="modal-header">
-					<h3>Xác nhận duyệt đơn hàng</h3>
+					<h2>Phân công shipper</h2>
 					<button type="button" class="close-modal"
-						onclick="closeModal('confirmApproveModal')">&times;</button>
+						onclick="closeModal('assignShipperModal')">&times;</button>
 				</div>
 				<div class="modal-body">
-					<!-- Nội dung sẽ được JS cập nhật tự động -->
-					<p>Bạn có chắc chắn muốn duyệt đơn hàng này không?</p>
+					<div style="margin-bottom: 10px">
+						<label for="shipperSelect" style="font-weight: 600">Chọn
+							nhân viên giao hàng:</label> <select id="shipperSelect"
+							style="width: 100%; padding: 8px"></select>
+					</div>
+					<div id="assignHint" style="font-size: 13px; color: #666"></div>
 				</div>
 				<div class="modal-footer">
 					<button type="button" class="btn-submit"
-						onclick="confirmApproveOrder()">Có</button>
+						onclick="assignShipperToOrder()">Phân công</button>
 					<button type="button" class="btn-cancel"
-						onclick="closeModal('confirmApproveModal')">Không</button>
+						onclick="closeModal('assignShipperModal')">Đóng</button>
 				</div>
 			</div>
 		</div>
 
+	</div>
+	<div id="notification" class="notification"></div>
 
-		<!-- HỦY ĐƠN HÀNG TRỰC TIẾP -->
-		<div id="cancelOrderModal" class="modal">
-			<div class="modal-content"
-				style="max-width: 600px; text-align: center;">
-				<div class="modal-header">
-					<h3>Xác nhận hủy đơn hàng</h3>
-					<button type="button" class="close-modal"
-						onclick="closeModal('cancelOrderModal')">&times;</button>
-				</div>
-				<div class="modal-body">
-					<p id="cancelModalMsg">Bạn có chắc chắn muốn hủy đơn hàng này
-						không?</p>
-					<textarea id="cancelReason" rows="3"
-						placeholder="Nhập lý do hủy (tùy chọn)"></textarea>
-				</div>
-				<div class="modal-footer">
-					<button type="button" class="btn-submit"
-						onclick="confirmCancelOrder()">Hủy đơn</button>
-					<button type="button" class="btn-cancel"
-						onclick="closeModal('cancelOrderModal')">Đóng</button>
-				</div>
-			</div>
-		</div>
-
-
-
-		<div id="notification" class="notification"></div>
-
-		<th:block layout:fragment="scripts">
-			<script th:src="@{/styles/js/vendor/orders.js}"></script>
-		</th:block>
+	<th:block layout:fragment="scripts">
+		<script th:src="@{/styles/js/vendor/orders.js}"></script>
+	</th:block>
 	</div>
 </body>
 </html>

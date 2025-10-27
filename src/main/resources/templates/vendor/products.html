@@ -11,37 +11,8 @@
 </head>
 <body>
 	<div layout:fragment="content">
-
-		<div class="stats-cards">
-			<div class="stat-card total">
-				<h3>Tổng số đơn hàng hôm nay</h3>
-				<div class="value" id="totalOrdersStat"
-					th:text="${totalOrders} ?: '0'">0</div>
-			</div>
-
-			<div class="stat-card pending">
-				<h3>Đơn hàng đã đóng đơn</h3>
-				<div class="value" id="closedOrdersStat"
-					th:text="${closedOrders} ?: '0'">0</div>
-			</div>
-
-			<div class="stat-card active">
-				<h3>Đơn hàng đang giao</h3>
-				<div class="value" id="deliveringOrdersStat"
-					th:text="${deliveringOrders} ?: '0'">0</div>
-			</div>
-
-			<div class="stat-card active">
-				<h3>Đơn hàng đã hủy</h3>
-				<div class="value" id="cancelledOrdersStat"
-					th:text="${cancelledOrders} ?: '0'">0</div>
-			</div>
-		</div>
-
-
-
 		<div class="search-filter-container">
-			<form id="searchFilterForm" th:action="@{/manager/orders}"
+			<form id="searchFilterForm" th:action="@{/vendor/products}"
 				method="get">
 				<div class="search-box">
 					<input type="text" name="keyword"
@@ -50,172 +21,199 @@
 						<i class="fas fa-search"></i> Tìm kiếm
 					</button>
 				</div>
+
 				<div class="filter-group">
 					<div class="filter-item">
-						<label for="statusFilter">Trạng thái:</label> <select
-							name="status">
-							<option value="" th:selected="${selectedStatus == null}">Tất
-								cả</option>
-							<option th:each="status : ${orderStatuses}"
-								th:value="${status.name()}" th:text="${status.displayName}"
-								th:selected="${status.name() == selectedStatus}"></option>
+						<label for="statusFilter">Trạng thái:</label><select
+							id="statusFilter" name="status">
+							<option value="">Tất cả</option>
+							<option value="1" th:selected="${status == '1'}">Đang
+								bán</option>
+							<option value="0" th:selected="${status == '0'}">Ngừng
+								bán</option>
+							<option value="-1" th:selected="${status == '-1'}">Hết
+								hàng</option>
 						</select>
 
 					</div>
-				</div>
+					<div class="filter-item">
+						<label for="categoryFilter">Danh mục:</label> <select
+							id="categoryFilter" name="categoryId">
+							<option value="">Tất cả</option>
+							<option th:each="cat : ${categories}" th:value="${cat.maDM}"
+								th:text="${cat.tenDM}" th:selected="${categoryId == cat.maDM}">
+							</option>
+						</select>
+					</div>
 
+				</div>
 			</form>
 		</div>
 
+		<div class="btn-add-container">
 
-		<div class="table-orders">
+			<a href="javascript:void(0)" class="btn-add"
+				onclick="openModal('addProductModal')"> <i class="fas fa-fan"></i> Thêm sản
+				phẩm
+			</a>
+		</div>
+
+		<div class="table-products">
 			<table>
 				<thead>
 					<tr>
-						<th>STT</th>
-						<th>Khách hàng</th>
-						<th>Ngày đặt hàng</th>
-						<th>Tổng tiền</th>
-						<th>Hình thức thanh toán</th>
-						<th>Ngày đặt đơn hàng</th>
-						<th>Trạng thái đơn hàng</th>
-						<th>Thao tác</th>
+						<th style="width: 80px">Mã</th>
+						<th style="width: 240px">Tên</th>
+						<th style="width: 300px">Hình ảnh</th>
+						<th style="width: 140px">Giá gốc</th>
+						<th style="width: 140px">Trạng thái</th>
+						<th style="width: 160px" class="text-right">Hành động</th>
 					</tr>
 				</thead>
-				<tbody id="orderTableBody">
+				<tbody id="productTableBody">
 					<tr>
-						<td colspan="8" style="text-align: center;">Đang tải dữ
+						<td colspan="7" style="text-align: center;">Đang tải dữ
 							liệu...</td>
 					</tr>
 				</tbody>
 			</table>
+
 		</div>
 
-		<div class="pagination" id="orderPagination"></div>
 
-		<!-- XEM THÔNG TIN CHI TIẾT ĐƠN HÀNG VÀ GHI CHÚ-->
-		<div id="viewOrderModal" class="modal">
+
+		<div class="pagination" id="productPagination"></div>
+
+
+		<!-- Thêm sản phẩm với nguyên liệu -->
+		<div id="addProductModal" class="modal">
 			<div class="modal-content">
 				<div class="modal-header">
-					<h2>Chi Tiết Đơn Hàng</h2>
+					<h2>Thêm Sản Phẩm</h2>
 					<button type="button" class="close-modal"
-						onclick="closeModal('viewOrderModal')">&times;</button>
+						onclick="closeModal('addProductModal')">&times;</button>
 				</div>
 				<div class="modal-body">
-					<table class="table-detail">
-						<tr>
-							<th>Mã đơn hàng</th>
-							<td id="detailOrderId"></td>
-						</tr>
-						<tr>
-							<th>Khách hàng</th>
-							<td id="detailCustomer"></td>
-						</tr>
-						<tr>
-							<th>Ngày đặt</th>
-							<td id="detailOrderDate"></td>
-						</tr>
-						<tr>
-							<th>Hình thức thanh toán</th>
-							<td id="detailPayment"></td>
-						</tr>
-						<tr>
-							<th>Trạng thái</th>
-							<td id="detailStatus"></td>
-						</tr>
-						<tr>
-							<th>Địa chỉ giao</th>
-							<td id="detailAddress"></td>
-						</tr>
-						<tr>
-							<th>SĐT người nhận</th>
-							<td id="detailPhone"></td>
-						</tr>
-						<tr>
-							<th>Nhân viên duyệt đơn</th>
-							<td id="detailEmployee"></td>
-						</tr>
-						<tr>
-							<th>Ngày cập nhật</th>
-							<td id="detailUpdatedAt"></td>
-						</tr>
-					</table>
+					<form th:action="@{/vendor/products/add}" method="post"
+						enctype="multipart/form-data">
+						<!-- Thông tin sản phẩm -->
+						<div class="form-group">
+							<label for="tenSP">Tên sản phẩm:</label> <input type="text"
+								id="tenSP" name="tenSP" required>
+						</div>
+						<div class="form-group">
+							<label for="donViTinh">Đơn vị tính:</label> <input type="text"
+								id="donViTinh" name="donViTinh">
+						</div>
+						<div class="form-group">
+							<label for="gia">Giá:</label> <input type="number" id="gia"
+								name="gia" step="0.01" min="0" required>
+						</div>
+						<div class="form-group">
+							<label for="moTa">Mô tả:</label>
+							<textarea id="moTa" name="moTa"></textarea>
+						</div>
+						<div class="form-group">
+							<label for="trangThai">Trạng thái:</label> <select id="trangThai"
+								name="trangThai" required></select>
+						</div>
 
-					<br>
-					<h4>Chi tiết sản phẩm</h4>
-					<br>
-					<table class="table-detail" id="detailProductsTable">
-						<thead>
-							<tr>
-								<th>STT</th>
-								<th>Sản phẩm</th>
-								<th>Số lượng</th>
-								<th>Giá bán</th>
-								<th>Thành tiền</th>
-							</tr>
-						</thead>
-						<tbody id="detailProductsBody">
-							<tr>
-								<td colspan="5" style="text-align: center;">Đang tải...</td>
-							</tr>
-						</tbody>
-					</table>
+						<div class="form-group">
+							<img src="/styles/image/logo.png" alt="Avatar"
+								class="product-preview" id="productPreview">
+							<div class="upload-btn">
+								<label for="file" class="btn-upload"> <i
+									class="fa-solid fa-camera"></i> Chọn ảnh
+								</label> <input type="file" id="file" name="file" accept="image/*"
+									onchange="previewProduct(event)" style="display: none;">
+							</div>
+						</div>
 
-					<!-- Phí vận chuyển và Tổng tiền -->
-					<table class="table-detail" style="margin-top: 10px;">
-						<tr>
-							<th>Phí vận chuyển</th>
-							<td id="detailShippingFee"></td>
-						</tr>
-						<tr>
-							<th>Tổng tiền</th>
-							<td id="detailTotal"></td>
-						</tr>
-					</table>
+						<div class="form-group">
+							<label for="danhMuc">Danh mục:</label> <select id="danhMuc"
+								name="danhMucId" required>
+								<option value="">Tất cả</option>
+								<option th:each="cat : ${categories}" th:value="${cat.maDM}"
+									th:text="${cat.tenDM}"></option>
+							</select>
+						</div>
+						<!-- Nguyên liệu sản phẩm -->
+						<!-- ... nguyên liệu sản phẩm ... -->
+						<div class="form-group">
+							<label>Nguyên liệu:</label>
+							<table id="materialsTable">
+								<thead>
+									<tr>
+										<th>Nguyên liệu</th>
+										<th>Số lượng</th>
+										<th>Đơn vị tính</th>
+										<th>Hành động</th>
+									</tr>
+								</thead>
+								<tbody>
+									<!-- Có thể để tr đầu tiên này như hiện tại, JS mới KHÔNG còn phụ thuộc vào nó -->
+									<tr class="material-row">
+										<td><select name="materials[0].materialId" required>
+												<option value="">Chọn nguyên liệu</option>
+												<option th:each="mat : ${materials}" th:value="${mat.maNL}"
+													th:text="${mat.tenNL}" th:attr="data-unit=${mat.donViTinh}">
+												</option>
+										</select></td>
+										<td><input type="number" name="materials[0].soLuong"
+											min="1" value="1" required></td>
+										<td><span class="unit-display"></span></td>
+										<td>
+											<button type="button" class="btn-remove">Xóa</button>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+
+							<!-- TEMPLATE MẪU DÙNG ĐỂ CLONE (an toàn khi clear tbody) -->
+							<template id="material-row-template">
+								<tr class="material-row">
+									<td><select name="materials[__i__].materialId" required>
+											<option value="">Chọn nguyên liệu</option>
+											<option th:each="mat : ${materials}" th:value="${mat.maNL}"
+												th:text="${mat.tenNL}" th:attr="data-unit=${mat.donViTinh}">
+											</option>
+									</select></td>
+									<td><input type="number" name="materials[__i__].soLuong"
+										min="1" value="1" required></td>
+									<td><span class="unit-display"></span></td>
+									<td><button type="button" class="btn-remove">Xóa</button></td>
+								</tr>
+							</template>
+
+							<button type="button" onclick="addMaterialRow()">Thêm
+								nguyên liệu</button>
+						</div>
+
+
+						<div class="form-actions">
+							<button type="submit" class="btn-submit">Thêm</button>
+							<button type="button" class="btn-cancel"
+								onclick="closeModal('addProductModal')">Hủy</button>
+						</div>
+					</form>
 				</div>
-
-				<button type="button" class="btn-cancel"
-					onclick="closeModal('viewOrderModal')">Đóng</button>
 			</div>
-
 		</div>
-		<!-- PHÂN CÔNG SHIPPER -->
-		<div id="assignShipperModal" class="modal">
-			<div class="modal-content">
-				<div class="modal-header">
-					<h2>Phân công shipper</h2>
-					<button type="button" class="close-modal"
-						onclick="closeModal('assignShipperModal')">&times;</button>
-				</div>
-				<div class="modal-body">
-					<div style="margin-bottom: 10px">
-						<label for="shipperSelect" style="font-weight: 600">Chọn
-							nhân viên giao hàng:</label> <select id="shipperSelect"
-							style="width: 100%; padding: 8px"></select>
-					</div>
-					<div id="assignHint" style="font-size: 13px; color: #666"></div>
-				</div>
-				<div class="modal-footer">
-					<button type="button" class="btn-submit"
-						onclick="assignShipperToOrder()">Phân công</button>
-					<button type="button" class="btn-cancel"
-						onclick="closeModal('assignShipperModal')">Đóng</button>
-				</div>
-			</div>
-		</div>
-
 	</div>
-
-
-
-
-
-
-	<div id="notification" class="notification"></div>
-
 	<th:block layout:fragment="scripts">
-		<script th:src="@{/styles/js/manager/orders.js}"></script>
+		<script th:inline="javascript">
+			window.__MATERIALS__ = /*[[${materials}]]*/[];
+		</script>
+		<script th:src="@{/styles/js/vendor/products.js}"></script>
 	</th:block>
-	</div>
+
 </body>
 </html>
+
+
+
+
+
+
+
+
