@@ -21,11 +21,11 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "Customer")
+@Table(name = "UserProfile")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Customer {
+public class UserProfile {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,20 +36,25 @@ public class Customer {
     @JoinColumn(name = "userId", nullable = false)
     private User user;
    
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "level")
-    private Level level;
-
     @Column(name = "fullName", columnDefinition = "nvarchar(500)" )
     private String fullName;
 
-    @Column(name = "idCard", unique = true, columnDefinition = "varchar(20)" )
+    @Column(name = "idCard", unique = true, nullable = true, columnDefinition = "varchar(20)" )
     private String idCard;
 
     @Column(name = "dob", nullable = true)
     private LocalDate dob;
+    
+    @Column(name = "gender", nullable = true)
+    private String gender;
 
 
+    //Chỉ customer mới được dùng
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "level")
+    private Level level;
+    
     @Column(name = "point", columnDefinition = "int default 0")
     private Integer point = 0;
     
@@ -73,14 +78,6 @@ public class Customer {
 
 	public void setUser(User user) {
 		this.user = user;
-	}
-
-	public Level getLevel() {
-		return level;
-	}
-
-	public void setLevel(Level level) {
-		this.level = level;
 	}
 
 	public String getFullName() {
@@ -107,6 +104,22 @@ public class Customer {
 		this.dob = dob;
 	}
 
+	public String getGender() {
+		return gender;
+	}
+
+	public void setGender(String gender) {
+		this.gender = gender;
+	}
+
+	public Level getLevel() {
+		return level;
+	}
+
+	public void setLevel(Level level) {
+		this.level = level;
+	}
+
 	public Integer getPoint() {
 		return point;
 	}
@@ -129,7 +142,6 @@ public class Customer {
 
 	public void setAddresses(List<CustomerAddress> addresses) {
 		this.addresses = addresses;
-	}
-        
+	}	
 }
 

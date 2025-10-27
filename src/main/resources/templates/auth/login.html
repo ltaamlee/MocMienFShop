@@ -16,6 +16,13 @@
 		<div class="login-card">
 			<h2>Mộc Miên</h2>
 			<form action="/login" method="post">
+			
+			<!-- Hiển thị lỗi -->
+				<div th:if="${error}" class="alert alert-danger" 
+				     style="background-color: #ffe0e0; color: #a60000; padding: 10px; border-radius: 8px; margin-bottom: 15px; text-align: center;">
+					<span th:text="${error}"></span>
+				</div>
+
 				<div class="form-group">
 					<label for="username">Tên đăng nhập</label> <input type="text"
 						id="username" name="username" required>
@@ -32,12 +39,10 @@
 			<div class="social-login">
 				<a href="/oauth2/authorization/google" class="btn-google"> <i
 					class="fab fa-google"></i> Đăng nhập với Google
-				</a> <a href="/oauth2/authorization/facebook" class="btn-facebook">
-					<i class="fab fa-facebook-f"></i> Đăng nhập với Facebook
 				</a>
 			</div>
 
-			<p class="register-link">
+			<p class="login-link">
 				Chưa có tài khoản? <a th:href="@{/register}">Đăng ký</a>
 			</p>
 		</div>

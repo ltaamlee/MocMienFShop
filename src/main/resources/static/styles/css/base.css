@@ -1015,9 +1015,11 @@ input:checked + .slider:before {
 .alert {
     padding: 10px 14px;
     border-radius: 6px;
-    margin-bottom: 15px;
+    margin: 0 auto 15px auto; 
     font-size: 0.9rem;
     font-family: var(--font-family);
+    text-align: center; 
+    max-width: 90%;  
 }
 
 .alert-success {
@@ -1117,3 +1119,4 @@ input:checked + .slider:before {
     margin-top: 5px;
     height: 1em; /* Giữ khoảng trống để layout không bị nhảy */
 }
+

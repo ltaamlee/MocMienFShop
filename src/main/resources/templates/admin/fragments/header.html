@@ -29,11 +29,10 @@
 
 			<div class="user-info">
 				<div class="user-details">
-					<span class="user-name" >Admin</span>
-					<span class="user-role">Quản
+					<span class="user-name">Admin</span> <span class="user-role">Quản
 						trị viên</span>
 				</div>
-			
+				<img th:src="${user.avatar != null} ? ${user.avatar}" alt="Avatar" class="user-avatar">
 			</div>
 
 		</div>

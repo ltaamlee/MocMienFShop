@@ -113,3 +113,85 @@ header {
 	border-radius: 50%;
 	line-height: 18px;
 }
+
+
+
+@media (max-width: 1024px) {
+    .glass-card {
+        padding: 60px 60px;
+    }
+    
+    .header-top {
+        gap: 20px;
+        padding: 15px 20px;
+    }
+    
+    .nav-links {
+        gap: 2rem;
+    }
+}
+
+@media (max-width: 992px) {
+  .filters-section {
+    grid-template-columns: 1fr;
+  }
+
+  .banner {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .banner-image img {
+    margin-top: 1rem;
+    max-width: 80%;
+  }
+}
+
+
+@media (max-width: 768px) {
+    .glass-card {
+        padding: 50px 40px;
+    }
+
+    .splash-nav {
+        gap: 25px;
+        top: 20px;
+    }
+
+    .swiper {
+        height: 400px;
+    }
+    
+    .header-top {
+        grid-template-columns: 1fr;
+        gap: 15px;
+        text-align: center;
+    }
+    
+    .logo {
+        order: 1;
+    }
+    
+    .search-box {
+        order: 2;
+    }
+    
+    .user-actions {
+        order: 3;
+        justify-content: center;
+    }
+    
+    .nav-links {
+        gap: 1.5rem;
+        flex-wrap: wrap;
+    }
+    
+    .footer-container {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .footer-logo {
+        justify-content: center;
+    }
+}

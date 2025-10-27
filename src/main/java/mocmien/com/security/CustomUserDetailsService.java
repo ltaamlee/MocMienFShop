@@ -18,18 +18,19 @@ public class CustomUserDetailsService implements UserDetailsService{
 	@Autowired
     private UserService userService;
 
-    @Override
-    public UserDetails loadUserByUsername(String usernameOrEmail) throws UsernameNotFoundException {
-    	Optional<User> userOpt = userService.findByUsername(usernameOrEmail);
+	@Override
+	public UserDetails loadUserByUsername(String usernameOrEmail) throws UsernameNotFoundException {
+	    Optional<User> userOpt = userService.findByEmail(usernameOrEmail); // ưu tiên email
 
-        if (userOpt.isEmpty()) {
-            userOpt = userService.findByEmail(usernameOrEmail);
-        }
+	    if (userOpt.isEmpty()) {
+	        userOpt = userService.findByUsername(usernameOrEmail);
+	    }
 
-        User user = userOpt.orElseThrow(() ->
-                new UsernameNotFoundException("Không tìm thấy người dùng: " + usernameOrEmail)
-        );
+	    User user = userOpt.orElseThrow(() ->
+	            new UsernameNotFoundException("Không tìm thấy người dùng: " + usernameOrEmail)
+	    );
 
-        return new CustomUserDetails(user);
-    }
+	    return new CustomUserDetails(user);
+	}
+
 }

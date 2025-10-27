@@ -18,11 +18,11 @@ import mocmien.com.service.UserService;
 @RequestMapping("/admin")
 @PreAuthorize("hasRole('ADMIN')")
 public class AdminController {
-	
+
 	@Autowired
 	private UserService userService;
-	
-	//Trang chủ
+
+	// Trang chủ
 	@GetMapping("/dashboard")
 	public String dashboard(@AuthenticationPrincipal CustomUserDetails userDetails, Model model) {
 
@@ -33,8 +33,76 @@ public class AdminController {
 
 		return "admin/dashboard";
 	}
-	
-	//Quản lý shop
-	
-	//Quản lý 
+
+	// Quản lý shop
+	@GetMapping("/store")
+	public String store(@AuthenticationPrincipal CustomUserDetails userDetails, Model model) {
+
+		if (userDetails != null) {
+			Optional<User> userOpt = userService.findByUsername(userDetails.getUsername());
+			userOpt.ifPresent(user -> model.addAttribute("user", user));
+		}
+
+		return "admin/store";
+	}
+
+	// Quản lý danh mục
+	@GetMapping("/category")
+	public String category(@AuthenticationPrincipal CustomUserDetails userDetails, Model model) {
+
+		if (userDetails != null) {
+			Optional<User> userOpt = userService.findByUsername(userDetails.getUsername());
+			userOpt.ifPresent(user -> model.addAttribute("user", user));
+		}
+
+		return "admin/category";
+	}
+
+	// Quản lý sản phẩm
+	@GetMapping("/product")
+	public String product(@AuthenticationPrincipal CustomUserDetails userDetails, Model model) {
+
+		if (userDetails != null) {
+			Optional<User> userOpt = userService.findByUsername(userDetails.getUsername());
+			userOpt.ifPresent(user -> model.addAttribute("user", user));
+		}
+
+		return "admin/product";
+	}
+
+	// Quản lý khuyến mãi và chiết khẩu app
+	@GetMapping("/promotion")
+	public String promotion(@AuthenticationPrincipal CustomUserDetails userDetails, Model model) {
+
+		if (userDetails != null) {
+			Optional<User> userOpt = userService.findByUsername(userDetails.getUsername());
+			userOpt.ifPresent(user -> model.addAttribute("user", user));
+		}
+
+		return "admin/promotion";
+	}
+
+	// Quản lý đơn vị vận chuyển
+	@GetMapping("/delivery")
+	public String delivery(@AuthenticationPrincipal CustomUserDetails userDetails, Model model) {
+
+		if (userDetails != null) {
+			Optional<User> userOpt = userService.findByUsername(userDetails.getUsername());
+			userOpt.ifPresent(user -> model.addAttribute("user", user));
+		}
+
+		return "admin/delivery";
+	}
+
+	// Quản lý đơn vị vận chuyển
+	@GetMapping("/profile")
+	public String profile(@AuthenticationPrincipal CustomUserDetails userDetails, Model model) {
+
+		if (userDetails != null) {
+			Optional<User> userOpt = userService.findByUsername(userDetails.getUsername());
+			userOpt.ifPresent(user -> model.addAttribute("user", user));
+		}
+
+		return "admin/profile";
+	}
 }

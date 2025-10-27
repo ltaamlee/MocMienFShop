@@ -3,7 +3,6 @@ package mocmien.com.repository;
 import org.springframework.stereotype.Repository;
 
 import jakarta.transaction.Transactional;
-import mocmien.com.entity.Customer;
 import mocmien.com.entity.Level;
 import mocmien.com.enums.Rank;
 

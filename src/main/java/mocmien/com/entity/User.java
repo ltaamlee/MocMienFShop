@@ -2,15 +2,18 @@ package mocmien.com.entity;
 
 import java.time.LocalDateTime;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
@@ -28,35 +31,38 @@ public class User {
 	@Column(name = "userId")
 	private Integer userId;
 
-	@Column(name = "username", nullable = false, unique = true, columnDefinition = "nvarchar(100)" )
+	@Column(name = "username", nullable = false, unique = true, columnDefinition = "nvarchar(100)")
 	private String username;
-	
+
 	@Column(name = "password", nullable = false, columnDefinition = "varchar(255)")
 	private String password;
-	
+
 	@Column(name = "avatar", columnDefinition = "varchar(MAX)")
-    private String avatar;
+	private String avatar;
 
 	@Column(name = "email", nullable = false, unique = true, columnDefinition = "varchar(100)")
 	private String email;
 
-	@Column(name = "phone", nullable = false, unique = true, columnDefinition = "varchar(20)")
+	@Column(name = "phone", columnDefinition = "varchar(20)")
 	private String phone;
-		
-    @Enumerated(EnumType.STRING)
+
+	@Enumerated(EnumType.STRING)
 	@Column(name = "status")
 	private UserStatus status = UserStatus.OFFLINE;
-	
-	@Column(name="isActive", nullable = false, columnDefinition="BIT DEFAULT 1")
-	private boolean isActive = true; 
-	
+
+	@Column(name = "isActive", nullable = false, columnDefinition = "BIT DEFAULT 1")
+	private boolean isActive = true;
+
 	@ManyToOne
-	@JoinColumn(name = "role")
+	@JoinColumn(name = "roleId", referencedColumnName = "id")
 	private Role role;
-	
+
 	@ManyToOne
-    @JoinColumn(name = "storeId")
-    private Store store;
+	@JoinColumn(name = "storeId", referencedColumnName = "id")
+	private Store store;
+	
+	@OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private UserProfile userProfile;
 
 	@Column(name = "code", columnDefinition = "varchar(20)")
 	private String code;
@@ -66,20 +72,23 @@ public class User {
 
 	@Column(name = "updatedAt")
 	private LocalDateTime updatedAt;
-	
+
 	@Column(name = "lastLoginAt")
 	private LocalDateTime lastLoginAt;
 
 	@PrePersist
-    protected void onCreate() {
-        createdAt = LocalDateTime.now();
-        updatedAt = LocalDateTime.now();
-    }
+	protected void onCreate() {
+		if (status == null) {
+			status = UserStatus.OFFLINE;
+		}
+		createdAt = LocalDateTime.now();
+		updatedAt = LocalDateTime.now();
+	}
 
-    @PreUpdate
-    protected void onUpdate() {
-        updatedAt = LocalDateTime.now();
-    }
+	@PreUpdate
+	protected void onUpdate() {
+		updatedAt = LocalDateTime.now();
+	}
 
 	public Integer getUserId() {
 		return userId;
@@ -120,6 +129,7 @@ public class User {
 	public void setEmail(String email) {
 		this.email = email;
 	}
+
 	public String getPhone() {
 		return phone;
 	}
@@ -201,4 +211,14 @@ public class User {
 	public User() {
 		super();
 	}
+
+	public UserProfile getUserProfile() {
+		return userProfile;
+	}
+
+	public void setUserProfile(UserProfile userProfile) {
+		this.userProfile = userProfile;
+	}
+	
+	
 }

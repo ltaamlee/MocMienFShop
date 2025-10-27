@@ -14,28 +14,26 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "Role")
+@Table(name = "Roles")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class Role {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "roleId")
-	private Integer roleId;
+	@Column(name = "id")
+	private Integer id;
 
 	@Enumerated(EnumType.STRING)
     @Column(name = "roleName", nullable = false, unique = true, length = 50)
     private RoleName roleName;
-	
-	//Getter và Setter
 
-	public Integer getRoleId() {
-		return roleId;
+	public Integer getId() {
+		return id;
 	}
 
-	public void setRoleId(Integer roleId) {
-		this.roleId = roleId;
+	public void setId(Integer id) {
+		this.id = id;
 	}
 
 	public RoleName getRoleName() {
@@ -45,5 +43,7 @@ public class Role {
 	public void setRoleName(RoleName roleName) {
 		this.roleName = roleName;
 	}
+	
+	//Getter và Setter
 
 }

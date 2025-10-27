@@ -28,7 +28,7 @@ public class CustomerAddress {
 
 	@ManyToOne
 	@JoinColumn(name = "customerId", nullable = false)
-	private Customer customer;
+	private UserProfile customer;
 	
 	@Column(name = "latitude", columnDefinition = "DECIMAL(10,7)")
 	private BigDecimal latitude;

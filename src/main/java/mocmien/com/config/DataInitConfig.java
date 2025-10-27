@@ -11,10 +11,12 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import mocmien.com.entity.Level;
 import mocmien.com.entity.Role;
 import mocmien.com.entity.User;
+import mocmien.com.entity.UserProfile;
 import mocmien.com.enums.Rank;
 import mocmien.com.enums.RoleName;
 import mocmien.com.repository.LevelRepository;
 import mocmien.com.repository.RoleRepository;
+import mocmien.com.repository.UserProfileRepository;
 import mocmien.com.service.UserService;
 
 @Configuration
@@ -23,6 +25,7 @@ public class DataInitConfig {
     @Bean
     CommandLineRunner initRolesAndUsers(UserService userService,
                                         RoleRepository roleRepository,
+                                        UserProfileRepository userProfileRepository,
                                         PasswordEncoder passwordEncoder) {
         return args -> {
             try {
@@ -38,12 +41,12 @@ public class DataInitConfig {
                 }
 
                 // 2. Tạo Admin
-                createOrUpdateUser(userService, roleRepository, passwordEncoder,
-                        "admin@example.com", "admin", "admin123", "0123456789", RoleName.ADMIN);
+                createOrUpdateUser(userService, roleRepository, userProfileRepository, passwordEncoder,
+                        "admin@example.com", "admin", "admin123", "Quản trị viên", "0123456789", RoleName.ADMIN);
 
                 // 3. Tạo Vendor
-                createOrUpdateUser(userService, roleRepository, passwordEncoder,
-                        "vendor@example.com", "vendor", "123", "0987654321", RoleName.VENDOR);
+                createOrUpdateUser(userService, roleRepository, userProfileRepository, passwordEncoder,
+                        "vendor@example.com", "vendor", "123", "Chủ cửa hàng", "0987654321", RoleName.VENDOR);
 
             } catch (Exception e) {
                 System.err.println("✗ Lỗi khi tạo hoặc cập nhật user: " + e.getMessage());
@@ -54,22 +57,33 @@ public class DataInitConfig {
 
     private void createOrUpdateUser(UserService userService,
                                     RoleRepository roleRepository,
+                                    UserProfileRepository userProfileRepository,
                                     PasswordEncoder passwordEncoder,
                                     String email,
                                     String username,
                                     String rawPassword,
+                                    String fullName,
                                     String phone,
                                     RoleName roleName) {
 
         User user = userService.findByEmail(email).orElseGet(User::new);
         user.setEmail(email);
-        user.setUsername(username);
+        user.setUsername(username);   
         user.setPassword(passwordEncoder.encode(rawPassword));
         user.setPhone(phone);
         user.setActive(true);
         user.setRole(roleRepository.findByRoleName(roleName)
                 .orElseThrow(() -> new RuntimeException("Role " + roleName + " không tồn tại!")));
         userService.save(user);
+        
+        
+     // Kiểm tra xem user đã có profile chưa
+        UserProfile userPro = userProfileRepository.findByUser(user)
+                .orElse(new UserProfile());
+        userPro.setFullName(fullName);
+        userPro.setUser(user); // Gắn user vào profile
+        userProfileRepository.save(userPro);
+        
 
         System.out.println("✓ User " + username + " đã được tạo hoặc cập nhật với role " + roleName);
     }

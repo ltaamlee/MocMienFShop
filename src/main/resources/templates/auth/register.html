@@ -1,13 +1,16 @@
 <!DOCTYPE html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
 <head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Đăng ký | Mộc Miên Flower Shop</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Đăng ký | Mộc Miên Flower Shop</title>
 
-	<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
-	<link rel="stylesheet" th:href="@{/styles/css/auth.css}">
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" />
+<link
+	href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap"
+	rel="stylesheet">
+<link rel="stylesheet" th:href="@{/styles/css/auth.css}">
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" />
 </head>
 <body>
 	<div class="register-container">
@@ -16,45 +19,55 @@
 
 			<form th:action="@{/register}" th:object="${user}" method="post">
 				<!-- Hiển thị lỗi -->
-				<div th:if="${error}" class="alert alert-danger" 
-				     style="background-color: #ffe0e0; color: #a60000; padding: 10px; border-radius: 8px; margin-bottom: 15px; text-align: center;">
-					<span th:text="${error}"></span>
-				</div>
+				<div class="form-group full-width">
 
-				<!-- Hiển thị thành công -->
-				<div th:if="${success}" class="alert alert-success"
-				     style="background-color: #e0ffe0; color: #007a00; padding: 10px; border-radius: 8px; margin-bottom: 15px; text-align: center;">
-					<span th:text="${success}"></span>
+					<div th:if="${error}" class="alert alert-error"
+						style="background-color: #ffe0e0; color: #a60000; padding: 10px; border-radius: 8px; margin-bottom: 15px; text-align: center;">
+						<span th:text="${error}"></span>
+					</div>
+
+
+					<!-- Hiển thị thành công -->
+					<div th:if="${success}" class="alert alert-success"
+						style="background-color: #e0ffe0; color: #007a00; padding: 10px; border-radius: 8px; margin-bottom: 15px; text-align: center;">
+						<span th:text="${success}"></span>
+					</div>
 				</div>
 
 				<!-- Username -->
-				<div class="form-group">
-					<label for="username">Tên đăng nhập</label>
-					<input type="text" id="username" th:field="*{username}" required>
+				<div class="form-group full-width">
+
+					<div class="form-group">
+						<label for="username">Tên đăng nhập</label> <input type="text"
+							id="username" th:field="*{username}" required>
+					</div>
 				</div>
 
 				<!-- Full name -->
-				<div class="form-group">
-					<label for="fullName">Họ và tên</label>
-					<input type="text" id="fullName" name="fullName" required>
+				<div class="form-group full-width">
+
+					<div class="form-group">
+						<label for="fullName">Họ và tên</label> <input type="text"
+							id="fullName" name="fullName" required>
+					</div>
 				</div>
 
 				<!-- Email -->
 				<div class="form-group full-width">
-					<label for="email">Email</label>
-					<input type="email" id="email" th:field="*{email}" required>
+					<label for="email">Email</label> <input type="email" id="email"
+						th:field="*{email}" required>
 				</div>
 
 				<!-- Password -->
 				<div class="form-group full-width">
-					<label for="password">Mật khẩu</label>
-					<input type="password" id="password" th:field="*{password}" required>
+					<label for="password">Mật khẩu</label> <input type="password"
+						id="password" th:field="*{password}" required>
 				</div>
 
 				<!-- Phone -->
 				<div class="form-group full-width">
-					<label for="phone">Số điện thoại</label>
-					<input type="text" id="phone" th:field="*{phone}" required>
+					<label for="phone">Số điện thoại</label> <input type="text"
+						id="phone" th:field="*{phone}" required>
 				</div>
 
 				<button type="submit" class="btn">Đăng ký</button>
@@ -63,11 +76,8 @@
 			<div class="divider">hoặc</div>
 
 			<div class="social-register">
-				<a href="/oauth2/authorization/google" class="btn-google">
-					<i class="fab fa-google"></i> Đăng ký với Google
-				</a>
-				<a href="/oauth2/authorization/facebook" class="btn-facebook">
-					<i class="fab fa-facebook-f"></i> Đăng ký với Facebook
+				<a href="/oauth2/authorization/google" class="btn-google"> <i
+					class="fab fa-google"></i> Đăng ký với Google
 				</a>
 			</div>
 

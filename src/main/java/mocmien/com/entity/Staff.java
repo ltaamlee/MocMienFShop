@@ -44,6 +44,9 @@ public class Staff {
     
     @Column(name = "idCard", unique = true, columnDefinition = "varchar(20)" )
     private String idCard;
+    
+    @Column(name = "fullName", columnDefinition = "nvarchar(500)" )
+    private String fullName;
 
     @Column(name = "position", columnDefinition = "nvarchar(100)")
     private StaffPosition position; // Chức vụ (ví dụ: nhân viên bán hàng, quản lý kho)

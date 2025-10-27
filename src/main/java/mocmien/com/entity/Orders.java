@@ -36,7 +36,7 @@ public class Orders {
     // Khóa ngoại: Khách hàng
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "customerId", referencedColumnName = "id", nullable = false)
-    private Customer customer;
+    private UserProfile customer;
 
     // Khóa ngoại: Cửa hàng
     @ManyToOne(fetch = FetchType.LAZY)

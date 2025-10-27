@@ -20,7 +20,7 @@ public interface UserService {
 	// -----------------------
     User save(User user);
 
-    Optional<User> login(String usenameOrEmail, String password);
+    Optional<User> login(String usernameOrEmail, String password);
     Optional<User> register(User user, RoleName roleName, String fullName);
     User createOAuthUser(String email, String fullName);
     

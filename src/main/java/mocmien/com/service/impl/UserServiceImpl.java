@@ -11,14 +11,14 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import mocmien.com.entity.Customer;
 import mocmien.com.entity.Level;
 import mocmien.com.entity.Role;
 import mocmien.com.entity.User;
+import mocmien.com.entity.UserProfile;
 import mocmien.com.enums.Rank;
 import mocmien.com.enums.RoleName;
 import mocmien.com.enums.UserStatus;
-import mocmien.com.repository.CustomerRepository;
+import mocmien.com.repository.UserProfileRepository;
 import mocmien.com.repository.LevelRepository;
 import mocmien.com.repository.RoleRepository;
 import mocmien.com.repository.UserRepository;
@@ -32,7 +32,7 @@ public class UserServiceImpl implements UserService {
 	@Autowired
 	private UserRepository userRepository;
 	@Autowired
-	private CustomerRepository customerRepository;
+	private UserProfileRepository customerRepository;
 	@Autowired
 	private LevelRepository levelRepository;
 	@Autowired
@@ -48,7 +48,7 @@ public class UserServiceImpl implements UserService {
 	// LOGIN VỚI GOOGLE
 	@Override
 	public User createOAuthUser(String email, String fullName) {
-
+	    // Kiểm tra user đã tồn tại
 	    Optional<User> existingUserOpt = userRepository.findByEmail(email);
 	    if (existingUserOpt.isPresent()) {
 	        User existingUser = existingUserOpt.get();
@@ -57,13 +57,11 @@ public class UserServiceImpl implements UserService {
 	        return userRepository.save(existingUser);
 	    }
 
-	    // Tạo User mới
+	    // Tạo user mới
 	    User user = new User();
 	    user.setEmail(email);
-	    user.setUsername(email.split("@")[0]);
+	    user.setUsername(email); // dùng email làm username để JWT khớp
 
-	    // Nếu phone là NOT NULL, set giá trị tạm
-	    user.setPhone("0000000000"); // giá trị placeholder
 	    user.setPassword(passwordEncoder.encode(UUID.randomUUID().toString()));
 	    user.setActive(true);
 	    user.setStatus(UserStatus.ONLINE);
@@ -75,15 +73,13 @@ public class UserServiceImpl implements UserService {
 
 	    User savedUser = userRepository.save(user);
 
-	    // Tạo Customer
-	    Customer customer = new Customer();
+	    // Tạo Customer liên kết
+	    UserProfile customer = new UserProfile();
 	    customer.setUser(savedUser);
 	    customer.setFullName(fullName);
-	    
+
 	    Level basicLevel = levelRepository.findByName(Rank.NEW)
 	            .orElseThrow(() -> new RuntimeException("Level NEW không tồn tại"));
-	    
-	    // Nếu level là NOT NULL, set giá trị mặc định
 	    customer.setLevel(basicLevel);
 	    customerRepository.save(customer);
 
@@ -92,31 +88,39 @@ public class UserServiceImpl implements UserService {
 
 
 	@Override
-	public Optional<User> login(String Username, String password) {
-		Optional<User> userOpt = userRepository.findByUsername(Username);
+	public Optional<User> login(String usernameOrEmail, String password) {
+	    // Tìm user theo username hoặc email
+	    Optional<User> userOpt = userRepository.findByUsername(usernameOrEmail);
+	    if (userOpt.isEmpty()) {
+	        userOpt = userRepository.findByEmail(usernameOrEmail);
+	    }
 
-		User user = userOpt.get();
+	    // Không tìm thấy user
+	    if (userOpt.isEmpty()) {
+	        throw new RuntimeException("Tài khoản không tồn tại!");
+	    }
 
-		boolean passwordMatch = passwordEncoder.matches(password, user.getPassword());
-		UserStatus status = user.getStatus();
+	    User user = userOpt.get();
 
-		System.out.printf("[LOGIN] User: %s | Role: %s | Status: %s | Password match: %s%n", user.getUsername(),
-				user.getRole().getRoleName(), status, passwordMatch);
+	    // Kiểm tra mật khẩu
+	    boolean passwordMatch = passwordEncoder.matches(password, user.getPassword());
+	    UserStatus status = user.getStatus();
 
-		// Kiểm tra trạng thái
-		if (!user.isActive()) {
-			System.out.println("[LOGIN] User không được phép đăng nhập (status = " + status + ")");
-			return Optional.empty();
-		}
+	    System.out.printf("[LOGIN] User: %s | Role: %s | Status: %s | Password match: %s%n",
+	            user.getUsername(), user.getRole().getRoleName(), status, passwordMatch);
 
-		// Kiểm tra mật khẩu
-		if (!passwordMatch) {
-			System.out.println("[LOGIN] Mật khẩu không đúng");
-			return Optional.empty();
-		}
+	    // Kiểm tra trạng thái hoạt động
+	    if (!user.isActive()) {
+	        throw new RuntimeException("Tài khoản của bạn đang bị khóa hoặc ngừng hoạt động!");
+	    }
 
-		return Optional.of(user);
+	    if (!passwordMatch) {
+	        throw new RuntimeException("Mật khẩu không chính xác!");
+	    }
+
+	    return Optional.of(user);
 	}
+
 
 	@Override
 	public Optional<User> register(User user, RoleName roleName, String fullName) {
@@ -153,13 +157,18 @@ public class UserServiceImpl implements UserService {
 
 		// Lưu User trước
 		User savedUser = userRepository.save(user);
+		
 
 		// Lưu Customer, liên kết user
-		Customer customer = new Customer();
+		UserProfile customer = new UserProfile();
 		customer.setUser(savedUser);
 		customer.setFullName(fullName);
-		customerRepository.save(customer);
-
+		
+		Level basicLevel = levelRepository.findByName(Rank.NEW)
+	            .orElseThrow(() -> new RuntimeException("Level NEW không tồn tại"));
+	    customer.setLevel(basicLevel);
+	    customerRepository.save(customer);
+		
 		return Optional.of(savedUser);
 	}
 
@@ -194,9 +203,13 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public void setStatus(Integer userId, UserStatus status) {
-		// TODO Auto-generated method stub
-
+	    userRepository.findById(userId).ifPresent(user -> {
+	        user.setStatus(status);
+	        userRepository.save(user);
+	        System.out.println("[USER STATUS] " + user.getUsername() + " → " + status);
+	    });
 	}
+
 
 	@Override
 	public Optional<User> findByEmail(String email) {
@@ -224,8 +237,15 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public Optional<User> findByUsernameOrEmail(String usernameOrEmail) {
-		// TODO Auto-generated method stub
-		return Optional.empty();
+		// Thử tìm theo username
+	    Optional<User> userOpt = userRepository.findByUsername(usernameOrEmail);
+	    
+	    // Nếu không có, thử tìm theo email
+	    if (userOpt.isEmpty()) {
+	        userOpt = userRepository.findByEmail(usernameOrEmail);
+	    }
+	    
+	    return userOpt;
 	}
 
 	@Override
@@ -254,20 +274,17 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public boolean existsByUsername(String username) {
-		// TODO Auto-generated method stub
-		return false;
+		return userRepository.existsByUsername(username);
 	}
 
 	@Override
 	public boolean existsByEmail(String email) {
-		// TODO Auto-generated method stub
-		return false;
+		return userRepository.existsByEmail(email);
 	}
 
 	@Override
 	public boolean existsByPhone(String phone) {
-		// TODO Auto-generated method stub
-		return false;
+		return userRepository.existsByPhone(phone);
 	}
 
 	@Override

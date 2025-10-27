@@ -8,8 +8,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import mocmien.com.entity.User;
 import mocmien.com.enums.RoleName;
 import mocmien.com.security.jwt.JwtTokenProvider;
@@ -37,23 +39,21 @@ public class RegisterController {
     }
 
     @PostMapping("/register")
-    public String processRegister(@ModelAttribute("user") User user,
-                                  @RequestParam("fullName") String fullName,
-                                  Model model,
-                                  HttpServletResponse response) {
-
-    	try {
-            // Gọi service để đăng ký user với role CUSTOMER
+    public String register(@Valid @ModelAttribute("user") User user,
+                           @RequestParam("fullName") String fullName,
+                           Model model) {
+        try {
             userService.register(user, RoleName.CUSTOMER, fullName);
-
-            // Sau khi đăng ký thành công, hiển thị thông báo
-            model.addAttribute("success", "Đăng ký thành công! Vui lòng đăng nhập.");
-            return "auth/login"; // Chuyển hướng tới trang login
-
-        } catch (RuntimeException e) {
-            // Nếu có lỗi (email hoặc username trùng, role không tồn tại, v.v.)
-            model.addAttribute("error", e.getMessage());
+            model.addAttribute("success", "Đăng ký thành công! Bạn có thể đăng nhập ngay.");
+            // Reset lại form
+            model.addAttribute("user", new User());
+            return "auth/register"; // vẫn ở trang đăng ký
+        } catch (RuntimeException ex) {
+            model.addAttribute("error", ex.getMessage());
             return "auth/register";
-        } 
+        }
     }
+
+
+
 }

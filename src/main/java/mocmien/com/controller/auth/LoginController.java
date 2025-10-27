@@ -43,69 +43,42 @@ public class LoginController {
     public String login(@Valid @ModelAttribute LoginRequest loginRequest,
                         Model model,
                         HttpServletResponse response) {
+        try {
+            // Gọi service để xác thực user
+            Optional<User> userOpt = userService.login(loginRequest.getUsername(), loginRequest.getPassword());
+            User user = userOpt.orElseThrow(() -> new RuntimeException("Đăng nhập thất bại!"));
 
-        Optional<User> userOpt = userService.login(loginRequest.getUsername(), loginRequest.getPassword());
+            // Cập nhật trạng thái ONLINE + thời gian đăng nhập
+            user.setStatus(UserStatus.ONLINE);
+            user.setLastLoginAt(LocalDateTime.now());
+            userService.save(user);
 
-        if (userOpt.isEmpty()) {
-            model.addAttribute("error", "Tên đăng nhập hoặc mật khẩu không đúng / Tài khoản không thể đăng nhập / Tài khoản ngừng hoạt động!");
+            // Tạo JWT token cookie
+            String token = tokenProvider.generateToken(user.getUsername());
+            Cookie cookie = new Cookie("JWT_TOKEN", token);
+            cookie.setHttpOnly(true);
+            cookie.setPath("/");
+            cookie.setMaxAge(24 * 60 * 60); // 1 ngày
+            response.addCookie(cookie);
+
+            // Điều hướng theo role
+            return switch (user.getRole().getRoleName()) {
+                case ADMIN -> "redirect:/admin/dashboard";
+                case VENDOR -> "redirect:/vendor/dashboard";
+                case SHIPPER -> "redirect:/shipper/dashboard";
+                case CUSTOMER -> "redirect:/home";
+                default -> "redirect:/login";
+            };
+
+        } catch (RuntimeException ex) {
+            // Nếu có lỗi (VD: tài khoản không tồn tại, sai mật khẩu,...)
+            model.addAttribute("error", ex.getMessage());
             return "auth/login";
         }
-
-        User user = userOpt.get();
-
-        // Set status ONLINE + cập nhật last login
-        user.setStatus(UserStatus.ONLINE);
-        user.setLastLoginAt(LocalDateTime.now());
-        userService.save(user);
-
-        // Tạo JWT cookie
-        String token = tokenProvider.generateToken(user.getUsername());
-        Cookie cookie = new Cookie("JWT_TOKEN", token);
-        cookie.setHttpOnly(true);
-        cookie.setPath("/");
-        cookie.setMaxAge(24 * 60 * 60);
-        response.addCookie(cookie);
-
-        // Redirect theo role
-        return switch (user.getRole().getRoleName()) {
-            case ADMIN -> "redirect:/admin/dashboard";
-            case VENDOR -> "redirect:/vendor/dashboard";
-            case SHIPPER -> "redirect:/shipper/dashboard";
-            case CUSTOMER -> "redirect:/home";
-            default -> "redirect:/login";
-        };
     }
 
-    // ===================== GOOGLE / OAUTH LOGIN =====================
-    @GetMapping("/oauth2/loginSuccess")
-    public String oauth2LoginSuccess(@AuthenticationPrincipal CustomUserDetails userDetails,
-                                     HttpServletResponse response) {
 
-        User user = userDetails.getUser();
-
-        // Set ONLINE + lastLoginAt
-        user.setStatus(UserStatus.ONLINE);
-        user.setLastLoginAt(LocalDateTime.now());
-        userService.save(user);
-
-        // JWT cookie
-        String token = tokenProvider.generateToken(user.getUsername());
-        Cookie cookie = new Cookie("JWT_TOKEN", token);
-        cookie.setHttpOnly(true);
-        cookie.setPath("/");
-        cookie.setMaxAge(24 * 60 * 60);
-        response.addCookie(cookie);
-
-        // Redirect theo role
-        return switch (user.getRole().getRoleName()) {
-            case ADMIN -> "redirect:/admin/dashboard";
-            case VENDOR -> "redirect:/vendor/dashboard";
-            case SHIPPER -> "redirect:/shipper/dashboard";
-            case CUSTOMER -> "redirect:/home";
-            default -> "redirect:/login";
-        };
-    }
-
+  
     // ===================== REFRESH TOKEN =====================
     @GetMapping("/refresh")
     public String refreshToken(HttpServletResponse response,
@@ -129,8 +102,20 @@ public class LoginController {
 
     // ===================== LOGOUT =====================
     @GetMapping("/logout")
-    public String logout(@AuthenticationPrincipal CustomUserDetails userDetails,
+    public String logout(@CookieValue(value = "JWT_TOKEN", required = false) String jwtToken,
                          HttpServletResponse response) {
+
+        // Nếu có token thì tìm user từ đó
+        if (jwtToken != null && tokenProvider.validateToken(jwtToken)) {
+            String username = tokenProvider.getUsernameFromToken(jwtToken);
+            Optional<User> userOpt = userService.findByUsername(username);
+
+            if (userOpt.isPresent()) {
+                User user = userOpt.get();
+                user.setStatus(UserStatus.OFFLINE);
+                userService.save(user);
+            }
+        }
 
         // Xóa cookie
         Cookie accessCookie = new Cookie("JWT_TOKEN", null);
@@ -145,16 +130,45 @@ public class LoginController {
         refreshCookie.setMaxAge(0);
         response.addCookie(refreshCookie);
 
-        // Set user OFFLINE
-        if (userDetails != null) {
-            User user = userDetails.getUser();
-            user.setStatus(UserStatus.OFFLINE);
-            userService.save(user);
-        }
-
         // Xóa context
         SecurityContextHolder.clearContext();
 
         return "redirect:/home";
     }
+    
+    // ===================== LOGOUT WITH GOOGLE=====================
+    @GetMapping("/logout/google")
+    public String logoutGoogle(@CookieValue(value = "JWT_TOKEN", required = false) String jwtToken,
+                               HttpServletResponse response) {
+
+        if (jwtToken != null && tokenProvider.validateToken(jwtToken)) {
+            String username = tokenProvider.getUsernameFromToken(jwtToken);
+            Optional<User> userOpt = userService.findByUsername(username);
+            userOpt.ifPresent(user -> {
+                user.setStatus(UserStatus.OFFLINE);
+                userService.save(user);
+            });
+        }
+
+        // Xóa cookie JWT
+        Cookie jwtCookie = new Cookie("JWT_TOKEN", null);
+        jwtCookie.setHttpOnly(true);
+        jwtCookie.setPath("/");
+        jwtCookie.setMaxAge(0);
+        response.addCookie(jwtCookie);
+
+        // Xóa refresh token nếu có
+        Cookie refreshCookie = new Cookie("REFRESH_TOKEN", null);
+        refreshCookie.setHttpOnly(true);
+        refreshCookie.setPath("/");
+        refreshCookie.setMaxAge(0);
+        response.addCookie(refreshCookie);
+
+        // Xóa context
+        SecurityContextHolder.clearContext();
+
+        return "redirect:https://accounts.google.com/Logout?continue=https://appengine.google.com/_ah/logout?continue=http://localhost:8080/home";
+    }
+
+
 }

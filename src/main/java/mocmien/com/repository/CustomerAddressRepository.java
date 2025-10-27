@@ -3,9 +3,9 @@ package mocmien.com.repository;
 import org.springframework.stereotype.Repository;
 
 import jakarta.transaction.Transactional;
-import mocmien.com.entity.Customer;
 import mocmien.com.entity.CustomerAddress;
 import mocmien.com.entity.Level;
+import mocmien.com.entity.UserProfile;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -25,13 +25,13 @@ public interface CustomerAddressRepository extends JpaRepository<CustomerAddress
 	// =====================================================
     // CRUD cơ bản
     // =====================================================
-    void deleteByCustomer(Customer customer);
+    void deleteByCustomer(UserProfile customer);
 
     // =====================================================
     // 🔍 TÌM KIẾM
     // =====================================================
-    List<CustomerAddress> findByCustomer(Customer customer);
-    Optional<CustomerAddress> findByCustomerAndIsDefaultTrue(Customer customer);
+    List<CustomerAddress> findByCustomer(UserProfile customer);
+    Optional<CustomerAddress> findByCustomerAndIsDefaultTrue(UserProfile customer);
 
     // Tìm tất cả địa chỉ có tỉnh/thành phố hoặc huyện cụ thể
     List<CustomerAddress> findByProvinceContainingIgnoreCase(String province);
@@ -41,23 +41,23 @@ public interface CustomerAddressRepository extends JpaRepository<CustomerAddress
     // =====================================================
     // KIỂM TRA TỒN TẠI
     // =====================================================
-    boolean existsByCustomerAndIsDefaultTrue(Customer customer);
+    boolean existsByCustomerAndIsDefaultTrue(UserProfile customer);
     boolean existsByLineAndWardAndDistrictAndProvince(String line, String ward, String district, String province);
 
     // =====================================================
     // THỐNG KÊ & ĐẾM
     // =====================================================
-    long countByCustomer(Customer customer);
+    long countByCustomer(UserProfile customer);
 
     // =====================================================
     // PHÂN TRANG / SẮP XẾP
     // =====================================================
-    Page<CustomerAddress> findByCustomer(Customer customer, Pageable pageable);
+    Page<CustomerAddress> findByCustomer(UserProfile customer, Pageable pageable);
     Page<CustomerAddress> findByProvinceContainingIgnoreCase(String province, Pageable pageable);
 
     // =====================================================
     // CUSTOM QUERIES KHÁC
     // =====================================================
     // Bỏ mặc định tất cả địa chỉ của khách hàng (dùng khi set địa chỉ mới là mặc định)
-    void deleteByCustomerAndIsDefaultTrue(Customer customer);
+    void deleteByCustomerAndIsDefaultTrue(UserProfile customer);
 }
