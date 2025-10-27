@@ -1,51 +1,84 @@
 <!DOCTYPE html>
-<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{customer/layout}">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mộc Miên Flower Shop</title>
-
-<link
-	href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap"
-	rel="stylesheet">
-<link rel="stylesheet" href="/styles/css/customer/base.css">
-<link rel="stylesheet" href="/styles/css/customer/about.css">
-<link rel="stylesheet"
-	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" />
+<title>Mộc Miên Flowers Shop</title>
+<th:block layout:fragment="styles">
+	<link rel="stylesheet" href="/styles/css/customer/base.css">
+	<link rel="stylesheet" href="/styles/css/customer/about.css">
+	<link rel="stylesheet"
+		href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
+</th:block>
 </head>
 <body>
-	<div th:insert="~{customer/fragments/header :: header}"></div>
-	<main class="about-container">
-		<!-- Giới thiệu -->
-		<section class="about-card">
-			<h3>Về Mộc Miên Flower Shop</h3>
-			<p>Mộc Miên Flower Shop được thành lập với niềm đam mê mang đến
-				những đóa hoa tươi thắm, góp phần lan tỏa yêu thương và cảm xúc
-				trong từng khoảnh khắc.</p>
-		</section>
+	<div layout:fragment="content">
+		<main class="about-container">
+			<!-- Giới thiệu -->
+			<section class="about-card">
+				<h3>Về Mộc Miên Flower Shop</h3>
+				<p>4Petals Flower Shop được thành lập với niềm đam mê mang đến
+					những đóa hoa tươi thắm, góp phần lan tỏa yêu thương và cảm xúc
+					trong từng khoảnh khắc.</p>
+			</section>
 
-		<!-- Sứ mệnh -->
-		<section class="about-card">
-			<h3>Sứ mệnh của chúng tôi</h3>
-			<p>Chúng tôi không chỉ bán hoa — chúng tôi gửi gắm thông điệp yêu
-				thương. Mỗi bó hoa được cắm bằng cả tâm huyết, giúp khách hàng
-				truyền tải tình cảm chân thành nhất.</p>
-		</section>
+			<!-- Sứ mệnh -->
+			<section class="about-card">
+				<h3>Sứ mệnh của chúng tôi</h3>
+				<p>Chúng tôi không chỉ bán hoa — chúng tôi gửi gắm thông điệp
+					yêu thương. Mỗi bó hoa được cắm bằng cả tâm huyết, giúp khách hàng
+					truyền tải tình cảm chân thành nhất.</p>
+			</section>
 
-		<!-- Giá trị -->
-		<section class="about-card">
-			<h3>Giá trị cốt lõi</h3>
-			<ul>
-				<li><i class="fa-solid fa-leaf"></i> Tươi mới mỗi ngày</li>
-				<li><i class="fa-solid fa-heart"></i> Tận tâm với khách hàng</li>
-				<li><i class="fa-solid fa-hand-holding-heart"></i> Chân thành &
-					tinh tế</li>
-			</ul>
-		</section>
-	</main>
+			<!-- Giá trị -->
+			<section class="about-card">
+				<h3>Giá trị cốt lõi</h3>
+				<ul>
+					<li><i class="fa-solid fa-leaf"></i> Tươi mới mỗi ngày</li>
+					<li><i class="fa-solid fa-heart"></i> Tận tâm với khách hàng</li>
+					<li><i class="fa-solid fa-hand-holding-heart"></i> Chân thành
+						& tinh tế</li>
+				</ul>
+			</section>
 
+			<!-- Dịch vụ -->
+			<section class="about-card">
+				<h3>💐 Dịch vụ nổi bật</h3>
+				<p>Thiết kế hoa theo yêu cầu – Mỗi khách hàng là một câu chuyện,
+					mỗi bó hoa là một lời kể. Giao hoa trong ngày – Kịp thời trao gửi
+					yêu thương, không để cảm xúc bị trễ nải. Thanh toán linh hoạt – Dễ
+					dàng, tiện lợi và an toàn.</p>
+			</section>
 
+			<!-- Cam kết-->
+			<section class="about-card">
+				<h3>🤝 Cam kết của Mộc Miên</h3>
+				<p>Chúng tôi tin rằng hoa không chỉ là một món quà, mà còn là sự
+					sẻ chia, là hơi ấm, là một niềm vui nhỏ bé. Hoa tươi mới mỗi ngày.
+					Giá cả minh bạch, hợp lý. Hỗ trợ đổi trả nếu khách hàng chưa hài
+					lòng.</p>
+			</section>
 
-	<div th:insert="~{customer/fragments/footer :: footer}"></div>
-</body>
+			<!-- Liên hệ-->
+			<section class="about-card">
+				<h3>📞 Liên hệ với chúng tôi</h3>
+				<p>
+					📍 123 Đường Hoa Tươi, Quận Bình Thạnh, TP.HCM<br> 📞 Hotline:
+					<a href="tel:0909123456">0909 123 456</a><br> 📧 Email: <a
+						href="mailto:contact@4mocmien.vn">contact@4petals.vn</a><br>
+					🌐 Facebook / Instagram: <a href="https://facebook.com/4Mocmien">@MocMien</a>
+				</p>
+
+			</section>
+		</main>
+	</div>
+<!-- 	<th:block layout:fragment="scripts">
+		<script src="/styles/js/customer/header.js"></script>
+		<script th:src="@{/styles/js/customer/avatar.js}"></script>
+		<script th:src="@{/styles/js/chat.js}"></script>
+	</th:block>
+</body> -->
 </html>
+

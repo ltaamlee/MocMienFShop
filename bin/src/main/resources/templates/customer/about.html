@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mộc Miên Flower Shop</title>
+
+<link
+	href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap"
+	rel="stylesheet">
+<link rel="stylesheet" href="/styles/css/customer/base.css">
+<link rel="stylesheet" href="/styles/css/customer/about.css">
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" />
+</head>
+<body>
+	<div th:insert="~{customer/fragments/header :: header}"></div>
+	<main class="about-container">
+		<!-- Giới thiệu -->
+		<section class="about-card">
+			<h3>Về Mộc Miên Flower Shop</h3>
+			<p>Mộc Miên Flower Shop được thành lập với niềm đam mê mang đến
+				những đóa hoa tươi thắm, góp phần lan tỏa yêu thương và cảm xúc
+				trong từng khoảnh khắc.</p>
+		</section>
+
+		<!-- Sứ mệnh -->
+		<section class="about-card">
+			<h3>Sứ mệnh của chúng tôi</h3>
+			<p>Chúng tôi không chỉ bán hoa — chúng tôi gửi gắm thông điệp yêu
+				thương. Mỗi bó hoa được cắm bằng cả tâm huyết, giúp khách hàng
+				truyền tải tình cảm chân thành nhất.</p>
+		</section>
+
+		<!-- Giá trị -->
+		<section class="about-card">
+			<h3>Giá trị cốt lõi</h3>
+			<ul>
+				<li><i class="fa-solid fa-leaf"></i> Tươi mới mỗi ngày</li>
+				<li><i class="fa-solid fa-heart"></i> Tận tâm với khách hàng</li>
+				<li><i class="fa-solid fa-hand-holding-heart"></i> Chân thành &
+					tinh tế</li>
+			</ul>
+		</section>
+	</main>
+
+
+
+	<div th:insert="~{customer/fragments/footer :: footer}"></div>
+</body>
+</html>

@@ -51,7 +51,7 @@ public class SecurityConfig {
                     "/product/**", "/about", "/contact", "/error",
                     "/styles/**", "/css/**", "/js/**", "/images/**",
                     "/image/**", "/webjars/**", "/forgot-password/**",
-                    "/verify-otp/**", "/api/payment/momo/callback",
+                    "/verify-otp/**","/reset-password/**", "/api/payment/momo/callback",
                     "/oauth2/**" // OAuth2 endpoints
                 ).permitAll()
                 // Chỉ admin mới truy cập /admin/**

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trang chủ Admin</title>
+<link
+	href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap"
+	rel="stylesheet">
+<link rel="stylesheet" href="/styles/css/admin/header.css">
+<link rel="stylesheet" href="/styles/css/admin/sidebar.css">
+<link rel="stylesheet" href="/styles/css/admin/main.css">
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" />
+</head>
+<body>
+	<div th:insert="~{admin/fragments/header :: header}"></div>
+
+	<main>
+		<div th:insert="~{admin/fragments/sidebar :: sidebar}"></div>
+
+		<h1>Chào mừng đến với trang quản trị</h1>
+		<p>Đây là trang chủ dành cho quản trị viên.</p>
+	</main>
+
+	<div th:insert="~{'admin/fragments/footer' :: footer}"></div>
+
+</body>
+</html>

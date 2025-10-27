@@ -14,12 +14,18 @@
 <body>
 	<div class="login-container">
 		<div class="login-card">
+
+			<div class="logo">
+				<a href="/home"> <img src="/styles/image/logo.png" alt="Logo">
+				</a>
+			</div>
 			<h2>Mộc Miên</h2>
+
 			<form action="/login" method="post">
-			
-			<!-- Hiển thị lỗi -->
-				<div th:if="${error}" class="alert alert-danger" 
-				     style="background-color: #ffe0e0; color: #a60000; padding: 10px; border-radius: 8px; margin-bottom: 15px; text-align: center;">
+
+				<!-- Hiển thị lỗi -->
+				<div th:if="${error}" class="alert alert-danger">
+					
 					<span th:text="${error}"></span>
 				</div>
 
@@ -33,6 +39,9 @@
 				</div>
 				<button type="submit" class="btn">Đăng nhập</button>
 			</form>
+			<p class="login-link">
+				<a th:href="@{/forgot-password}"> Quên mật khẩu</a>
+			</p>
 
 			<div class="divider">hoặc</div>
 

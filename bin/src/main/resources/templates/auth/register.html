@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Đăng ký | Mộc Miên Flower Shop</title>
+<link
+	href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap"
+	rel="stylesheet">
+<link rel="stylesheet" th:href="@{/styles/css/auth.css}">
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" />
+</head>
+<body>
+	<div class="register-container">
+		<div class="register-card">
+			<h2>Mộc Miên</h2>
+			<form th:action="@{/register}" method="post">
+				<!-- Dòng 1: Username và Full Name -->
+				<div class="form-group">
+					<label for="username">Tên đăng nhập</label> <input type="text"
+						id="username" name="username" required>
+				</div>
+				<div class="form-group">
+					<label for="fullName">Họ và tên</label> <input type="text"
+						id="fullName" name="fullName" required>
+				</div>
+
+				<!-- Dòng 2: Email (full width) -->
+				<div class="form-group full-width">
+					<label for="email">Email</label> <input type="email" id="email"
+						name="email" required>
+				</div>
+
+				<!-- Dòng 3: Password và Phone -->
+				<div class="form-group">
+					<label for="password">Mật khẩu</label> <input type="password"
+						id="password" name="password" required>
+				</div>
+				<div class="form-group">
+					<label for="phone">Số điện thoại</label> <input type="text"
+						id="phone" name="phone">
+				</div>
+
+				<!-- Dòng 4: Address (full width) -->
+				<div class="form-group full-width">
+					<label for="address">Địa chỉ</label> <input type="text"
+						id="address" name="address">
+				</div>
+
+				<button type="submit" class="btn">Đăng ký</button>
+			</form>
+
+			<div class="divider">hoặc</div>
+
+			<div class="social-register">
+				<a href="/oauth2/authorization/google" class="btn-google"> <i
+					class="fab fa-google"></i> Đăng ký với Google
+				</a> <a href="/oauth2/authorization/facebook" class="btn-facebook">
+					<i class="fab fa-facebook-f"></i> Đăng ký với Facebook
+				</a>
+			</div>
+
+			<p class="login-link">
+				Đã có tài khoản? <a th:href="@{/login}">Đăng nhập</a>
+			</p>
+		</div>
+	</div>
+</body>
+</html>

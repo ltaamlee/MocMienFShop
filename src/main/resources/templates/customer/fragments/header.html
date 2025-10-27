@@ -56,8 +56,6 @@
                         <div class="avatar" id="avatar-btn">
                             <img th:if="${user != null and user.avatar != null}"
                                  th:src="@{${user.avatar}}" alt="Avatar" class="avatar-img">
-                            <img th:if="${user == null or user.imageUrl == null}"
-                                 src="/images/avatar-default.png" alt="Avatar" class="avatar-img">
                         </div>
 
                         <div class="dropdown" id="user-dropdown">
