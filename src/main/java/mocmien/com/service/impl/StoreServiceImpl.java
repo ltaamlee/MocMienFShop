@@ -85,6 +85,11 @@ public class StoreServiceImpl implements StoreService {
 		
 	}
 
+	@Override
+	public Optional<Store> findById(Integer id) {
+		return storeRepository.findById(id);
+	}
+
 
 
 }

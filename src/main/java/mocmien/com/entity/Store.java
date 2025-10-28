@@ -51,7 +51,9 @@ public class Store {
     @Column(name = "storeName", nullable = false, unique = true, columnDefinition = "nvarchar(500)")
     private String storeName;
 
-
+	@Column(name = "phone", columnDefinition = "varchar(20)")
+	private String phone;
+    
     @Column(name = "address", columnDefinition = "nvarchar(500)")
     private String address;
 
@@ -221,6 +223,16 @@ public class Store {
 	public void setAddress(String address) {
 		this.address = address;
 	}
+
+	public String getPhone() {
+		return phone;
+	}
+
+	public void setPhone(String phone) {
+		this.phone = phone;
+	}
+	
+	
     
 	
     

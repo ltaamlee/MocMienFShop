@@ -5,7 +5,7 @@ function fetchUserStats() {
 		.then(data => {
 			document.getElementById("totalUsersStat").textContent = data.totalUsers-1;
 			document.getElementById("activeUsersStat").textContent = data.activeUsers-1;
-			document.getElementById("inactiveUsersStat").textContent = data.inactiveUsers-1;
+			document.getElementById("inactiveUsersStat").textContent = data.inactiveUsers;
 			document.getElementById("blockedUsersStat").textContent = data.blockedUsers;
 		})
 		.catch(error => console.error("Error fetching user stats:", error));
@@ -117,7 +117,6 @@ function renderUserTable(users) {
             <td>${lastLogin}</td>
             <td>
                 <button class="btn-block" data-id="${user.userId}">${lockIcon}</button>
-                <button class="btn-view" data-id="${user.userId}"><i class="fas fa-eye"></i></button>
                 <button class="btn-delete" onclick="deleteUser(${user.userId})">
                     <i class="fas fa-trash"></i>
                 </button>
@@ -138,6 +137,9 @@ function renderUserTable(users) {
 
 
 function toggleBlockUser(userId) {
+    const confirmAction = confirm("Bạn có chắc muốn khóa/mở khóa user này không?");
+    if (!confirmAction) return; // người dùng hủy => dừng
+
     fetch(`/api/admin/user/${userId}/block`, {
         method: 'PATCH'
     })
@@ -149,9 +151,14 @@ function toggleBlockUser(userId) {
         console.log("User blocked/unblocked:", userId);
         loadUsers(0); // reload danh sách để cập nhật trạng thái
         fetchUserStats(); // cập nhật số liệu thống kê
+        alert("Thao tác thành công!"); // thông báo thành công
     })
-    .catch(error => console.error(error));
+    .catch(error => {
+        console.error(error);
+        alert("Có lỗi xảy ra khi thực hiện thao tác."); // thông báo lỗi
+    });
 }
+
 
 
 function deleteUser(userId) {

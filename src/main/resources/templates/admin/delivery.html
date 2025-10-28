@@ -6,73 +6,108 @@
 <title>Profile</title>
 <th:block layout:fragment="styles">
 	<link rel="stylesheet" href="/styles/css/admin/header.css">
+	<link rel="stylesheet" href="/styles/css/component/modal.css">
+
 </th:block>
 </head>
 <body>
 	<div layout:fragment="content">
-		<div class="account-content">
-			<h2>Admin Profile</h2>
 
-			<div id="alertBox" class="alert" style="display: none;">
-				<i class="fa-solid" id="alertIcon"></i> <span id="alertMessage"></span>
+
+		<!-- THỐNG KÊ NHÀ VẬN CHUYỂN -->
+		<div class="stats-cards">
+			<div class="stat-card total">
+				<h3>Tổng số nhà vận chuyển</h3>
+				<div class="value" id="totalDeliveriesStat"
+					th:text="${totalDeliveries} ?: '0'">0</div>
 			</div>
-
-			<form id="profileForm" class="account-form"
-				enctype="multipart/form-data">
-
-				<!-- Avatar -->
-				<div class="profile-avatar">
-					<img th:src="@{/images/{path}(path=${user.imageUrl})}" alt="Avatar"
-						class="avatar-preview" id="avatarPreview">
-
-					<div class="upload-btn">
-						<label for="file" class="btn-upload"> <i
-							class="fa-solid fa-camera"></i> Thay ảnh
-						</label> <input type="file" id="file" name="file" accept="image/*"
-							onchange="previewAvatar(event)">
-					</div>
-				</div>
-
-				<!-- Cột thông tin -->
-				<div class="form-fields-wrapper form-col">
-					<div class="form-group">
-						<label>Họ và tên:</label> <input type="text" name="name"
-							th:value="${user.nhanVien != null ? user.nhanVien.hoTen : ''}">
-					</div>
-
-					<div class="form-group">
-						<label>Email:</label> <input type="email" name="email"
-							th:value="${user.email}">
-					</div>
-
-					<div class="form-group">
-						<label>Số điện thoại:</label> <input type="text" name="phone"
-							th:value="${user.nhanVien != null ? user.nhanVien.sdt : ''}">
-					</div>
-				</div>
-
-				<div class="form-fields-wrapper form-col">
-					<div class="form-group">
-						<label>Vai trò:</label> <input type="text"
-							th:value="${user.role.roleName}" readonly>
-					</div>
-
-					<div class="form-group">
-						<label>Mật khẩu mới (nếu muốn đổi):</label> <input type="password"
-							name="password">
-					</div>
-				</div>
-
-				<div class="form-save">
-					<button type="submit" class="btn-save">Lưu thay đổi</button>
-				</div>
-			</form>
-
+			<div class="stat-card active">
+				<h3>Đang hoạt động</h3>
+				<div class="value" id="activeDeliveriesStat"
+					th:text="${activeDeliveries} ?: '0'">0</div>
+			</div>
+			<div class="stat-card inactive">
+				<h3>Tạm ngưng</h3>
+				<div class="value" id="inactiveDeliveriesStat"
+					th:text="${inactiveDeliveries} ?: '0'">0</div>
+			</div>
 		</div>
+
+
+		<!-- Nút mở modal -->
+		<button type="button" class="btn btn-primary" data-bs-toggle="modal"
+			data-bs-target="#addDeliveryModal">+ Thêm nhà vận chuyển</button>
+
+		<!-- Modal -->
+		<div class="modal fade" id="addDeliveryModal" tabindex="-1"
+			aria-labelledby="addDeliveryModalLabel" aria-hidden="true">
+			<div class="modal-dialog modal-lg modal-dialog-centered">
+				<div class="modal-content">
+
+					<div class="modal-header bg-primary text-white">
+						<h5 class="modal-title" id="addDeliveryModalLabel">Thêm Nhà
+							Vận Chuyển</h5>
+						<button type="button" class="btn-close btn-close-white"
+							data-bs-dismiss="modal" aria-label="Close"></button>
+					</div>
+
+					<form id="deliveryForm" th:action="@{/admin/delivery/add}"
+						method="post">
+						<div class="modal-body">
+
+							<div class="mb-3">
+								<label class="form-label">Tên nhà vận chuyển *</label> <input
+									type="text" class="form-control" name="deliveryName" required
+									placeholder="Ví dụ: Giao Hàng Nhanh">
+							</div>
+
+							<div class="mb-3">
+								<label class="form-label">Mô tả</label>
+								<textarea class="form-control" name="description" rows="2"
+									placeholder="Nhập mô tả..."></textarea>
+							</div>
+
+							<div class="row">
+								<div class="col-md-4 mb-3">
+									<label class="form-label">Giá cơ bản (₫)</label> <input
+										type="number" step="0.01" class="form-control"
+										name="basePrice" required>
+								</div>
+								<div class="col-md-4 mb-3">
+									<label class="form-label">Giá mỗi km (₫)</label> <input
+										type="number" step="0.01" class="form-control"
+										name="pricePerKM">
+								</div>
+								<div class="col-md-4 mb-3">
+									<label class="form-label">Khoảng cách tối đa (km)</label> <input
+										type="number" class="form-control" name="maxDistance">
+								</div>
+							</div>
+
+							<div class="form-check form-switch mb-3">
+								<input class="form-check-input" type="checkbox" name="isActive"
+									value="true" id="isActiveSwitch"> <label
+									class="form-check-label" for="isActiveSwitch">Kích hoạt
+									nhà vận chuyển</label>
+							</div>
+
+						</div>
+
+						<div class="modal-footer">
+							<button type="button" class="btn btn-secondary"
+								data-bs-dismiss="modal">Hủy</button>
+							<button type="submit" class="btn btn-success">Lưu</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+
+
 	</div>
 
 	<th:block layout:fragment="scripts">
-		<script th:src="@{/styles/js/admin/profile.js}"></script>
+		<script th:src="@{/styles/js/admin/delivery.js}"></script>
 	</th:block>
 </body>
 </html>

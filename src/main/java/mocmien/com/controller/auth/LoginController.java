@@ -7,6 +7,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -41,10 +42,20 @@ public class LoginController {
 
     @PostMapping("/login")
     public String login(@Valid @ModelAttribute LoginRequest loginRequest,
+                        BindingResult bindingResult, // thêm này để bắt lỗi validation
                         Model model,
                         HttpServletResponse response) {
+
+        // Nếu có lỗi validation (VD: username/password trống)
+        if (bindingResult.hasErrors()) {
+            // Chuyển lỗi về model để hiển thị trên trang login
+            bindingResult.getFieldErrors().forEach(error -> {
+                model.addAttribute(error.getField(), error.getDefaultMessage());
+            });
+            return "auth/login"; // quay lại form login
+        }
+
         try {
-            // Gọi service để xác thực user
             Optional<User> userOpt = userService.login(loginRequest.getUsername(), loginRequest.getPassword());
             User user = userOpt.orElseThrow(() -> new RuntimeException("Đăng nhập thất bại!"));
 
@@ -71,11 +82,11 @@ public class LoginController {
             };
 
         } catch (RuntimeException ex) {
-            // Nếu có lỗi (VD: tài khoản không tồn tại, sai mật khẩu,...)
             model.addAttribute("error", ex.getMessage());
             return "auth/login";
         }
     }
+
 
 
   

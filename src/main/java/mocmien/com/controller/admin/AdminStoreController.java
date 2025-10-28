@@ -1,10 +1,15 @@
 package mocmien.com.controller.admin;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -64,6 +69,36 @@ public class AdminStoreController {
         return ResponseEntity.ok().build();
     }
     
+    
+    
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getStore(@PathVariable Integer id) {
+        Optional<Store> storeOpt = storeService.findById(id);
+        if (!storeOpt.isPresent()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Store not found");
+        }
+
+        Store store = storeOpt.get();
+
+        // Tránh LazyInitializationException bằng cách fetch dữ liệu cần thiết
+        Map<String, Object> result = new HashMap<>();
+        result.put("id", store.getId());
+        result.put("storeName", store.getStoreName());
+        result.put("point", store.getPoint());
+        result.put("rating", store.getRating());
+        result.put("address", store.getAddress());
+        result.put("phone", store.getPhone());
+        result.put("isActive", store.isActive());
+        result.put("isOpen", store.isOpen());
+        result.put("vendorName", store.getVendor().getUsername());
+        result.put("levelName", store.getLevel().getName());
+        result.put("avatar", store.getAvatar());
+        result.put("cover", store.getCover());
+        result.put("featureImages", store.getFeatureImages());
+
+        return ResponseEntity.ok(result);
+    }
+
     
     // -----------------------
     // Xóa cửa hàng

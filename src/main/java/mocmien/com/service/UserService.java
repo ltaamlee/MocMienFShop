@@ -52,5 +52,6 @@ public interface UserService {
     List<User> searchByUsername(String keyword);
 
     Page<UserResponse> findAll(String keyword, UserStatus status, Boolean isActive, String roleName, Pageable pageable);
+
     
 }

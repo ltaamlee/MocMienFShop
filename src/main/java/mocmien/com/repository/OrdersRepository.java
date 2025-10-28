@@ -18,9 +18,4 @@ import mocmien.com.entity.Store;
 @Repository
 public interface OrdersRepository extends JpaRepository<Orders, String> {
 
-    // -----------------------
-    // CRUD cơ bản (JpaRepository đã có sẵn)
-    // -----------------------
-    // save, findById, findAll, deleteById, etc.
-
 }

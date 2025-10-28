@@ -10,4 +10,6 @@ import mocmien.com.entity.Delivery;
 @Repository
 public interface DeliveryRepository extends JpaRepository<Delivery, Integer> {
     List<Delivery> findByIsActiveTrue();
+
+    long countByIsActive(boolean isActive);
 }

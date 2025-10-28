@@ -12,7 +12,6 @@
 	<div layout:fragment="content">
 
 
-		<!-- THỐNG KÊ NHANH CỬA HÀNG-->
 		<div class="stats-cards">
 			<div class="stat-card total">
 				<h3>Tổng số cửa hàng</h3>
@@ -37,7 +36,6 @@
 		</div>
 
 
-		<!-- SEARCH + FILTER -->
 		<div class="search-filter-container">
 			<form id="searchFilterForm" th:action="@{/admin/store}" method="get">
 				<div class="search-box">
@@ -54,8 +52,8 @@
 						<label for="statusFilter">Cấp phép:</label> <select
 							id="statusFilter" name="status">
 							<option value="">Tất cả</option>
-							<option value="true" th:selected="${status == 'true'}">Đang hoạt
-								động</option>
+							<option value="true" th:selected="${status == 'true'}">Đang
+								hoạt động</option>
 							<option value="false" th:selected="${status == 'false'}">Bị
 								khóa</option>
 						</select>
@@ -92,7 +90,28 @@
 
 		<div class="pagination" id="storePagination"></div>
 
-	</div>
+		<div class="modal fade" id="storeDetailModal" tabindex="-1"
+			aria-labelledby="storeDetailModalLabel" aria-hidden="true">
+			<div class="modal-dialog modal-dialog-centered">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="storeDetailModalLabel">Chi
+							tiết cửa hàng</h5>
+						<button type="button" class="btn-close" data-bs-dismiss="modal"
+							aria-label="Close"></button>
+					</div>
+					<div class="modal-body">
+						<p>Đang tải...</p>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-secondary"
+							data-bs-dismiss="modal">Đóng</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		</div>
+	
 	<th:block layout:fragment="scripts">
 		<script th:src="@{/styles/js/admin/store.js}"></script>
 	</th:block>

@@ -72,7 +72,12 @@ function renderStoreTable(stores) {
 
 			</td>
             <td>
-                <button class="btn-view" data-id="${store.id}"><i class="fas fa-eye"></i></button>
+			<button class="btn btn-primary btn-sm btn-view" 
+			           data-id="${store.id}" 
+			           data-bs-toggle="modal" 
+			           data-bs-target="#storeDetailModal">
+			       <i class="fas fa-eye"></i>
+			   </button>
                 <button class="btn-delete" data-id="${store.id}"><i class="fas fa-trash"></i></button>
             </td>
         `;
@@ -98,8 +103,38 @@ function renderStoreTable(stores) {
 			}
 		});
 	});
+	
+	// Gắn sự kiện cho nút xem chi tiết
+	document.querySelectorAll('.btn-view').forEach(btn => {
+	    btn.addEventListener('click', function() {
+	        const storeId = this.dataset.id;
+	        openStoreModal(storeId);
+	    });
+	});
+}
 
-
+// ===========================
+// HÀM MỞ MODAL CHI TIẾT
+// ===========================
+function openStoreModal(storeId) {
+    // Gọi API để lấy chi tiết store
+    fetch(`/api/admin/store/${storeId}`)
+        .then(res => res.json())
+        .then(store => {
+            // Gán dữ liệu vào modal
+            document.querySelector('#storeDetailModalLabel').textContent = store.storeName || "Chi tiết cửa hàng";
+            document.querySelector('#storeDetailModal .modal-body').innerHTML = `
+                <p><strong>Chủ cửa hàng:</strong> ${store.vendorName || 'N/A'}</p>
+                <p><strong>Hạng cửa hàng:</strong> ${store.levelName || 'N/A'}</p>
+                <p><strong>Điểm:</strong> ${store.point || 0}</p>
+                <p><strong>Rating:</strong> ${store.rating || 0}</p>
+                <p><strong>Địa chỉ:</strong> ${store.address || 'Chưa cập nhật'}</p>
+            `;
+        })
+        .catch(err => {
+			console.error(err);
+			document.querySelector('#storeDetailModal .modal-body').innerHTML = "<p>Không thể tải chi tiết cửa hàng.</p>";
+		});
 }
 
 
