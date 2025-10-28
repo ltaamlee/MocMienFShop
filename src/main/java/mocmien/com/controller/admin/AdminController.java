@@ -1,5 +1,6 @@
 package mocmien.com.controller.admin;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,10 +12,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import mocmien.com.dto.response.category.CategoryResponse;
+import mocmien.com.entity.Category;
 import mocmien.com.entity.User;
 import mocmien.com.enums.RoleName;
 import mocmien.com.enums.UserStatus;
 import mocmien.com.security.CustomUserDetails;
+import mocmien.com.service.CategoryService;
 import mocmien.com.service.UserService;
 
 @Controller
@@ -24,6 +28,8 @@ public class AdminController {
 
 	@Autowired
 	private UserService userService;
+	@Autowired
+	private CategoryService categoryService;
 
 	// Trang chủ
 	@GetMapping("/dashboard")
@@ -72,7 +78,10 @@ public class AdminController {
 			Optional<User> userOpt = userService.findByUsername(userDetails.getUsername());
 			userOpt.ifPresent(user -> model.addAttribute("user", user));
 		}
-
+		
+        List<CategoryResponse> categories = categoryService.getAllCategories();
+        model.addAttribute("categories", categories);
+        
 		return "admin/category";
 	}
 

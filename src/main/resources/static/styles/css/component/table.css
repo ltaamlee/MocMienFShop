@@ -4,7 +4,8 @@
 .table-employees,
 .table-promotions,
 .table-orders,
-.table-stores{
+.table-stores,
+.table-categories{
     margin-top: 1rem;
     background: rgb(255, 255, 255);
     border-radius: 8px;

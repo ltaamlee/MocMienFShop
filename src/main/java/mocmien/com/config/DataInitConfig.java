@@ -33,7 +33,7 @@ public class DataInitConfig {
                                         PasswordEncoder passwordEncoder) {
         return args -> {
             try {
-                // 1. Tạo tất cả Role nếu chưa tồn tại
+                // 1️⃣ Tạo tất cả Role nếu chưa tồn tại
                 for (RoleName roleName : RoleName.values()) {
                     roleRepository.findByRoleName(roleName).orElseGet(() -> {
                         Role role = new Role();
@@ -44,13 +44,19 @@ public class DataInitConfig {
                     });
                 }
 
-                // 2. Tạo Admin
+                // 2️⃣ Tạo Admin
                 createOrUpdateUser(userService, roleRepository, userProfileRepository, passwordEncoder,
                         "admin@example.com", "admin", "admin123", "Quản trị viên", "0123456789", RoleName.ADMIN);
 
-                // 3. Tạo Vendor
+                // 3️⃣ Tạo 3 Vendor
                 createOrUpdateUser(userService, roleRepository, userProfileRepository, passwordEncoder,
-                        "vendor@example.com", "vendor", "123", "Phương Thi", "0987654321", RoleName.VENDOR);
+                        "vendor1@mocmien.com", "vendor1", "123456", "Nguyễn Văn A", "0981000001", RoleName.VENDOR);
+
+                createOrUpdateUser(userService, roleRepository, userProfileRepository, passwordEncoder,
+                        "vendor2@mocmien.com", "vendor2", "123456", "Trần Thị B", "0981000002", RoleName.VENDOR);
+
+                createOrUpdateUser(userService, roleRepository, userProfileRepository, passwordEncoder,
+                        "vendor3@mocmien.com", "vendor3", "123456", "Lê Văn C", "0981000003", RoleName.VENDOR);
 
             } catch (Exception e) {
                 System.err.println("✗ Lỗi khi tạo hoặc cập nhật user: " + e.getMessage());
@@ -72,22 +78,19 @@ public class DataInitConfig {
 
         User user = userService.findByEmail(email).orElseGet(User::new);
         user.setEmail(email);
-        user.setUsername(username);   
+        user.setUsername(username);
         user.setPassword(passwordEncoder.encode(rawPassword));
         user.setPhone(phone);
         user.setActive(true);
         user.setRole(roleRepository.findByRoleName(roleName)
                 .orElseThrow(() -> new RuntimeException("Role " + roleName + " không tồn tại!")));
         userService.save(user);
-        
-        
-     // Kiểm tra xem user đã có profile chưa
-        UserProfile userPro = userProfileRepository.findByUser(user)
-                .orElse(new UserProfile());
+
+        // Kiểm tra xem user đã có profile chưa
+        UserProfile userPro = userProfileRepository.findByUser(user).orElse(new UserProfile());
         userPro.setFullName(fullName);
         userPro.setUser(user); // Gắn user vào profile
         userProfileRepository.save(userPro);
-        
 
         System.out.println("✓ User " + username + " đã được tạo hoặc cập nhật với role " + roleName);
     }
@@ -113,52 +116,78 @@ public class DataInitConfig {
             System.out.println("Init levels hoàn tất.");
         };
     }
-    
-    
-//    @Bean
-//    CommandLineRunner initStores(StoreRepository storeRepository, UserRepository userRepository, LevelRepository levelRepository) {
-//        return args -> {
-//            // Lấy vendor
-//            User vendor = userRepository.findById(2).orElse(null);
-//            if (vendor == null) {
-//                System.out.println("Vendor with ID=2 not found!");
-//                return;
-//            }
-//
-//            // Lấy Level mặc định
-//            Level defaultLevel = levelRepository.findById(1).orElse(null);
-//
-//            // Tạo store mẫu
-//            Store store1 = new Store();
-//            store1.setStoreName("Cửa hàng Hoa Mai");
-//            store1.setVendor(vendor);
-//            store1.setLevel(defaultLevel);
-//            store1.setActive(true);
-//            store1.setOpen(true);
-//            store1.setPoint(100);
-//            store1.seteWallet(BigDecimal.valueOf(5000));
-//            store1.setRating(BigDecimal.valueOf(4.5));
-//            store1.setAvatar(null);
-//            store1.setCover(null);
-//            store1.setFeatureImages(List.of());
-//
-//            Store store2 = new Store();
-//            store2.setStoreName("Cửa hàng Bách Hóa Xanh");
-//            store2.setVendor(vendor);
-//            store2.setLevel(defaultLevel);
-//            store2.setActive(true);
-//            store2.setOpen(false);
-//            store2.setPoint(80);
-//            store2.seteWallet(BigDecimal.valueOf(3000));
-//            store2.setRating(BigDecimal.valueOf(4.0));
-//            store2.setAvatar(null);
-//            store2.setCover(null);
-//            store2.setFeatureImages(List.of());
-//
-//            // Lưu vào database
-//            storeRepository.saveAll(List.of(store1, store2));
-//
-//            System.out.println("Sample stores created!");
-//        };
-//    }
+
+    // 4️⃣ Tạo 3 cửa hàng cho 3 Vendor
+    @Bean
+    CommandLineRunner initStores(StoreRepository storeRepository, 
+                                 UserRepository userRepository, 
+                                 LevelRepository levelRepository) {
+        return args -> {
+            Level defaultLevel = levelRepository.findAll().stream().findFirst().orElse(null);
+            if (defaultLevel == null) {
+                System.out.println("⚠ Không tìm thấy Level mặc định. Bỏ qua tạo Store.");
+                return;
+            }
+
+            // Vendor 1
+            userRepository.findByEmail("vendor1@mocmien.com").ifPresent(vendor -> {
+                if (storeRepository.findByVendor(vendor).isEmpty()) {
+                    Store store = new Store();
+                    store.setStoreName("Cửa hàng Mộc Miên");
+                    store.setVendor(vendor);
+                    store.setLevel(defaultLevel);
+                    store.setActive(true);
+                    store.setOpen(true);
+                    store.setPoint(150);
+                    store.seteWallet(BigDecimal.valueOf(5000));
+                    store.setRating(BigDecimal.valueOf(4.7));
+                    store.setAvatar(null);
+                    store.setCover(null);
+                    store.setFeatureImages(List.of());
+                    storeRepository.save(store);
+                    System.out.println("✓ Store của vendor1 được tạo!");
+                }
+            });
+
+            // Vendor 2
+            userRepository.findByEmail("vendor2@mocmien.com").ifPresent(vendor -> {
+                if (storeRepository.findByVendor(vendor).isEmpty()) {
+                    Store store = new Store();
+                    store.setStoreName("Cửa hàng Hương Quê");
+                    store.setVendor(vendor);
+                    store.setLevel(defaultLevel);
+                    store.setActive(true);
+                    store.setOpen(false);
+                    store.setPoint(100);
+                    store.seteWallet(BigDecimal.valueOf(3000));
+                    store.setRating(BigDecimal.valueOf(4.3));
+                    store.setAvatar(null);
+                    store.setCover(null);
+                    store.setFeatureImages(List.of());
+                    storeRepository.save(store);
+                    System.out.println("✓ Store của vendor2 được tạo!");
+                }
+            });
+
+            // Vendor 3
+            userRepository.findByEmail("vendor3@mocmien.com").ifPresent(vendor -> {
+                if (storeRepository.findByVendor(vendor).isEmpty()) {
+                    Store store = new Store();
+                    store.setStoreName("Cửa hàng Tươi Sạch");
+                    store.setVendor(vendor);
+                    store.setLevel(defaultLevel);
+                    store.setActive(true);
+                    store.setOpen(true);
+                    store.setPoint(120);
+                    store.seteWallet(BigDecimal.valueOf(4000));
+                    store.setRating(BigDecimal.valueOf(4.6));
+                    store.setAvatar(null);
+                    store.setCover(null);
+                    store.setFeatureImages(List.of());
+                    storeRepository.save(store);
+                    System.out.println("✓ Store của vendor3 được tạo!");
+                }
+            });
+        };
+    }
 }
