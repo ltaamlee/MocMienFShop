@@ -23,10 +23,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import mocmien.com.dto.response.store.StoreResponse;
 import mocmien.com.dto.response.store.StoreStats;
-import mocmien.com.dto.response.users.UserStats;
 import mocmien.com.entity.Store;
 import mocmien.com.service.StoreService;
-import mocmien.com.service.UserService;
 
 @RestController
 @RequestMapping("/api/admin/store")
@@ -36,76 +34,118 @@ public class AdminStoreController {
 	private StoreService storeService;
 	
 	// -----------------------
-    // Thống kê các cửa hàng
+    // 1. THỐNG KÊ CỬA HÀNG
     // -----------------------
     @GetMapping("/stats")
-    public StoreStats getStoreStatistics() {
-        return storeService.getStoreStatistics();
+    public ResponseEntity<StoreStats> getStoreStatistics() {
+        StoreStats stats = storeService.getStoreStatistics();
+        return ResponseEntity.ok(stats);
     }
     
- // -----------------------
-    // Lấy danh sách cửa hàng theo phân trang
+    // -----------------------
+    // 2. TÌM KIẾM & PHÂN TRANG
     // -----------------------
     @GetMapping
-    public Page<StoreResponse> getStores(
+    public ResponseEntity<Page<StoreResponse>> searchStores(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(required = false) String keyword,
-            @RequestParam(required = false) String status
-    ) {
-    	
-    	Boolean active = null;
-        if (status != null && !status.isEmpty()) {
-            active = Boolean.parseBoolean(status); // chuyển sang Boolean
+            @RequestParam(required = false) Boolean status) {
+        
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createAt").descending());
+        Page<Store> storePage;
+        
+        // Tìm kiếm theo điều kiện
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            // Tìm theo tên cửa hàng
+            storePage = storeService.findByStoreNameContainingIgnoreCase(keyword.trim(), pageable);
+        } else if (status != null) {
+            // Lọc theo trạng thái isActive
+            storePage = storeService.findByIsActive(status, pageable);
+        } else {
+            // Lấy tất cả - cần thêm method này vào StoreService
+            // Tạm thời lấy tất cả store active
+            storePage = storeService.findAll(pageable);
         }
-
-        Pageable pageable = PageRequest.of(page, size, Sort.by("id").descending());
-        return storeService.getStores(pageable, keyword, active);
-    	    }
-
-    @PatchMapping("/{storeId}/block")
-    public ResponseEntity<?> blockStore(@PathVariable Integer storeId) {
-    	storeService.changeBlock(storeId);
-        return ResponseEntity.ok().build();
+        
+        // Convert sang DTO
+        Page<StoreResponse> response = storePage.map(this::convertToResponse);
+        
+        return ResponseEntity.ok(response);
     }
     
-    
-    
-    @GetMapping("/{id}")
-    public ResponseEntity<?> getStore(@PathVariable Integer id) {
-        Optional<Store> storeOpt = storeService.findById(id);
-        if (!storeOpt.isPresent()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Store not found");
+    // -----------------------
+    // 3. XEM CHI TIẾT CỬA HÀNG
+    // -----------------------
+    @GetMapping("/{storeId}")
+    public ResponseEntity<?> getStoreDetail(@PathVariable Integer storeId) {
+        Optional<Store> storeOpt = storeService.findById(storeId);
+        
+        if (storeOpt.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("message", "Không tìm thấy cửa hàng"));
         }
-
+        
         Store store = storeOpt.get();
-
-        // Tránh LazyInitializationException bằng cách fetch dữ liệu cần thiết
-        Map<String, Object> result = new HashMap<>();
-        result.put("id", store.getId());
-        result.put("storeName", store.getStoreName());
-        result.put("point", store.getPoint());
-        result.put("rating", store.getRating());
-        result.put("address", store.getAddress());
-        result.put("phone", store.getPhone());
-        result.put("isActive", store.isActive());
-        result.put("isOpen", store.isOpen());
-        result.put("vendorName", store.getVendor().getUsername());
-        result.put("levelName", store.getLevel().getName());
-        result.put("avatar", store.getAvatar());
-        result.put("cover", store.getCover());
-        result.put("featureImages", store.getFeatureImages());
-
-        return ResponseEntity.ok(result);
+        StoreResponse response = convertToResponse(store);
+        
+        return ResponseEntity.ok(response);
     }
-
     
     // -----------------------
-    // Xóa cửa hàng
+    // 4. KHÓA/MỞ KHÓA CỬA HÀNG
     // -----------------------
-    @DeleteMapping("/{id}")
-    public void deleteStore(@PathVariable Integer id) {
-        storeService.deleteStore(id);
+    @PatchMapping("/{storeId}/block")
+    public ResponseEntity<?> toggleBlockStore(@PathVariable Integer storeId) {
+        Optional<Store> storeOpt = storeService.findById(storeId);
+        
+        if (storeOpt.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("message", "Không tìm thấy cửa hàng"));
+        }
+        
+        storeService.changeBlock(storeId);
+        
+        return ResponseEntity.ok(Map.of("message", "Cập nhật trạng thái thành công"));
     }
-	
+    
+    // -----------------------
+    // 5. XÓA CỬA HÀNG
+    // -----------------------
+    @DeleteMapping("/{storeId}")
+    public ResponseEntity<?> deleteStore(@PathVariable Integer storeId) {
+        Optional<Store> storeOpt = storeService.findById(storeId);
+        
+        if (storeOpt.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("message", "Không tìm thấy cửa hàng"));
+        }
+        
+        storeService.deleteStore(storeId);
+        
+        return ResponseEntity.ok(Map.of("message", "Xóa cửa hàng thành công"));
+    }
+    
+    // -----------------------
+    // HELPER: Convert Entity -> DTO
+    // -----------------------
+    private StoreResponse convertToResponse(Store store) {
+        StoreResponse dto = new StoreResponse();
+        dto.setId(store.getId());
+        dto.setStoreName(store.getStoreName());
+        dto.setVendorName(store.getVendor() != null ? store.getVendor().getUsername() : "N/A");
+        dto.setLevelName(store.getLevel() != null ? store.getLevel().toString() : "N/A");
+        dto.setPhone(store.getPhone());
+        dto.setAddress(store.getAddress());
+        dto.setAvatar(store.getAvatar());
+        dto.setCover(store.getCover());
+        dto.setPoint(store.getPoint());
+        dto.setRating(store.getRating());
+        dto.seteWallet(store.geteWallet());
+        dto.setActive(store.isActive());
+        dto.setOpen(store.isOpen());
+        dto.setCreateAt(store.getCreateAt());
+        dto.setUpdateAt(store.getUpdateAt());
+        return dto;
+    }
 }

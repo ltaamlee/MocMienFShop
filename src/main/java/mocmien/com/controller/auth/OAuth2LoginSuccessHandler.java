@@ -17,50 +17,50 @@ import mocmien.com.service.UserService;
 @Component
 public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
 
-    private final UserService userService;
-    private final JwtTokenProvider tokenProvider;
+	private final UserService userService;
+	private final JwtTokenProvider tokenProvider;
 
-    public OAuth2LoginSuccessHandler(UserService userService, JwtTokenProvider tokenProvider) {
-        this.userService = userService;
-        this.tokenProvider = tokenProvider;
-    }
+	public OAuth2LoginSuccessHandler(UserService userService, JwtTokenProvider tokenProvider) {
+		this.userService = userService;
+		this.tokenProvider = tokenProvider;
+	}
 
-    @Override
-    public void onAuthenticationSuccess(HttpServletRequest request,
-                                        HttpServletResponse response,
-                                        Authentication authentication) throws IOException {
+	@Override
+	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
+			Authentication authentication) throws IOException {
 
-        if (!(authentication.getPrincipal() instanceof OAuth2User oauthUser)) {
-            response.sendRedirect("/login?error=true");
-            return;
-        }
+		System.out.println("===== OAuth2 Login Success Handler =====");
+		System.out.println("Authentication principal class: " + authentication.getPrincipal().getClass().getName());
 
-        String email = oauthUser.getAttribute("email");
-        String fullName = oauthUser.getAttribute("name");
+		if (!(authentication.getPrincipal() instanceof OAuth2User oauthUser)) {
+			response.sendRedirect("/login?error=true");
+			return;
+		}
 
-        // Tạo hoặc lấy user đã có
-        User user = userService.createOAuthUser(email, fullName);
+		String email = oauthUser.getAttribute("email");
+		String fullName = oauthUser.getAttribute("name");
 
-        // Tạo JWT cookie
-        String token = tokenProvider.generateToken(user.getUsername());
-        Cookie cookie = new Cookie("JWT_TOKEN", token);
-        cookie.setHttpOnly(true);
-        cookie.setPath("/");
-        cookie.setMaxAge(24 * 60 * 60);
-        response.addCookie(cookie);
+		// Tạo hoặc lấy user đã có
+		User user = userService.createOAuthUser(email, fullName);
 
-        // Redirect theo role
-        String redirectUrl = switch (user.getRole().getRoleName()) {
-            case ADMIN -> "/admin/dashboard";
-            case VENDOR -> "/vendor/dashboard";
-            case SHIPPER -> "/shipper/dashboard";
-            case CUSTOMER -> "/home";
-            default -> "/login";
-        };
+		// Tạo JWT cookie
+		String token = tokenProvider.generateToken(user.getUsername());
+		Cookie cookie = new Cookie("JWT_TOKEN", token);
+		cookie.setHttpOnly(true);
+		cookie.setPath("/");
+		cookie.setMaxAge(24 * 60 * 60);
+		response.addCookie(cookie);
 
-        response.sendRedirect(redirectUrl);
-    }
-    
-    
-    
+		// Redirect theo role
+		String redirectUrl = switch (user.getRole().getRoleName()) {
+		case ADMIN -> "/admin/dashboard";
+		case VENDOR -> "/vendor/dashboard";
+		case SHIPPER -> "/shipper/dashboard";
+		case CUSTOMER -> "/home";
+		default -> "/login";
+		};
+
+		response.sendRedirect(redirectUrl);
+	}
+
 }

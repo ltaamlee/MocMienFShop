@@ -173,7 +173,6 @@ public class VendorStoreController {
         r.setAddress(s.getAddress());
         r.setAvatar(s.getAvatar());
         r.setCover(s.getCover());
-        r.setFeatureImages(s.getFeatureImages());
         r.seteWallet(s.geteWallet());
         r.setRating(s.getRating());
         r.setPoint(s.getPoint());
@@ -182,19 +181,15 @@ public class VendorStoreController {
 
         if (s.getLevel() != null && s.getLevel().getName() != null) {
             r.setLevelName(s.getLevel().getName().name());
-            r.setLevelDisplayName(s.getLevel().getName().getDisplayName());
-            r.setLevelDiscount(s.getLevel().getDiscount());
-        } else {
-            r.setLevelDiscount(BigDecimal.ZERO);
+            r.setLevelName(s.getLevel().getName().getDisplayName());
         }
 
         String ownerName = (s.getVendor().getUserProfile() != null
                 && s.getVendor().getUserProfile().getFullName() != null)
                 ? s.getVendor().getUserProfile().getFullName()
                 : s.getVendor().getUsername();
-        r.setOwnerName(ownerName);
-        r.setOwnerPhone(s.getVendor().getPhone());
-        r.setOwnerEmail(s.getVendor().getEmail());
+        r.setVendorName(ownerName);
+        r.setPhone(s.getVendor().getPhone());
         return r;
     }
     

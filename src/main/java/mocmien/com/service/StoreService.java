@@ -27,8 +27,6 @@ public interface StoreService {
     List<Store> findByVendor(User vendor);
     Optional<Store> findByIdAndVendor(Integer id, User vendor);
 
-	public Page<StoreResponse> getStores(Pageable pageable, String keyword, Boolean active);
-
 	void deleteStore(Integer id);
 
 	void changeBlock(Integer storeId);
@@ -40,19 +38,11 @@ public interface StoreService {
 	Page<Store> findByStoreNameContainingIgnoreCase(String keyword, Pageable pageable);
 
 	List<Store> findByIsOpen(Boolean isOpen);
-
 	List<Store> findByIsActive(Boolean isActive);
 
 	Optional<Store> findByStoreName(String storeName);
 
 	List<Store> findByStoreNameContainingIgnoreCase(String keyword);
-
-	List<Store> findTopStoresByRating(Pageable pageable);
-
-	int addToEWallet(Integer storeId, BigDecimal amount);
-
-	List<Store> findTopStoresByPoint(Pageable pageable);
-
 
 	List<Store> findByRatingGreaterThanEqual(BigDecimal rating);
 
@@ -63,4 +53,6 @@ public interface StoreService {
 	long countByIsOpen(Boolean isOpen);
 
 	long countByIsActive(Boolean isActive);
+
+	Page<Store> findAll(Pageable pageable);
 }

@@ -146,26 +146,8 @@ public class StoreServiceImpl implements StoreService {
 	}
 
 	@Override
-	public Page<StoreResponse> getStores(Pageable pageable, String keyword, Boolean active) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List<Store> findTopStoresByRating(Pageable pageable) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public int addToEWallet(Integer storeId, BigDecimal amount) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public List<Store> findTopStoresByPoint(Pageable pageable) {
-		// TODO Auto-generated method stub
-		return null;
+	
+	public Page<Store> findAll(Pageable pageable) {
+	    return storeRepository.findAll(pageable);
 	}
 }

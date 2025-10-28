@@ -21,25 +21,21 @@
 			</div>
 			<h2>Mộc Miên</h2>
 
-			<form action="/login" method="post" novalidate>
+			<form action="/login" method="post">
 
+				<!-- Hiển thị lỗi -->
 				<div th:if="${error}" class="alert alert-danger">
-
+					
 					<span th:text="${error}"></span>
-
 				</div>
 
 				<div class="form-group">
 					<label for="username">Tên đăng nhập</label> <input type="text"
 						id="username" name="username" required>
-					<div th:if="${username}" class="alert alert-danger" th:text="${username}"></div>
-
 				</div>
 				<div class="form-group">
 					<label for="password">Mật khẩu</label> <input type="password"
-						id="password" name="password" required> <br>
-					<div th:if="${password}" class="alert alert-danger"
-						th:text="${password}"></div>
+						id="password" name="password" required>
 				</div>
 				<button type="submit" class="btn">Đăng nhập</button>
 			</form>
@@ -55,12 +51,6 @@
 				</a>
 			</div>
 
-			<div class="role-login" style="margin-top: 15px; text-align: center;">
-				<p class="login-link">
-					Đăng nhập với tư cách: <a th:href="@{vendor/login}">Chủ shop</a> |
-					<a th:href="@{shipper/login}">Shipper</a>
-				</p>
-			</div>
 			<p class="login-link">
 				Chưa có tài khoản? <a th:href="@{/register}">Đăng ký</a>
 			</p>

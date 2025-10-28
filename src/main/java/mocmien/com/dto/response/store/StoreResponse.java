@@ -1,38 +1,30 @@
 package mocmien.com.dto.response.store;
 
 import java.math.BigDecimal;
-
-import java.util.List;
-
-import lombok.Builder;
+import java.time.LocalDateTime;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
-@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class StoreResponse {
     private Integer id;
-
     private String storeName;
+    private String vendorName;
+    private String levelName;
+    private String phone;
     private String address;
-
     private String avatar;
     private String cover;
-    private List<String> featureImages;
-
-    private BigDecimal eWallet;
-    private BigDecimal rating;
     private Integer point;
-
+    private BigDecimal rating;
+    private BigDecimal eWallet;
     private boolean isActive;
     private boolean isOpen;
-
-    private String levelName;          // Rank enum name
-    private String levelDisplayName;   // Rank tiếng Việt
-    private BigDecimal levelDiscount;
-
-    private String ownerName;          // vendor.username hoặc fullName
-    private String ownerPhone;
-    private String ownerEmail;
+    private LocalDateTime createAt;
+    private LocalDateTime updateAt;
 	public Integer getId() {
 		return id;
 	}
@@ -44,6 +36,24 @@ public class StoreResponse {
 	}
 	public void setStoreName(String storeName) {
 		this.storeName = storeName;
+	}
+	public String getVendorName() {
+		return vendorName;
+	}
+	public void setVendorName(String vendorName) {
+		this.vendorName = vendorName;
+	}
+	public String getLevelName() {
+		return levelName;
+	}
+	public void setLevelName(String levelName) {
+		this.levelName = levelName;
+	}
+	public String getPhone() {
+		return phone;
+	}
+	public void setPhone(String phone) {
+		this.phone = phone;
 	}
 	public String getAddress() {
 		return address;
@@ -63,17 +73,11 @@ public class StoreResponse {
 	public void setCover(String cover) {
 		this.cover = cover;
 	}
-	public List<String> getFeatureImages() {
-		return featureImages;
+	public Integer getPoint() {
+		return point;
 	}
-	public void setFeatureImages(List<String> featureImages) {
-		this.featureImages = featureImages;
-	}
-	public BigDecimal geteWallet() {
-		return eWallet;
-	}
-	public void seteWallet(BigDecimal eWallet) {
-		this.eWallet = eWallet;
+	public void setPoint(Integer point) {
+		this.point = point;
 	}
 	public BigDecimal getRating() {
 		return rating;
@@ -81,11 +85,11 @@ public class StoreResponse {
 	public void setRating(BigDecimal rating) {
 		this.rating = rating;
 	}
-	public Integer getPoint() {
-		return point;
+	public BigDecimal geteWallet() {
+		return eWallet;
 	}
-	public void setPoint(Integer point) {
-		this.point = point;
+	public void seteWallet(BigDecimal eWallet) {
+		this.eWallet = eWallet;
 	}
 	public boolean isActive() {
 		return isActive;
@@ -99,69 +103,17 @@ public class StoreResponse {
 	public void setOpen(boolean isOpen) {
 		this.isOpen = isOpen;
 	}
-	public String getLevelName() {
-		return levelName;
+	public LocalDateTime getCreateAt() {
+		return createAt;
 	}
-	public void setLevelName(String levelName) {
-		this.levelName = levelName;
+	public void setCreateAt(LocalDateTime createAt) {
+		this.createAt = createAt;
 	}
-	public String getLevelDisplayName() {
-		return levelDisplayName;
+	public LocalDateTime getUpdateAt() {
+		return updateAt;
 	}
-	public void setLevelDisplayName(String levelDisplayName) {
-		this.levelDisplayName = levelDisplayName;
+	public void setUpdateAt(LocalDateTime updateAt) {
+		this.updateAt = updateAt;
 	}
-	public BigDecimal getLevelDiscount() {
-		return levelDiscount;
-	}
-	public void setLevelDiscount(BigDecimal levelDiscount) {
-		this.levelDiscount = levelDiscount;
-	}
-	public String getOwnerName() {
-		return ownerName;
-	}
-	public void setOwnerName(String ownerName) {
-		this.ownerName = ownerName;
-	}
-	public String getOwnerPhone() {
-		return ownerPhone;
-	}
-	public void setOwnerPhone(String ownerPhone) {
-		this.ownerPhone = ownerPhone;
-	}
-	public String getOwnerEmail() {
-		return ownerEmail;
-	}
-	public void setOwnerEmail(String ownerEmail) {
-		this.ownerEmail = ownerEmail;
-	}
-	public StoreResponse(Integer id, String storeName, String address, String avatar, String cover,
-			List<String> featureImages, BigDecimal eWallet, BigDecimal rating, Integer point, boolean isActive,
-			boolean isOpen, String levelName, String levelDisplayName, BigDecimal levelDiscount, String ownerName,
-			String ownerPhone, String ownerEmail) {
-		super();
-		this.id = id;
-		this.storeName = storeName;
-		this.address = address;
-		this.avatar = avatar;
-		this.cover = cover;
-		this.featureImages = featureImages;
-		this.eWallet = eWallet;
-		this.rating = rating;
-		this.point = point;
-		this.isActive = isActive;
-		this.isOpen = isOpen;
-		this.levelName = levelName;
-		this.levelDisplayName = levelDisplayName;
-		this.levelDiscount = levelDiscount;
-		this.ownerName = ownerName;
-		this.ownerPhone = ownerPhone;
-		this.ownerEmail = ownerEmail;
-	}
-	public StoreResponse() {
-		super();
-	}
-	
-	
-	
+   
 }
