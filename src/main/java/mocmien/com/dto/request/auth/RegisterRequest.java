@@ -26,6 +26,5 @@ public class RegisterRequest {
     @NotBlank(message = "Số điện thoại không được để trống")
     @Pattern(regexp = "^[0-9]{10,11}$", message = "Số điện thoại phải có 10 chữ số")
     private String sdt;
-    
-    
+   
 }

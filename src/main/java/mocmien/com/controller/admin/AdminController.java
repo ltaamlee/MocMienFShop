@@ -9,8 +9,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import mocmien.com.entity.User;
+import mocmien.com.enums.RoleName;
+import mocmien.com.enums.UserStatus;
 import mocmien.com.security.CustomUserDetails;
 import mocmien.com.service.UserService;
 
@@ -32,6 +35,21 @@ public class AdminController {
 		}
 
 		return "admin/dashboard";
+	}
+
+	// Trang chủ
+	@GetMapping("/user")
+	public String user(@AuthenticationPrincipal CustomUserDetails userDetails, Model model, @RequestParam(defaultValue = "10") int size) {
+
+		if (userDetails != null) {
+			Optional<User> userOpt = userService.findByUsername(userDetails.getUsername());
+			userOpt.ifPresent(user -> model.addAttribute("user", user));
+		}
+		model.addAttribute("statuses", UserStatus.values());
+		model.addAttribute("roles", RoleName.values());
+
+
+		return "admin/user";
 	}
 
 	// Quản lý shop

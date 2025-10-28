@@ -7,6 +7,5 @@ public class LoginResponse {
     private String roleName;
     private String token;
     private String avatar;   
-    
-    
+
 }

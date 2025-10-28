@@ -21,15 +21,13 @@
 				<!-- Hiển thị lỗi -->
 				<div class="form-group full-width">
 
-					<div th:if="${error}" class="alert alert-error"
-						style="background-color: #ffe0e0; color: #a60000; padding: 10px; border-radius: 8px; margin-bottom: 15px; text-align: center;">
+					<div th:if="${error}" class="alert alert-error">
 						<span th:text="${error}"></span>
 					</div>
 
 
 					<!-- Hiển thị thành công -->
-					<div th:if="${success}" class="alert alert-success"
-						style="background-color: #e0ffe0; color: #007a00; padding: 10px; border-radius: 8px; margin-bottom: 15px; text-align: center;">
+					<div th:if="${success}" class="alert alert-success">
 						<span th:text="${success}"></span>
 					</div>
 				</div>

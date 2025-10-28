@@ -5,29 +5,27 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title layout:title-pattern="$CONTENT_TITLE - Admin"></title>
+<title layout:title-pattern="$CONTENT_TITLE - Shipper"></title>
 <link
 	href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap"
 	rel="stylesheet">
 <link rel="stylesheet"
 	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" />
-<link rel="stylesheet" href="/styles/css/base.css">
-<link rel="stylesheet" href="/styles/css/sidebar.css">
+<link rel="stylesheet" href="/styles/css/shipper/base.css">
+<link rel="stylesheet" href="/styles/css/shipper/header.css">
+<link rel="stylesheet" href="/styles/css/shipper/sidebar.css">
 <link rel="stylesheet" href="/styles/css/component/button.css">
 <link rel="stylesheet" href="/styles/css/component/table.css">
-<link rel="stylesheet" href="/styles/css/component/card.css">
-<link rel="stylesheet" href="/styles/css/admin/header.css">
 <th:block layout:fragment="styles">
 </th:block>
 </head>
 <body>
-	<div th:replace="~{admin/fragments/header :: header}"></div>
-	<div th:replace="~{admin/fragments/sidebar :: sidebar}"></div>
+	<div th:replace="~{shipper/fragments/header :: header}"></div>
+	<div th:replace="~{shipper/fragments/sidebar :: sidebar}"></div>
 
 	<main>
 		<div layout:fragment="content">
-		ADMIN
-		</div>
+SHIPPER		</div>
 	</main>
 	<script th:src="@{/styles/js/sidebar.js}"></script>
 	

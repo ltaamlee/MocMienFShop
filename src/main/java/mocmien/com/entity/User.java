@@ -56,10 +56,6 @@ public class User {
 	@ManyToOne
 	@JoinColumn(name = "roleId", referencedColumnName = "id")
 	private Role role;
-
-	@ManyToOne
-	@JoinColumn(name = "storeId", referencedColumnName = "id")
-	private Store store;
 	
 	@OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private UserProfile userProfile;
@@ -160,14 +156,6 @@ public class User {
 
 	public void setRole(Role role) {
 		this.role = role;
-	}
-
-	public Store getStore() {
-		return store;
-	}
-
-	public void setStore(Store store) {
-		this.store = store;
 	}
 
 	public String getCode() {

@@ -42,9 +42,6 @@ public class Shipper {
     @JoinColumn(name = "deliveryId", nullable = false)
     private Delivery delivery;
 
-    @Column(name = "fullName", nullable = false,  columnDefinition = "NVARCHAR(200)")
-    private String fullName;
-
     @Column(name = "vehicleNumber", nullable = false, unique = true, length = 50)
     private String vehicleNumber; // Biển số xe
 

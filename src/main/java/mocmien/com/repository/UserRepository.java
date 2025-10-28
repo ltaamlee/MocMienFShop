@@ -10,8 +10,10 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import mocmien.com.dto.response.users.UserResponse;
 import mocmien.com.entity.Role;
 import mocmien.com.entity.User;
+import mocmien.com.enums.RoleName;
 import mocmien.com.enums.UserStatus;
 
 @Repository
@@ -23,6 +25,8 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 	void deleteByUsername(String username);
 	void deleteByPhone(String phone);
 		
+	
+	
 	// -----------------------
 	// Tìm kiếm User
 	// -----------------------
@@ -36,6 +40,8 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 	List<User> findByRole(Role role);
 	List<User> findByRoleAndStatus(Role role, UserStatus status);
 	List<User> searchByUsername(String keyword);
+	List<User> findByIsActiveFalse();
+
 	// -----------------------
 	// Kiểm tra tồn tại
 	// -----------------------
@@ -51,6 +57,8 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 	long countByStatus(UserStatus status);
 	long countByRole(Role role);
 	long countByRoleAndStatus(Role role, UserStatus status);
+	long countByIsActiveFalse();
+
 
 	// -----------------------
 	// Optional nâng cao
@@ -58,9 +66,33 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 	List<User> findTop10ByStatusOrderByCreatedAtDesc(UserStatus status); // 10 user mới nhất theo status
 	List<User> findByUsernameContainingIgnoreCase(String keyword); // search username
 	
-	Page<User> findByUsernameContainingAndEmailContaining(String username, String email, Pageable pageable);
-	//Tìm kiếm phân trang
-	Page<User> findByStatus(UserStatus status, Pageable pageable);
-	Page<User> findByUsernameContainingIgnoreCase(String keyword, Pageable pageable);
+
+
+	// 1. Tìm theo trạng thái
+    Page<User> findByStatus(UserStatus status, Pageable pageable);
+
+    // 2. Tìm theo username hoặc email
+    Page<User> findByUsernameContainingIgnoreCaseOrEmailContainingIgnoreCase(
+        String username, String email, Pageable pageable);
+
+    // 3. Tìm theo cả status + keyword (username/email)
+    Page<User> findByStatusAndUsernameContainingIgnoreCaseOrStatusAndEmailContainingIgnoreCase(
+        UserStatus status1, String username,
+        UserStatus status2, String email,
+        Pageable pageable
+    );
+    
+    @Query("SELECT u FROM User u " +
+    	       "WHERE (:keyword IS NULL OR LOWER(u.username) LIKE CONCAT('%', :keyword, '%') " +
+    	       "    OR LOWER(u.email) LIKE CONCAT('%', :keyword, '%') " +
+    	       "    OR LOWER(u.userProfile.fullName) LIKE CONCAT('%', :keyword, '%')) " +
+    	       "AND (:status IS NULL OR u.status = :status) " +
+    	       "AND (:isActive IS NULL OR u.isActive = :isActive) " +
+    	       "AND (:roleName IS NULL OR (u.role IS NOT NULL AND u.role.roleName = :roleName))")
+    	Page<User> searchUsers(@Param("keyword") String keyword,
+    	                       @Param("status") UserStatus status,
+    	                       @Param("isActive") Boolean isActive,
+    	                       @Param("roleName") RoleName roleName,
+    	                       Pageable pageable);
 
 }

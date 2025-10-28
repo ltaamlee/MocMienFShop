@@ -2,6 +2,7 @@ package mocmien.com.config;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
@@ -10,6 +11,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import mocmien.com.entity.Level;
 import mocmien.com.entity.Role;
+import mocmien.com.entity.Store;
 import mocmien.com.entity.User;
 import mocmien.com.entity.UserProfile;
 import mocmien.com.enums.Rank;
@@ -17,6 +19,8 @@ import mocmien.com.enums.RoleName;
 import mocmien.com.repository.LevelRepository;
 import mocmien.com.repository.RoleRepository;
 import mocmien.com.repository.UserProfileRepository;
+import mocmien.com.repository.UserRepository;
+import mocmien.com.repository.StoreRepository;
 import mocmien.com.service.UserService;
 
 @Configuration
@@ -109,4 +113,52 @@ public class DataInitConfig {
             System.out.println("Init levels hoàn tất.");
         };
     }
+    
+    
+//    @Bean
+//    CommandLineRunner initStores(StoreRepository storeRepository, UserRepository userRepository, LevelRepository levelRepository) {
+//        return args -> {
+//            // Lấy vendor
+//            User vendor = userRepository.findById(2).orElse(null);
+//            if (vendor == null) {
+//                System.out.println("Vendor with ID=2 not found!");
+//                return;
+//            }
+//
+//            // Lấy Level mặc định
+//            Level defaultLevel = levelRepository.findById(1).orElse(null);
+//
+//            // Tạo store mẫu
+//            Store store1 = new Store();
+//            store1.setStoreName("Cửa hàng Hoa Mai");
+//            store1.setVendor(vendor);
+//            store1.setLevel(defaultLevel);
+//            store1.setActive(true);
+//            store1.setOpen(true);
+//            store1.setPoint(100);
+//            store1.seteWallet(BigDecimal.valueOf(5000));
+//            store1.setRating(BigDecimal.valueOf(4.5));
+//            store1.setAvatar(null);
+//            store1.setCover(null);
+//            store1.setFeatureImages(List.of());
+//
+//            Store store2 = new Store();
+//            store2.setStoreName("Cửa hàng Bách Hóa Xanh");
+//            store2.setVendor(vendor);
+//            store2.setLevel(defaultLevel);
+//            store2.setActive(true);
+//            store2.setOpen(false);
+//            store2.setPoint(80);
+//            store2.seteWallet(BigDecimal.valueOf(3000));
+//            store2.setRating(BigDecimal.valueOf(4.0));
+//            store2.setAvatar(null);
+//            store2.setCover(null);
+//            store2.setFeatureImages(List.of());
+//
+//            // Lưu vào database
+//            storeRepository.saveAll(List.of(store1, store2));
+//
+//            System.out.println("Sample stores created!");
+//        };
+//    }
 }

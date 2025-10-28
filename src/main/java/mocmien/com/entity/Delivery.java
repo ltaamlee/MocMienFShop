@@ -26,8 +26,8 @@ public class Delivery {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 
-	@Column(name = "deliveryName", nullable = false, unique = true, length = 500)
-	private String deliveryName;
+	@Column(name = "deliveryName", nullable = false, unique = true, columnDefinition = "NVARCHAR(500)")
+	private String deliveryName; 
 
 	@Column(name = "description", columnDefinition = "NVARCHAR(MAX)")
 	private String description;
