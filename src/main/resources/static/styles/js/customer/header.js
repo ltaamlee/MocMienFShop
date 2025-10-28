@@ -95,22 +95,22 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 });
 
-document.addEventListener("DOMContentLoaded", () => {
-  const badge = document.getElementById("cart-count");
-  if (!badge) return;
+fetch("/cart/count", {
+  credentials: "include",   // 👈 BẮT BUỘC để gửi JSESSIONID
+  cache: "no-store"             // tránh cache
+})
+  .then(res => {
+    if (!res.ok) throw new Error("Load cart count failed");
+    return res.json();
+  })
+  .then(data => {
+    const count = data.count || 0;
+    const badge = document.getElementById("cart-count");
+    if (!badge) return; // không có thẻ -> thoát
+    badge.textContent = count > 99 ? "99+" : count;
+    badge.style.display = count > 0 ? "inline-block" : "none";
+  })
+  .catch(err => console.error(err));
 
-  fetch("/cart/count")
-    .then(res => res.json())
-    .then(data => {
-      const count = data.count || 0;
-      if (count > 0) {
-        badge.textContent = count;
-        badge.style.display = "inline-block";
-      } else {
-        badge.style.display = "none";
-      }
-    })
-    .catch(err => console.error("Lỗi khi tải số lượng giỏ hàng:", err));
-});
 
 

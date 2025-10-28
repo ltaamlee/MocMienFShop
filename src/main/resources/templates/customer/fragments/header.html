@@ -2,17 +2,18 @@
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
-<meta charset="UTF-8">
-<link rel="stylesheet" href="/styles/css/customer/base.css">
-<link rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" />
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap"
-      rel="stylesheet">
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="/styles/css/customer/base.css">
+  <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap"
+        rel="stylesheet">
 </head>
 <body>
   <div th:fragment="header">
     <header>
       <div class="header-top">
+
         <!-- 🔹 Logo -->
         <div class="logo">
           <a th:href="@{/home}" class="logo-link">
@@ -21,7 +22,7 @@
           </a>
         </div>
 
-        <!-- 🔹 Tìm kiếm -->
+        <!-- 🔹 Ô tìm kiếm -->
         <form th:action="@{/product}" method="get" class="search-form">
           <div class="search-box">
             <input type="text" name="q" th:value="${keyword}" placeholder="Tìm kiếm sản phẩm..." />
@@ -29,8 +30,9 @@
           </div>
         </form>
 
-        <!-- 🔹 User actions -->
+        <!-- 🔹 User Actions -->
         <div class="user-actions">
+
           <!-- Khi CHƯA đăng nhập -->
           <a th:href="@{/login}" sec:authorize="isAnonymous()">
             <i class="fa-solid fa-right-to-bracket"></i> <strong>Đăng nhập</strong>
@@ -40,19 +42,21 @@
           </a>
 
           <!-- Giỏ hàng ẩn khi chưa đăng nhập -->
-          <a href="#" sec:authorize="isAnonymous()" class="cart-icon disabled"
+          <a href="/login" sec:authorize="isAnonymous()" class="cart-icon disabled"
              title="Vui lòng đăng nhập để sử dụng giỏ hàng" style="display: none;">
              <i class="fa-solid fa-cart-shopping"></i> Giỏ hàng
           </a>
 
           <!-- Khi ĐÃ đăng nhập -->
           <div sec:authorize="isAuthenticated()">
-            <!-- Chỉ hiển thị giỏ hàng cho CUSTOMER -->
+
+            <!-- 🔹 Giỏ hàng chỉ hiển thị cho CUSTOMER -->
             <a th:href="@{/cart}" class="cart-icon" sec:authorize="hasRole('CUSTOMER')">
               <i class="fa-solid fa-cart-shopping"></i>
               <span id="cart-count" class="cart-count" style="display: none;">0</span>
             </a>
 
+            <!-- 🔹 Tên người dùng -->
             <span class="welcome">
               Xin chào,
               <strong th:text="${user != null && user.userProfile != null && user.userProfile.fullName != null 
@@ -67,7 +71,7 @@
               <div class="avatar" id="avatar-btn">
                 <!-- Nếu có avatar -->
                 <img th:if="${user != null and user.avatar != null}"
-                     th:src="${user.avatar}" alt="Avatar" class="avatar-img">
+                     th:src="@{${user.avatar}}" alt="Avatar" class="avatar-img">
 
                 <!-- Nếu không có avatar -->
                 <img th:if="${user == null or user.avatar == null}"
@@ -76,9 +80,28 @@
               </div>
 
               <div class="dropdown" id="user-dropdown">
-                <a th:href="@{/account}"><i class="fa-solid fa-user"></i> Tài khoản</a>
-                <a th:href="@{/customer/orders}"><i class="fa-solid fa-box"></i> Đơn mua</a>
-                <a th:href="@{/logout}"><i class="fa-solid fa-right-from-bracket"></i> Đăng xuất</a>
+                <!-- 🔸 ADMIN -->
+                <div sec:authorize="hasRole('ADMIN')">
+                  <a th:href="@{/admin/profile}"><i class="fa-solid fa-user-shield"></i> Hồ sơ</a>
+                  <a th:href="@{/admin/dashboard}"><i class="fa-solid fa-chart-line"></i> Dashboard</a>
+                </div>
+
+                <!-- 🔸 VENDOR -->
+                <div sec:authorize="hasRole('VENDOR')">
+                  <a th:href="@{/vendor/profile}"><i class="fa-solid fa-user"></i> Hồ sơ</a>
+                  <a th:href="@{/vendor/dashboard}"><i class="fa-solid fa-store"></i> Cửa hàng</a>
+                </div>
+
+                <!-- 🔸 CUSTOMER -->
+                <div sec:authorize="hasRole('CUSTOMER')">
+                  <a th:href="@{/account}"><i class="fa-solid fa-user"></i> Tài khoản</a>
+                  <a th:href="@{/customer/orders}"><i class="fa-solid fa-box"></i> Đơn mua</a>
+                </div>
+
+                <!-- 🔸 Đăng xuất -->
+                <a th:href="@{/logout}">
+                  <i class="fa-solid fa-right-from-bracket"></i> Đăng xuất
+                </a>
               </div>
             </div>
           </div>

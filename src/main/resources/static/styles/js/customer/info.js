@@ -8,7 +8,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 	// 👉 Mở popup
 	editBtn.addEventListener('click', () => {
-		popup.classList.add('active');  // dùng class thay vì style.display
+		popup.classList.add('active');  // hiển thị popup
 	});
 
 	// 👉 Đóng popup (gọi khi bấm X)
@@ -31,29 +31,22 @@ document.addEventListener("DOMContentLoaded", () => {
 			return res.json();
 		})
 		.then(data => {
-			// ✅ Cập nhật UI
-			document.getElementById('display-hoTen').value = data.hoTen || "";
-			document.getElementById('display-sdt').value = data.sdt || "";
-			document.getElementById('display-diaChi').value = data.diaChi || "";
-			document.getElementById('display-ngaySinh').value = data.ngaySinh || "";
-			
-
-			// Nếu backend trả email trực tiếp
-			if (data.email) {
-				document.getElementById('display-email').value = data.email;
-			}
-			// Nếu backend trả email nằm trong user
-			else if (data.user && data.user.email) {
-				document.getElementById('display-email').value = data.user.email;
-			}
+			// ✅ Cập nhật lại giao diện hiển thị thông tin cá nhân
+			document.getElementById('display-fullName').value = data.fullName || "";
+			document.getElementById('display-dob').value = data.dob || "";
+			document.getElementById('display-gender').value = data.gender || "";
+			document.getElementById('display-phone').value = data.phone || "";
+			document.getElementById('display-email').value = data.email || "";
+			document.getElementById('display-point').value = data.point || "";
+			document.getElementById('display-ewallet').value = data.eWallet || "";
 
 			closeEditPopup();
 			alert("Cập nhật thông tin thành công!");
-			console.log(data);
+			console.log("✅ Thông tin sau khi cập nhật:", data);
 		})
 		.catch(err => {
-			console.error("Lỗi khi lưu:", err);
-			alert("Lỗi khi lưu thông tin!");
+			console.error("❌ Lỗi khi lưu:", err);
+			alert("Đã xảy ra lỗi khi lưu thông tin!");
 		});
 	});
 });

@@ -112,4 +112,144 @@ public class Orders {
     protected void onUpdate() {
         updateAt = LocalDateTime.now();
     }
+    
+    // ==============================
+    // Getters & Setters
+    // ==============================
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public UserProfile getCustomer() {
+        return customer;
+    }
+
+    public void setCustomer(UserProfile customer) {
+        this.customer = customer;
+    }
+
+    public Store getStore() {
+        return store;
+    }
+
+    public void setStore(Store store) {
+        this.store = store;
+    }
+
+    public Promotion getPromotion() {
+        return promotion;
+    }
+
+    public void setPromotion(Promotion promotion) {
+        this.promotion = promotion;
+    }
+
+    public Delivery getDelivery() {
+        return delivery;
+    }
+
+    public void setDelivery(Delivery delivery) {
+        this.delivery = delivery;
+    }
+
+    public Shipper getShipper() {
+        return shipper;
+    }
+
+    public void setShipper(Shipper shipper) {
+        this.shipper = shipper;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public Boolean getIsPaid() {
+        return isPaid;
+    }
+
+    public void setIsPaid(Boolean isPaid) {
+        this.isPaid = isPaid;
+    }
+
+    public PaymentMethod getPaymentMethod() {
+        return paymentMethod;
+    }
+
+    public void setPaymentMethod(PaymentMethod paymentMethod) {
+        this.paymentMethod = paymentMethod;
+    }
+
+    public BigDecimal getAmountFromCustomer() {
+        return amountFromCustomer;
+    }
+
+    public void setAmountFromCustomer(BigDecimal amountFromCustomer) {
+        this.amountFromCustomer = amountFromCustomer;
+    }
+
+    public BigDecimal getAmountFromStore() {
+        return amountFromStore;
+    }
+
+    public void setAmountFromStore(BigDecimal amountFromStore) {
+        this.amountFromStore = amountFromStore;
+    }
+
+    public BigDecimal getAmountToStore() {
+        return amountToStore;
+    }
+
+    public void setAmountToStore(BigDecimal amountToStore) {
+        this.amountToStore = amountToStore;
+    }
+
+    public BigDecimal getAmountToSys() {
+        return amountToSys;
+    }
+
+    public void setAmountToSys(BigDecimal amountToSys) {
+        this.amountToSys = amountToSys;
+    }
+
+    public String getNote() {
+        return note;
+    }
+
+    public void setNote(String note) {
+        this.note = note;
+    }
+
+    public List<OrderDetail> getOrderDetails() {
+        return orderDetails;
+    }
+
+    public void setOrderDetails(List<OrderDetail> orderDetails) {
+        this.orderDetails = orderDetails;
+    }
+
+    public LocalDateTime getCreateAt() {
+        return createAt;
+    }
+
+    public void setCreateAt(LocalDateTime createAt) {
+        this.createAt = createAt;
+    }
+
+    public LocalDateTime getUpdateAt() {
+        return updateAt;
+    }
+
+    public void setUpdateAt(LocalDateTime updateAt) {
+        this.updateAt = updateAt;
+    }
 }

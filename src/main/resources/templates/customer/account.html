@@ -32,7 +32,8 @@
 							<!-- Cột bên trái: Avatar -->
 							<div class="profile-avatar">
 								<div class="avatar-frame">
-									<img th:src="@{${user.avatar != null ? user.avatar : '/styles/image/customer/default-avatar.png'}}"
+									<img
+										th:src="@{${user.avatar != null ? user.avatar : '/styles/image/customer/default-avatar.png'}}"
 										alt="Avatar" id="avatar-preview">
 								</div>
 								<form method="post" enctype="multipart/form-data"
@@ -47,7 +48,8 @@
 								</form>
 
 								<!-- ✅ Popup xem trước ảnh -->
-								<div id="preview-popup" class="preview-popup" style="display: none;">
+								<div id="preview-popup" class="preview-popup"
+									style="display: none;">
 									<div class="preview-overlay" onclick="closePreviewPopup()"></div>
 									<div class="preview-box">
 										<button class="close-btn" onclick="closePreviewPopup()">&times;</button>
@@ -66,51 +68,47 @@
 							<div class="profile-info">
 								<div class="info-display">
 									<div class="form-group">
-										<label>Họ và tên:</label>
-										<input type="text" id="display-fullName" readonly
+										<label>Họ và tên:</label> <input type="text"
+											id="display-fullName" readonly
 											th:value="${user.userProfile.fullName}">
 									</div>
 
 									<div class="form-group">
-										<label>Ngày sinh:</label>
-										<input type="text" id="display-dob" readonly
-											th:value="${user.userProfile.dob}">
+										<label>Ngày sinh:</label> <input type="text" id="display-dob"
+											readonly th:value="${user.userProfile.dob}">
 									</div>
 
 									<div class="form-group">
-										<label>Giới tính:</label>
-										<input type="text" id="display-gender" readonly
+										<label>Giới tính:</label> <input type="text"
+											id="display-gender" readonly
 											th:value="${user.userProfile.gender}">
 									</div>
 
 									<div class="form-group">
-										<label>Email:</label>
-										<input type="email" id="display-email" readonly
-											th:value="${user.email}">
+										<label>Email:</label> <input type="email" id="display-email"
+											readonly th:value="${user.email}">
 									</div>
 
 									<div class="form-group">
-										<label>Số điện thoại:</label>
-										<input type="text" id="display-phone" readonly
-											th:value="${user.phone}">
+										<label>Số điện thoại:</label> <input type="text"
+											id="display-phone" readonly th:value="${user.phone}">
 									</div>
 
 									<div class="form-group">
-										<label>Điểm tích lũy:</label>
-										<input type="text" id="display-point" readonly
+										<label>Điểm tích lũy:</label> <input type="text"
+											id="display-point" readonly
 											th:value="${user.userProfile.point}">
 									</div>
 
 									<div class="form-group">
-										<label>Số dư ví:</label>
-										<input type="text" id="display-ewallet" readonly
+										<label>Số dư ví:</label> <input type="text"
+											id="display-ewallet" readonly
 											th:value="${user.userProfile.eWallet}">
 									</div>
 								</div>
 
 								<button type="button" id="btn-edit-info" class="btn-edit">
-									Cập nhật thông tin cá nhân
-								</button>
+									Cập nhật thông tin cá nhân</button>
 							</div>
 
 							<!-- Popup sửa thông tin -->
@@ -119,22 +117,25 @@
 									<button class="close-btn" onclick="closeEditPopup()">&times;</button>
 									<h3>Chỉnh sửa thông tin cá nhân</h3>
 
-									<form id="editInfoForm" th:action="@{/account/update}" method="post">
+									<form id="editInfoForm" th:action="@{/account/update}"
+										method="post">
+										<!-- 🧍‍♀️ Họ và tên -->
 										<div class="form-group">
-											<label>Họ và tên:</label>
-											<input type="text" id="edit-fullName" name="fullName"
+											<label>Họ và tên:</label> <input type="text"
+												id="edit-fullName" name="fullName"
 												th:value="${user.userProfile.fullName}" required>
 										</div>
 
+										<!-- 📅 Ngày sinh -->
 										<div class="form-group">
-											<label>Ngày sinh:</label>
-											<input type="date" id="edit-dob" name="dob"
-												th:value="${user.userProfile.dob}">
+											<label>Ngày sinh:</label> <input type="date" id="edit-dob"
+												name="dob" th:value="${user.userProfile.dob}">
 										</div>
 
+										<!-- 🚻 Giới tính -->
 										<div class="form-group">
-											<label>Giới tính:</label>
-											<select id="edit-gender" name="gender">
+											<label>Giới tính:</label> <select id="edit-gender"
+												name="gender">
 												<option value="Nam"
 													th:selected="${user.userProfile.gender == 'Nam'}">Nam</option>
 												<option value="Nữ"
@@ -144,22 +145,38 @@
 											</select>
 										</div>
 
+										<!-- 📧 Email -->
 										<div class="form-group">
-											<label>Email:</label>
-											<input type="email" id="edit-email" name="email"
-												th:value="${user.email}" readonly>
+											<label>Email:</label> <input type="email" id="edit-email"
+												name="email" th:value="${user.email}" readonly>
 										</div>
 
+										<!-- 📞 Số điện thoại -->
 										<div class="form-group">
-											<label>Số điện thoại:</label>
-											<input type="text" id="edit-phone" name="phone"
-												th:value="${user.phone}">
+											<label>Số điện thoại:</label> <input type="text"
+												id="edit-phone" name="phone" th:value="${user.phone}">
+										</div>
+
+
+										<!-- 💰 Số dư ví -->
+										<div class="form-group">
+											<label>Số dư ví (E-Wallet):</label> <input type="text"
+												id="edit-ewallet" name="eWallet"
+												th:value="${user.userProfile.eWallet}" readonly>
+										</div>
+
+										<!-- ⭐ Điểm tích lũy -->
+										<div class="form-group">
+											<label>Điểm tích lũy:</label> <input type="text"
+												id="edit-point" name="point"
+												th:value="${user.userProfile.point}" readonly>
 										</div>
 
 										<div class="popup-buttons" style="justify-content: center;">
 											<button type="submit" class="btn-save">Lưu thay đổi</button>
 										</div>
 									</form>
+
 								</div>
 							</div>
 
