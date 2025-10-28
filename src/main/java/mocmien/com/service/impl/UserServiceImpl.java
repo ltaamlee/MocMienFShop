@@ -287,4 +287,16 @@ public class UserServiceImpl implements UserService {
 		userRepository.deleteById(userId);
 	}
 
+	@Override
+	public Optional<User> findById(Integer userId) {
+		// TODO Auto-generated method stub
+		return Optional.empty();
+	}
+
+	@Override
+	public boolean existsById(Integer userId) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 }

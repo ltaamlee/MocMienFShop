@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
 <meta charset="UTF-8">
-<link rel="stylesheet" href="/styles/css/seller.css">
+<link rel="stylesheet" href="/styles/css/vendor/header.css">
 <link rel="stylesheet"
 	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" />
 <link
@@ -10,27 +10,24 @@
 	rel="stylesheet">
 </head>
 <body>
-	<div th:fragment="header">
-		<header>
-			<div class="header-top">
-
-				<div class="search-box">
-					<input type="text" placeholder="Tìm kiếm...">
-					<button type="submit">
-						<i class="fa-solid fa-magnifying-glass"></i>
-					</button>
-				</div>
-
-				<div class="seller-info">Tên Seller, Logo</div>
-
-				<div class="noti">
-					<i class="fa-solid fa-bell"></i> <span class="noti-text">Thông
-						Báo</span> <span class="noti-count">3</span>
-					<!-- Số thông báo, nếu muốn -->
-				</div>
-
+	<header th:fragment="header">
+		<div class="header-top">
+			<!-- Logo -->
+			<div class="logo">
+				<a href="/home"> <img src="/styles/image/logo.png" alt="Logo">
+				</a>
 			</div>
-		</header>
-	</div>
+
+			<div class="user-info">
+				<div class="user-details">
+					<span class="user-name">vendor</span> <span class="user-role">Quản
+						lý cửa hàng</span>
+				</div>
+				<img th:src="${user.avatar != null} ? ${user.avatar}" alt="Avatar" class="user-avatar">
+			</div>
+
+		</div>
+	</header>
+
 </body>
 </html>

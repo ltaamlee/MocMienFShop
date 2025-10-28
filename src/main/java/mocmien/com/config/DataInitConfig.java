@@ -50,7 +50,7 @@ public class DataInitConfig {
 
                 // 3. Tạo Vendor
                 createOrUpdateUser(userService, roleRepository, userProfileRepository, passwordEncoder,
-                        "vendor@example.com", "vendor", "123", "Chủ cửa hàng", "0987654321", RoleName.VENDOR);
+                        "vendor@example.com", "vendor", "123", "Phương Thi", "0987654321", RoleName.VENDOR);
 
             } catch (Exception e) {
                 System.err.println("✗ Lỗi khi tạo hoặc cập nhật user: " + e.getMessage());

@@ -15,7 +15,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import mocmien.com.entity.Store;
 import mocmien.com.entity.User;
-import mocmien.com.enums.UserStatus;
 
 @Repository
 public interface StoreRepository extends JpaRepository<Store, Integer>{
@@ -23,9 +22,37 @@ public interface StoreRepository extends JpaRepository<Store, Integer>{
     // -----------------------
     long countByIsActive(Boolean isActive);
     long countByIsOpen(Boolean isOpen);
-	Page<Store> findByStoreNameContainingIgnoreCase(String keyword, Pageable pageable);
-	Page<Store> findByStoreNameContainingIgnoreCaseAndIsActive(String keyword, boolean isActive, Pageable pageable);
-	Page<Store> findByIsActive(boolean isActive, Pageable pageable);
+    List<Store> findByStoreNameContainingIgnoreCase(String keyword);
+    Page<Store> findByStoreNameContainingIgnoreCaseAndIsActive(String keyword, boolean isActive, Pageable pageable);
+    Page<Store> findByIsActive(boolean isActive, Pageable pageable);
 
+    // -----------------------
+    // Cập nhật ví điện tử + rating + điểm trong 1 transaction
+    // -----------------------
+    @Transactional
+    @Modifying
+    @Query("""
+        UPDATE Store s 
+        SET s.eWallet = s.eWallet + :revenue,
+            s.rating  = s.rating  + :rating,
+            s.point   = s.point   + :points
+        WHERE s.id = :storeId
+    """)
+    int updateAfterOrder(
+            @Param("storeId") Integer storeId,
+            @Param("revenue") BigDecimal revenue,
+            @Param("rating") BigDecimal rating,
+            @Param("points") Integer points
+    );
+    
+    // Các hàm tìm kiếm hợp lệ
+    List<Store> findByVendor(User vendor);
+    Optional<Store> findByIdAndVendor(Integer id, User vendor);
+    List<Store> findByIsOpen(Boolean isOpen);
+    Page<Store> findByStoreNameContainingIgnoreCase(String keyword, Pageable pageable);
+    List<Store> findByIsActive(Boolean isActive);
+    Optional<Store> findByStoreName(String storeName);
+    List<Store> findByRatingGreaterThanEqual(BigDecimal rating);
+    List<Store> findByPointGreaterThanEqual(Integer point);
 
 }

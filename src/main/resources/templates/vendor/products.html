@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{vendor/layout}">
+<head>
+<title>Quản lý Đơn hàng</title>
+<th:block layout:fragment="styles">
+	<link rel="stylesheet" href="/styles/css/vendor/header.css">
+	<link rel="stylesheet" href="/styles/css/vendor/main.css">
+</th:block>
+</head>
+<body>
+	<div layout:fragment="content">
+		<div class="search-filter-container">
+			<form id="searchFilterForm" th:action="@{/vendor/products}"
+				method="get">
+				<div class="search-box">
+					<input type="text" name="keyword"
+						placeholder="Tìm kiếm theo tên..." th:value="${keyword}">
+					<button type="submit">
+						<i class="fas fa-search"></i> Tìm kiếm
+					</button>
+				</div>
+
+				<div class="filter-group">
+					<div class="filter-item">
+						<label for="statusFilter">Trạng thái:</label><select
+							id="statusFilter" name="status">
+							<option value="">Tất cả</option>
+							<option value="1" th:selected="${status == '1'}">Đang
+								bán</option>
+							<option value="0" th:selected="${status == '0'}">Ngừng
+								bán</option>
+							<option value="-1" th:selected="${status == '-1'}">Hết
+								hàng</option>
+						</select>
+
+					</div>
+					<div class="filter-item">
+						<label for="categoryFilter">Danh mục:</label> <select
+							id="categoryFilter" name="categoryId">
+							<option value="">Tất cả</option>
+							<option th:each="cat : ${categories}" th:value="${cat.maDM}"
+								th:text="${cat.tenDM}" th:selected="${categoryId == cat.maDM}">
+							</option>
+						</select>
+					</div>
+
+				</div>
+			</form>
+		</div>
+
+		<div class="btn-add-container">
+
+			<a href="javascript:void(0)" class="btn-add"
+				onclick="openModal('addProductModal')"> <i class="fas fa-fan"></i> Thêm sản
+				phẩm
+			</a>
+		</div>
+
+		<div class="table-products">
+			<table>
+				<thead>
+					<tr>
+						<th style="width: 80px">Mã</th>
+						<th style="width: 240px">Tên</th>
+						<th style="width: 300px">Hình ảnh</th>
+						<th style="width: 140px">Giá gốc</th>
+						<th style="width: 140px">Trạng thái</th>
+						<th style="width: 160px" class="text-right">Hành động</th>
+					</tr>
+				</thead>
+				<tbody id="productTableBody">
+					<tr>
+						<td colspan="7" style="text-align: center;">Đang tải dữ
+							liệu...</td>
+					</tr>
+				</tbody>
+			</table>
+
+		</div>
+
+
+
+		<div class="pagination" id="productPagination"></div>
+
+
+		<!-- Thêm sản phẩm với nguyên liệu -->
+		<div id="addProductModal" class="modal">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h2>Thêm Sản Phẩm</h2>
+					<button type="button" class="close-modal"
+						onclick="closeModal('addProductModal')">&times;</button>
+				</div>
+				<div class="modal-body">
+					<form th:action="@{/vendor/products/add}" method="post"
+						enctype="multipart/form-data">
+						<!-- Thông tin sản phẩm -->
+						<div class="form-group">
+							<label for="tenSP">Tên sản phẩm:</label> <input type="text"
+								id="tenSP" name="tenSP" required>
+						</div>
+						<div class="form-group">
+							<label for="donViTinh">Đơn vị tính:</label> <input type="text"
+								id="donViTinh" name="donViTinh">
+						</div>
+						<div class="form-group">
+							<label for="gia">Giá:</label> <input type="number" id="gia"
+								name="gia" step="0.01" min="0" required>
+						</div>
+						<div class="form-group">
+							<label for="moTa">Mô tả:</label>
+							<textarea id="moTa" name="moTa"></textarea>
+						</div>
+						<div class="form-group">
+							<label for="trangThai">Trạng thái:</label> <select id="trangThai"
+								name="trangThai" required></select>
+						</div>
+
+						<div class="form-group">
+							<img src="/styles/image/logo.png" alt="Avatar"
+								class="product-preview" id="productPreview">
+							<div class="upload-btn">
+								<label for="file" class="btn-upload"> <i
+									class="fa-solid fa-camera"></i> Chọn ảnh
+								</label> <input type="file" id="file" name="file" accept="image/*"
+									onchange="previewProduct(event)" style="display: none;">
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label for="danhMuc">Danh mục:</label> <select id="danhMuc"
+								name="danhMucId" required>
+								<option value="">Tất cả</option>
+								<option th:each="cat : ${categories}" th:value="${cat.maDM}"
+									th:text="${cat.tenDM}"></option>
+							</select>
+						</div>
+						<!-- Nguyên liệu sản phẩm -->
+						<!-- ... nguyên liệu sản phẩm ... -->
+						<div class="form-group">
+							<label>Nguyên liệu:</label>
+							<table id="materialsTable">
+								<thead>
+									<tr>
+										<th>Nguyên liệu</th>
+										<th>Số lượng</th>
+										<th>Đơn vị tính</th>
+										<th>Hành động</th>
+									</tr>
+								</thead>
+								<tbody>
+									<!-- Có thể để tr đầu tiên này như hiện tại, JS mới KHÔNG còn phụ thuộc vào nó -->
+									<tr class="material-row">
+										<td><select name="materials[0].materialId" required>
+												<option value="">Chọn nguyên liệu</option>
+												<option th:each="mat : ${materials}" th:value="${mat.maNL}"
+													th:text="${mat.tenNL}" th:attr="data-unit=${mat.donViTinh}">
+												</option>
+										</select></td>
+										<td><input type="number" name="materials[0].soLuong"
+											min="1" value="1" required></td>
+										<td><span class="unit-display"></span></td>
+										<td>
+											<button type="button" class="btn-remove">Xóa</button>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+
+							<!-- TEMPLATE MẪU DÙNG ĐỂ CLONE (an toàn khi clear tbody) -->
+							<template id="material-row-template">
+								<tr class="material-row">
+									<td><select name="materials[__i__].materialId" required>
+											<option value="">Chọn nguyên liệu</option>
+											<option th:each="mat : ${materials}" th:value="${mat.maNL}"
+												th:text="${mat.tenNL}" th:attr="data-unit=${mat.donViTinh}">
+											</option>
+									</select></td>
+									<td><input type="number" name="materials[__i__].soLuong"
+										min="1" value="1" required></td>
+									<td><span class="unit-display"></span></td>
+									<td><button type="button" class="btn-remove">Xóa</button></td>
+								</tr>
+							</template>
+
+							<button type="button" onclick="addMaterialRow()">Thêm
+								nguyên liệu</button>
+						</div>
+
+
+						<div class="form-actions">
+							<button type="submit" class="btn-submit">Thêm</button>
+							<button type="button" class="btn-cancel"
+								onclick="closeModal('addProductModal')">Hủy</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+	<th:block layout:fragment="scripts">
+		<script th:inline="javascript">
+			window.__MATERIALS__ = /*[[${materials}]]*/[];
+		</script>
+		<script th:src="@{/styles/js/vendor/products.js}"></script>
+	</th:block>
+
+</body>
+</html>
+
+
+
+
+
+
+
+

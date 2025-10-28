@@ -33,15 +33,15 @@ import mocmien.com.enums.Rank;
 @AllArgsConstructor
 public class Store {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    private Integer id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "id")
+	private Integer id;
 
-    // Hạng cửa hàng
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "level", nullable = false)
-    private Level level;
+	// Hạng cửa hàng
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "level", nullable = false)
+	private Level level;
 
     // Chủ cửa hàng
     @OneToOne(fetch = FetchType.LAZY)
@@ -57,51 +57,52 @@ public class Store {
     @Column(name = "address", columnDefinition = "nvarchar(500)")
     private String address;
 
-    @Column(name = "avatar", columnDefinition = "varchar(MAX)")
-    private String avatar;
+	@Column(name = "avatar", columnDefinition = "varchar(MAX)")
+	private String avatar;
 
-    @Column(name = "cover", columnDefinition = "varchar(MAX)")
-    private String cover;
+	@Column(name = "cover", columnDefinition = "varchar(MAX)")
+	private String cover;
 
-    // Danh sách ảnh nổi bật
-    @ElementCollection
-    @Column(name = "featureImages")
-    private List<String> featureImages;
 
-    @Column(name = "point", nullable = false, columnDefinition = "int default 0")
-    private Integer point = 0;
+	// Danh sách ảnh nổi bật
+	@ElementCollection
+	@Column(name = "featureImages")
+	private List<String> featureImages;
 
-    @Column(name = "eWallet", nullable = false, columnDefinition = "DECIMAL(18,2)")
-    private BigDecimal eWallet = BigDecimal.ZERO;
+	@Column(name = "point", nullable = false, columnDefinition = "int default 0")
+	private Integer point = 0;
 
-    @Column(name = "rating", nullable = false, columnDefinition = "DECIMAL(2,1)")
-    private BigDecimal rating = BigDecimal.ZERO;
+	@Column(name = "eWallet", nullable = false, columnDefinition = "DECIMAL(18,2)")
+	private BigDecimal eWallet = BigDecimal.ZERO;
 
-	@Column(name="isActive", nullable = false, columnDefinition="BIT DEFAULT 1")
-	private boolean isActive = true; 
+	@Column(name = "rating", nullable = false, columnDefinition = "DECIMAL(2,1)")
+	private BigDecimal rating = BigDecimal.ZERO;
 
-    @Column(name = "isOpen", nullable = false)
-    private boolean isOpen = false;
+	@Column(name = "isActive", nullable = false, columnDefinition = "BIT DEFAULT 1")
+	private boolean isActive = true;
 
-    @Column(name = "createAt")
-    private LocalDateTime createAt;
+	@Column(name = "isOpen", nullable = false)
+	private boolean isOpen = true;
 
-    @Column(name = "updateAt")
-    private LocalDateTime updateAt;
+	@Column(name = "createAt")
+	private LocalDateTime createAt;
 
-    // ==============================
-    // Callback tự động cập nhật ngày
-    // ==============================
-    @PrePersist
-    protected void onCreate() {
-        createAt = LocalDateTime.now();
-        updateAt = LocalDateTime.now();
-    }
+	@Column(name = "updateAt")
+	private LocalDateTime updateAt;
 
-    @PreUpdate
-    protected void onUpdate() {
-        updateAt = LocalDateTime.now();
-    }
+	// ==============================
+	// Callback tự động cập nhật ngày
+	// ==============================
+	@PrePersist
+	protected void onCreate() {
+		createAt = LocalDateTime.now();
+		updateAt = LocalDateTime.now();
+	}
+
+	@PreUpdate
+	protected void onUpdate() {
+		updateAt = LocalDateTime.now();
+	}
 
 	public Integer getId() {
 		return id;
@@ -127,13 +128,28 @@ public class Store {
 		this.vendor = vendor;
 	}
 
-
 	public String getStoreName() {
 		return storeName;
 	}
 
 	public void setStoreName(String storeName) {
 		this.storeName = storeName;
+	}
+
+	public String getPhone() {
+		return phone;
+	}
+
+	public void setPhone(String phone) {
+		this.phone = phone;
+	}
+
+	public String getAddress() {
+		return address;
+	}
+
+	public void setAddress(String address) {
+		this.address = address;
 	}
 
 	public String getAvatar() {
@@ -216,24 +232,5 @@ public class Store {
 		this.updateAt = updateAt;
 	}
 
-	public String getAddress() {
-		return address;
-	}
-
-	public void setAddress(String address) {
-		this.address = address;
-	}
-
-	public String getPhone() {
-		return phone;
-	}
-
-	public void setPhone(String phone) {
-		this.phone = phone;
-	}
 	
-	
-    
-	
-    
 }

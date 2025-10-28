@@ -56,7 +56,7 @@ public class User {
 	@ManyToOne
 	@JoinColumn(name = "roleId", referencedColumnName = "id")
 	private Role role;
-	
+
 	@OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private UserProfile userProfile;
 

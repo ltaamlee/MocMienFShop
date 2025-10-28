@@ -14,7 +14,10 @@ import mocmien.com.enums.UserStatus;
 
 
 public interface UserService {
-
+    // Thêm:
+    Optional<User> findById(Integer userId);
+    boolean existsById(Integer userId);
+	
 	// -----------------------
 	// CRUD
 	// -----------------------

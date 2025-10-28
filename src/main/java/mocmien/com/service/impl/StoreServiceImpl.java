@@ -19,12 +19,17 @@ import mocmien.com.entity.User;
 import mocmien.com.enums.UserStatus;
 import mocmien.com.repository.StoreRepository;
 import mocmien.com.service.StoreService;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional
 public class StoreServiceImpl implements StoreService {
 
-	@Autowired
-	private StoreRepository storeRepository;
+	private final StoreRepository storeRepository;
+
+	public StoreServiceImpl(StoreRepository storeRepository) {
+		this.storeRepository = storeRepository;
+	}
 	
 	@Override
 	public StoreStats getStoreStatistics() {
@@ -35,32 +40,6 @@ public class StoreServiceImpl implements StoreService {
 
 		return new StoreStats(total, active, inactive, blocked);
 	}
-
-	public Page<StoreResponse> getStores(Pageable pageable, String keyword, Boolean active) {
-	    Page<Store> stores;
-
-	    if (keyword != null && !keyword.isEmpty() && active != null) {
-	        stores = storeRepository.findByStoreNameContainingIgnoreCaseAndIsActive(keyword, active, pageable);
-	    } else if (keyword != null && !keyword.isEmpty()) {
-	        stores = storeRepository.findByStoreNameContainingIgnoreCase(keyword, pageable);
-	    } else if (active != null) {
-	        stores = storeRepository.findByIsActive(active, pageable);
-	    } else {
-	        stores = storeRepository.findAll(pageable);
-	    }
-
-	    return stores.map(store -> new StoreResponse(
-	            store.getId(),
-	            store.getStoreName(),
-	            store.getVendor().getUsername(),
-	            store.getPoint(),
-	            store.geteWallet(),
-	            store.getRating(),
-	            store.isActive(),
-	            store.isOpen()
-	    ));
-	}
-
 
 	@Override
 	public void deleteStore(Integer storeId) {
@@ -82,14 +61,111 @@ public class StoreServiceImpl implements StoreService {
 			String action = newStatus ? "UNBLOCKED (Active=true)" : "BLOCKED (Active=false)";
 			System.out.println("[USER STATUS TOGGLED] " + store.getStoreName() + " -> " + action);
 		});
-		
+
 	}
 
 	@Override
 	public Optional<Store> findById(Integer id) {
 		return storeRepository.findById(id);
 	}
+	
+	// CRUD
+	@Override
+	public Store save(Store store) {
+		return storeRepository.save(store);
+	}
+
+	// Vendor
+	@Override
+	public List<Store> findByVendor(User vendor) {
+		return storeRepository.findByVendor(vendor);
+	}
+
+	@Override
+	public Optional<Store> findByIdAndVendor(Integer id, User vendor) {
+		return storeRepository.findByIdAndVendor(id, vendor);
+	}
+
+	// Name
+	@Override
+	public List<Store> findByStoreNameContainingIgnoreCase(String keyword) {
+		return storeRepository.findByStoreNameContainingIgnoreCase(keyword);
+	}
+
+	@Override
+	public Optional<Store> findByStoreName(String storeName) {
+		return storeRepository.findByStoreName(storeName);
+	}
+
+	// Status
+	@Override
+	public List<Store> findByIsActive(Boolean isActive) {
+		return storeRepository.findByIsActive(isActive);
+	}
+
+	@Override
+	public List<Store> findByIsOpen(Boolean isOpen) {
+		return storeRepository.findByIsOpen(isOpen);
+	}
+
+	// Paging
+	@Override
+	public Page<Store> findByIsActive(Boolean isActive, Pageable pageable) {
+		return storeRepository.findByIsActive(isActive, pageable);
+	}
+
+	@Override
+	public Page<Store> findByStoreNameContainingIgnoreCase(String keyword, Pageable pageable) {
+		return storeRepository.findByStoreNameContainingIgnoreCase(keyword, pageable);
+	}
 
 
+	@Override
+	public long countByIsActive(Boolean isActive) {
+		return storeRepository.countByIsActive(isActive);
+	}
 
+	@Override
+	public long countByIsOpen(Boolean isOpen) {
+		return storeRepository.countByIsOpen(isOpen);
+	}
+
+	@Override
+	public List<Store> findByPointGreaterThanEqual(Integer point) {
+		return storeRepository.findByPointGreaterThanEqual(point);
+	}
+
+	@Override
+	public List<Store> findByRatingGreaterThanEqual(BigDecimal rating) {
+		return storeRepository.findByRatingGreaterThanEqual(rating);
+	}
+
+	@Override
+	public int updateAfterOrder(Integer storeId, BigDecimal revenue, BigDecimal rating, Integer points) {
+		return storeRepository.updateAfterOrder(storeId, revenue, rating, points);
+	}
+
+	@Override
+	public Page<StoreResponse> getStores(Pageable pageable, String keyword, Boolean active) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<Store> findTopStoresByRating(Pageable pageable) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public int addToEWallet(Integer storeId, BigDecimal amount) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public List<Store> findTopStoresByPoint(Pageable pageable) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

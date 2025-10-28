@@ -56,6 +56,7 @@ public class SecurityConfig {
                 ).permitAll()
                 // Chỉ admin mới truy cập /admin/**
                 .requestMatchers("/admin/**").hasRole("ADMIN")
+                .requestMatchers("/vendor/**").hasRole("VENDOR")
                 .anyRequest().authenticated()
             )
             // OAuth2 login

@@ -61,6 +61,8 @@ public class AdminProfileController {
             // encode nếu dùng Spring Security
             currentUser.setPassword(password);
         }
+        System.out.println("AvatarUrl nhận được: " + avatarUrl);
+
 
         // Cập nhật UserProfile
         if (currentUser.getUserProfile() != null) {
