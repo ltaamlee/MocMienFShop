@@ -1,9 +1,11 @@
 package mocmien.com.controller;
 
+
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestParam;
 
 
@@ -70,6 +72,7 @@ public class HomeController {
 		return "customer/payment-guide";
 	}
 
+	@ModelAttribute("user")
 	private void addUserToModel(Model model, Authentication authentication) {
 		if (authentication != null && authentication.isAuthenticated()) {
 			String username = authentication.getName();
@@ -79,4 +82,5 @@ public class HomeController {
 			model.addAttribute("user", null);
 		}
 	}
+	
 }

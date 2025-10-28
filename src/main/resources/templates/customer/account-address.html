@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{customer/layout}">
+<head>
+<meta charset="UTF-8">
+<title>Địa chỉ của tôi - MocMien</title>
+<th:block layout:fragment="styles">
+	<link rel="stylesheet" href="/styles/css/customer/base.css">
+	<link rel="stylesheet" href="/styles/css/customer/account-sidebar.css">
+	<link rel="stylesheet" href="/styles/css/customer/account-address.css">
+</th:block>
+</head>
+<body>
+	<div layout:fragment="content">
+		<main class="account-page">
+			<section class="container account-container">
+				<div class="account-layout">
+
+					<!-- Sidebar -->
+					<div th:replace="~{customer/fragments/account-sidebar :: sidebar}"></div>
+
+					<!-- Nội dung chính -->
+					<div class="account-content">
+						<div class="address-header">
+							<h2>Địa chỉ của tôi</h2>
+							<a href="#" class="btn-add-address">+ Thêm địa chỉ mới</a>
+						</div>
+
+						<!-- ✅ Danh sách địa chỉ -->
+						<div class="address-list">
+							<div th:each="addr : ${addresses}" class="address-item">
+								<div class="address-left">
+									<div class="address-header-line">
+										<span class="name" th:text="${addr.fullName}">Nguyễn
+											Văn A</span> <span class="divider">|</span> <span class="phone"
+											th:text="${addr.phone}">(+84) 909 123 456</span>
+									</div>
+									<div class="address-detail"
+										th:text="${addr.line + ', ' + addr.ward + ', ' + addr.district + ', ' + addr.province}">
+										22C, Phường Tăng Nhơn Phú B, Thành phố Thủ Đức, TP Hồ Chí Minh
+									</div>
+									<div th:if="${addr.isDefault}" class="badge-default">Mặc
+										định</div>
+								</div>
+
+								<!-- Bên phải -->
+								<div class="address-right">
+									<a href="#" class="link edit-address"
+										th:attr="data-id=${addr.id},
+												data-fullname=${addr.fullName},
+												data-phone=${addr.phone},
+												data-line=${addr.line},
+												data-ward=${addr.ward},
+												data-district=${addr.district},
+												data-province=${addr.province},
+												data-isdefault=${addr.isDefault}">
+										Cập nhật </a> <a th:if="${!addr.isDefault}"
+										th:href="@{'/account/address/delete/' + ${addr.id}}"
+										class="link delete"
+										onclick="return confirm('Xóa địa chỉ này?')">Xóa</a>
+									<button th:if="${!addr.isDefault}"
+										th:attr="onclick=|window.location.href='/account/address/set-default/${addr.id}'|"
+										class="btn-set-default">Thiết lập mặc định</button>
+								</div>
+							</div>
+
+							<div th:if="${#lists.isEmpty(addresses)}" class="no-address">
+								<p>Chưa có địa chỉ nào được lưu.</p>
+							</div>
+						</div>
+					</div>
+
+				</div>
+			</section>
+		</main>
+
+		<!-- 📦 Popup thêm / sửa -->
+		<div id="addressModal" class="modal hidden">
+			<div class="modal-content">
+				<h3 id="modalTitle">Thêm địa chỉ mới</h3>
+
+				<form id="addressForm" th:action="@{/account/address/save}"
+					method="post">
+					<input type="hidden" name="id" id="id">
+
+					<!-- 🧍‍♀️ Họ tên -->
+					<div class="form-group">
+						<label>Họ tên</label> <input type="text" name="fullName"
+							id="fullName" placeholder="VD: Nguyễn Văn A" required />
+					</div>
+
+					<!-- 📞 Số điện thoại -->
+					<div class="form-group">
+						<label>Số điện thoại</label> <input type="text" name="phone"
+							id="phone" placeholder="VD: 0909123456" required />
+					</div>
+
+					<!-- 🏠 Địa chỉ chi tiết -->
+					<div class="form-group">
+						<label>Địa chỉ</label> <input type="text" name="line" id="line"
+							placeholder="VD: 22C, Làng Tăng Phú" required />
+					</div>
+
+					<!-- 🌍 Khu vực hành chính -->
+					<div class="form-group">
+						<label>Khu vực</label>
+						<div class="address-select-group">
+							<input type="text" id="province" name="province"
+								placeholder="Tỉnh/Thành phố" readonly required /> <input
+								type="text" id="district" name="district"
+								placeholder="Quận/Huyện" readonly required /> <input
+								type="text" id="ward" name="ward" placeholder="Phường/Xã"
+								readonly required />
+							<button type="button" id="openAddressPopup" class="btn-select">Chọn
+								địa chỉ</button>
+						</div>
+					</div>
+
+
+					<!-- 🌟 Mặc định -->
+					<div class="form-group checkbox-group">
+						<label> <input type="checkbox" name="isDefault"
+							id="isDefault" /> Đặt làm địa chỉ mặc định
+						</label>
+					</div>
+
+					<div class="modal-actions">
+						<button type="button" id="cancelBtn">Hủy</button>
+						<button type="submit" class="confirm-btn">Lưu</button>
+					</div>
+				</form>
+			</div>
+		</div>
+
+		<!-- 📍 Popup chọn địa chỉ -->
+		<div id="addressPopup" class="popup hidden">
+			<div class="popup-content">
+				<h3>Chọn địa chỉ</h3>
+
+				<!-- Tabs -->
+				<div class="address-tabs">
+					<button class="tab active" data-tab="province">Tỉnh /
+						Thành phố</button>
+					<button class="tab" data-tab="district">Quận / Huyện</button>
+					<button class="tab" data-tab="ward">Phường / Xã</button>
+				</div>
+
+				<!-- Search -->
+				<div class="search-container">
+					<input id="searchBox" type="text" class="search-box"
+						placeholder="Tìm kiếm..." />
+				</div>
+
+				<!-- Danh sách -->
+				<div class="address-lists">
+					<ul id="provinceList" class="address-list active"></ul>
+					<ul id="districtList" class="address-list"></ul>
+					<ul id="wardList" class="address-list"></ul>
+				</div>
+
+				<!-- Nút -->
+				<div class="popup-actions">
+					<button id="cancelPopup" class="btn-cancel">Trở lại</button>
+					<button id="confirmPopup" class="btn-confirm">Hoàn thành</button>
+				</div>
+			</div>
+		</div>
+
+
+	</div>
+
+	<th:block layout:fragment="scripts">
+		<script src="/styles/js/customer/header.js"></script>
+		<script th:src="@{/styles/js/customer/avatar.js}"></script>
+		<script src="/styles/js/customer/account-sidebar.js"></script>
+		<script th:src="@{/styles/js/customer/account-address.js}"></script>
+	</th:block>
+</body>
+</html>

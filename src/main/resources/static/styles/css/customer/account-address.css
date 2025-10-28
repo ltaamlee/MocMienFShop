@@ -1,0 +1,417 @@
+/* 🌸 ===== BỐ CỤC CHUNG ===== */
+.account-page {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+  padding-top: calc(var(--header-height) + 20px);
+}
+
+.account-container {
+  width: 100%;
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: 0 80px; 
+  box-sizing: border-box;
+}
+
+/* Bố cục chính gồm sidebar + nội dung */
+.account-layout {
+  display: flex;
+  flex-direction: row;          
+  flex-wrap: nowrap;            
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: 3rem;
+  width: 100%;
+}
+
+/* Sidebar cố định bên trái */
+.account-layout > div:first-child {
+  flex: 0 0 260px;
+}
+
+/* Sidebar */
+.account-sidebar {
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  padding: 25px 20px;
+  position: sticky;
+  top: 0px;
+  height: fit-content;
+  text-align: left;
+}
+
+/* Nội dung bên phải */
+.account-content {
+  flex: 1;
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.05);
+  padding: 40px 50px;
+  min-height: 600px;
+  text-align: left;
+  transition: all 0.3s ease;
+}
+
+/* ===== TIÊU ĐỀ & NÚT ===== */
+.address-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 2px solid #f5c9ce;
+  padding-bottom: 12px;
+  margin-bottom: 25px;
+}
+
+.address-header h2 {
+  color: #ca4c59;
+  font-weight: 700;
+  font-size: 1.4rem;
+  letter-spacing: 0.3px;
+}
+
+.btn-add-address {
+  background-color: #ca4c59;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-weight: 600;
+  text-decoration: none;
+  font-size: 0.95rem;
+  transition: 0.3s ease;
+}
+
+.btn-add-address:hover {
+  background-color: #e37281;
+  transform: translateY(-2px);
+  box-shadow: 0 3px 8px rgba(202, 76, 89, 0.25);
+}
+
+/* ===== DANH SÁCH ĐỊA CHỈ ===== */
+.address-list {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.address-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  border-bottom: 1px solid #f1d0d3;
+  padding-bottom: 16px;
+  padding-top: 8px;
+}
+
+.address-item:hover {
+  background-color: #fff9fa;
+  border-radius: 8px;
+  transition: 0.25s ease;
+}
+
+/* ===== BÊN TRÁI ===== */
+.address-left {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.address-header-line {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.name {
+  color: #333;
+  font-weight: 500;
+  font-size: 1rem;
+}
+
+.divider {
+  color: #aaa;
+}
+
+.phone {
+  color: #555;
+  font-size: 0.9rem;
+}
+
+.address-detail {
+  color: #555;
+  line-height: 1.5;
+  font-size: 0.9rem;
+  margin-top: 2px;
+}
+
+.badge-default {
+  color: #ca4c59;
+  border: 1px solid #ca4c59;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  padding: 2px 6px;
+  width: fit-content;
+  margin-top: 4px;
+}
+
+/* ===== BÊN PHẢI ===== */
+.address-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 240px;
+  justify-content: flex-end;
+}
+
+.address-right .link {
+  color: #007bff;
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.address-right .link:hover {
+  text-decoration: underline;
+}
+
+.address-right .link.delete {
+  color: #e53935;
+}
+
+.btn-set-default {
+  border: 1px solid #ccc;
+  background: #fff;
+  border-radius: 6px;
+  padding: 6px 14px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  font-size: 0.85rem;
+}
+
+.btn-set-default:hover {
+  border-color: #ca4c59;
+  color: #ca4c59;
+}
+
+/* ===== CHƯA CÓ ĐỊA CHỈ ===== */
+.no-address {
+  text-align: center;
+  color: #777;
+  margin-top: 50px;
+  font-style: italic;
+}
+
+.modal {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex; justify-content: center; align-items: center;
+  z-index: 10000;
+}
+.modal.hidden { display: none; }
+
+.modal-content {
+  background: #fff;
+  padding: 2rem;
+  border-radius: 12px;
+  width: 420px;
+  max-width: 90%;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+}
+
+.modal-content h3 {
+  margin-bottom: 1rem;
+  text-align: center;
+  color: var(--primary-color);
+}
+
+.form-group {
+  margin-bottom: 1rem;
+}
+.form-group input, .form-group textarea {
+  width: 100%;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 10px;
+  font-size: 0.95rem;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+.modal-actions button {
+  padding: 8px 18px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+.modal-actions #cancelBtn {
+  background: #ddd;
+}
+.modal-actions .confirm-btn {
+  background: var(--primary-color);
+  color: white;
+}
+
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 992px) {
+  .account-layout {
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .account-layout > div:first-child {
+    flex: 1;
+    width: 100%;
+  }
+
+  .account-content {
+    padding: 25px 20px;
+  }
+}
+/* ===== Popup chọn địa chỉ ===== */
+.popup {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10000;
+}
+.popup.hidden {
+  display: none;
+}
+
+.popup-content {
+  background: white;
+  width: 420px;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.2);
+  animation: fadeIn 0.3s ease;
+}
+
+.address-tabs {
+  display: flex;
+  border-bottom: 2px solid #f3f3f3;
+  margin-bottom: 8px;
+}
+.address-tabs .tab {
+  flex: 1;
+  background: none;
+  border: none;
+  padding: 8px;
+  cursor: pointer;
+  color: #666;
+  font-weight: 500;
+}
+.address-tabs .tab.active {
+  color: #d14b4b;
+  border-bottom: 2px solid #d14b4b;
+}
+
+/* ✅ Chỉ áp dụng cho danh sách bên trong popup */
+.popup .address-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  max-height: 220px;
+  overflow-y: auto;
+  display: none;
+}
+.popup .address-list.active {
+  display: block;
+}
+
+.popup .address-list li {
+  padding: 8px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.popup .address-list li:hover {
+  background: #f6f6f6;
+}
+.popup .address-list li.active {
+  background: #ffecec;
+  color: #c00;
+}
+
+.popup-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 15px;
+}
+.popup-actions button {
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+}
+#confirmPopup {
+  background: #d14b4b;
+  color: white;
+}
+#cancelPopup {
+  background: #ddd;
+}
+
+/* 🌸 Ô tìm kiếm trong popup chọn địa chỉ */
+.search-container {
+  position: relative;
+  margin: 12px 0 18px 0;
+}
+
+.search-box {
+  width: 100%;
+  padding: 10px 40px 10px 14px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  outline: none;
+  transition: all 0.25s ease;
+  background-color: #fff;
+  color: #333;
+  box-sizing: border-box;
+}
+
+/* Hiệu ứng khi người dùng bấm vào ô tìm kiếm */
+.search-box:focus {
+  border-color: #d14b4b;
+  box-shadow: 0 0 0 3px rgba(209, 75, 75, 0.15);
+}
+
+/* 🔍 Icon tìm kiếm Font Awesome */
+.search-container::after {
+  content: "\f002"; /* Font Awesome search icon */
+  font-family: "Font Awesome 6 Free";
+  font-weight: 900;
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #aaa;
+  font-size: 1rem;
+  pointer-events: none;
+  transition: color 0.25s ease;
+}
+
+.search-box:focus + .search-container::after {
+  color: #d14b4b;
+}
+
+/* Khi nhập text vào có thể thêm hiệu ứng nhỏ */
+.search-box:not(:placeholder-shown) {
+  border-color: #d14b4b;
+}
+

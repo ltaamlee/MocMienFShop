@@ -43,7 +43,7 @@ document.addEventListener("DOMContentLoaded", () => {
     showSlide(index);
   }));
 
-  if (slides.length > 0) setInterval(nextSlide, 3000);
+  if (slides.length > 0) setInterval(nextSlide, 8000);
 
   
   
