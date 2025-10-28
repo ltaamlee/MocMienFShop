@@ -10,88 +10,91 @@
       rel="stylesheet">
 </head>
 <body>
-<div th:fragment="header">
+  <div th:fragment="header">
     <header>
-        <div class="header-top">
-            <div class="logo">
-                <a th:href="@{/home}" class="logo-link">
-                    <img src="/styles/image/logo.png" alt="Logo">
-                    <span class="shop-name">4Petals Flower Shop</span>
-                </a>
-            </div>
-
-            <div class="search-box">
-                <form th:action="@{/product}" method="get" class="search-form">
-                    <input type="text" name="q" th:value="${keyword}" placeholder="Tìm kiếm sản phẩm..." />
-                    <button type="submit"><i class="fa fa-search"></i></button>
-                </form>
-            </div>
-
-            <div class="user-actions">
-                <!-- Hiển thị khi chưa đăng nhập -->
-                <a th:href="@{/login}" sec:authorize="isAnonymous()">
-                    <i class="fa-solid fa-right-to-bracket"></i> <strong>Đăng nhập</strong>
-                </a>
-                <a th:href="@{/register}" sec:authorize="isAnonymous()">
-                    <i class="fa-solid fa-user-plus"></i> <strong>Đăng ký</strong>
-                </a>
-                <a href="/login" sec:authorize="isAnonymous()" class="cart-icon disabled"
-                   title="Vui lòng đăng nhập để sử dụng giỏ hàng">
-                    <i class="fa-solid fa-cart-shopping"></i> Giỏ hàng
-                </a>
-
-                <!-- Khi đã đăng nhập -->
-                <div sec:authorize="isAuthenticated()">
-                    <!-- Giỏ hàng cho user CUSTOMER -->
-                    <a th:href="@{/cart}" class="cart-icon" sec:authorize="hasRole('CUSTOMER')">
-                        <i class="fa-solid fa-cart-shopping"></i>
-                        <span id="cart-count" class="cart-count" style="display: none;">0</span>
-                    </a>
-
-                    <span class="welcome">
-                        Xin chào, <strong th:text="${#authentication.name}">User</strong>
-                    </span>
-
-                    <div class="user-menu">
-                        <div class="avatar" id="avatar-btn">
-                            <img th:if="${user != null and user.avatar != null}"
-                                 th:src="@{${user.avatar}}" alt="Avatar" class="avatar-img">
-                        </div>
-
-                        <div class="dropdown" id="user-dropdown">
-                            <!-- Menu tùy role -->
-                            <div sec:authorize="hasRole('ADMIN')">
-                                <a th:href="@{/admin/profile}"><i class="fa-solid fa-user-shield"></i> Profile</a>
-                                <a th:href="@{/admin/dashboard}"><i class="fa-solid fa-chart-line"></i> Dashboard</a>
-                            </div>
-
-                            <div sec:authorize="hasRole('VENDOR')">
-                                <a th:href="@{/vendor/profile}"><i class="fa-solid fa-user"></i> Profile</a>
-                                <a th:href="@{/vendor/dashboard}"><i class="fa-solid fa-chart-line"></i> Dashboard</a>
-                            </div>
-
-                            <div sec:authorize="hasRole('CUSTOMER')">
-                                <a th:href="@{/account}"><i class="fa-solid fa-user"></i> Tài khoản</a>
-                                <a th:href="@{/customer/orders}"><i class="fa-solid fa-box"></i> Đơn mua</a>
-                            </div>
-
-                            <a th:href="@{/logout}"> <i class="fa-solid fa-right-from-bracket"></i> Đăng xuất </a>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
+      <div class="header-top">
+        <!-- 🔹 Logo -->
+        <div class="logo">
+          <a th:href="@{/home}" class="logo-link">
+            <img src="/styles/image/logo.png" alt="Logo">
+            <span class="shop-name">4Petals Flower Shop</span>
+          </a>
         </div>
 
-        <nav class="header-nav">
-            <ul class="nav-links">
-                <li><a th:href="@{/home}"><i class="fa-solid fa-house"></i> Trang chủ</a></li>
-                <li><a th:href="@{/product}"><i class="fa-solid fa-box-open"></i> Sản phẩm</a></li>
-                <li><a th:href="@{/about}"><i class="fa-solid fa-circle-info"></i> Giới thiệu</a></li>
-                <li><a th:href="@{/contact}"><i class="fa-solid fa-envelope"></i> Liên hệ</a></li>
-            </ul>
-        </nav>
+        <!-- 🔹 Tìm kiếm -->
+        <form th:action="@{/product}" method="get" class="search-form">
+          <div class="search-box">
+            <input type="text" name="q" th:value="${keyword}" placeholder="Tìm kiếm sản phẩm..." />
+            <button type="submit"><i class="fa fa-search"></i></button>
+          </div>
+        </form>
+
+        <!-- 🔹 User actions -->
+        <div class="user-actions">
+          <!-- Khi CHƯA đăng nhập -->
+          <a th:href="@{/login}" sec:authorize="isAnonymous()">
+            <i class="fa-solid fa-right-to-bracket"></i> <strong>Đăng nhập</strong>
+          </a>
+          <a th:href="@{/register}" sec:authorize="isAnonymous()">
+            <i class="fa-solid fa-user-plus"></i> <strong>Đăng ký</strong>
+          </a>
+
+          <!-- Giỏ hàng ẩn khi chưa đăng nhập -->
+          <a href="#" sec:authorize="isAnonymous()" class="cart-icon disabled"
+             title="Vui lòng đăng nhập để sử dụng giỏ hàng" style="display: none;">
+             <i class="fa-solid fa-cart-shopping"></i> Giỏ hàng
+          </a>
+
+          <!-- Khi ĐÃ đăng nhập -->
+          <div sec:authorize="isAuthenticated()">
+            <!-- Chỉ hiển thị giỏ hàng cho CUSTOMER -->
+            <a th:href="@{/cart}" class="cart-icon" sec:authorize="hasRole('CUSTOMER')">
+              <i class="fa-solid fa-cart-shopping"></i>
+              <span id="cart-count" class="cart-count" style="display: none;">0</span>
+            </a>
+
+            <span class="welcome">
+              Xin chào,
+              <strong th:text="${user != null && user.userProfile != null && user.userProfile.fullName != null 
+                               ? user.userProfile.fullName 
+                               : #authentication.name}">
+                User
+              </strong>
+            </span>
+
+            <!-- 🔹 Menu người dùng -->
+            <div class="user-menu">
+              <div class="avatar" id="avatar-btn">
+                <!-- Nếu có avatar -->
+                <img th:if="${user != null and user.avatar != null}"
+                     th:src="${user.avatar}" alt="Avatar" class="avatar-img">
+
+                <!-- Nếu không có avatar -->
+                <img th:if="${user == null or user.avatar == null}"
+                     src="/styles/image/customer/default-avatar.png"
+                     alt="Avatar" class="avatar-img">
+              </div>
+
+              <div class="dropdown" id="user-dropdown">
+                <a th:href="@{/account}"><i class="fa-solid fa-user"></i> Tài khoản</a>
+                <a th:href="@{/customer/orders}"><i class="fa-solid fa-box"></i> Đơn mua</a>
+                <a th:href="@{/logout}"><i class="fa-solid fa-right-from-bracket"></i> Đăng xuất</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 🔹 Menu chính -->
+      <nav class="header-nav">
+        <ul class="nav-links">
+          <li><a th:href="@{/home}"><i class="fa-solid fa-house"></i> Trang chủ</a></li>
+          <li><a th:href="@{/product}"><i class="fa-solid fa-box-open"></i> Sản phẩm</a></li>
+          <li><a th:href="@{/about}"><i class="fa-solid fa-circle-info"></i> Giới thiệu</a></li>
+          <li><a th:href="@{/contact}"><i class="fa-solid fa-envelope"></i> Liên hệ</a></li>
+        </ul>
+      </nav>
     </header>
-</div>
+  </div>
 </body>
 </html>

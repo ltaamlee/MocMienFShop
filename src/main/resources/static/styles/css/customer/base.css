@@ -362,12 +362,13 @@ header {
 .user-menu:hover .dropdown,
 .user-menu .dropdown:hover {
   display: flex;
+  flex-direction: column;
 }
 .user-menu .dropdown a {
 	display: flex;
 	align-items: center;
 	gap: 10px;
-	color: var(--text-color);
+	color: var(--text1-color);
 	padding: 10px 15px;
 	text-decoration: none;
 	transition: background 0.2s ease;
@@ -377,6 +378,11 @@ header {
 	background: #f5f5f5;
 	color: var(--primary-color);
 }
+
+.user-actions > div {
+    display: contents;
+}
+
 
 /* === Layout user-info === */
 .user-info {
@@ -518,6 +524,46 @@ footer {
     padding-top: 10px;
     border-top: 1px solid rgba(0, 0, 0, 0.2);
     font-size: 0.85rem;
+}
+
+/* ===== CART ===== */
+.cart-icon {
+  position: relative;
+  color: var(--secondary-color);
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.cart-icon i {
+  font-size: 1.5rem;
+  position: relative;
+  color: var(--secondary-color);
+}
+.cart-icon:hover { color: var(--primary-color); }
+.cart-icon.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+.cart-count {
+  position: absolute;
+  top: -6px;
+  right: -10px;
+  background: var(--primary-color);
+  color: white;
+  border-radius: 50%;
+  font-size: 0.7rem;
+  padding: 2px 6px;
+  font-weight: 600;
+  min-width: 18px;
+  height: 18px;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
 }
 
 /* ===== ANIMATIONS ===== */

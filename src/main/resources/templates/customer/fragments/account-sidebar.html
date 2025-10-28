@@ -1,0 +1,50 @@
+<th:block th:fragment="sidebar">
+  <div class="account-sidebar">
+    <div class="profile-info">
+
+      <!-- ✅ Avatar động -->
+      <img th:if="${user != null and user.avatar != null}"
+           th:src="@{${user.avatar}(v=${#dates.createNow().time})}"
+           alt="Avatar" class="avatar">
+
+      <!-- 🪶 Ảnh mặc định -->
+      <img th:if="${user == null or user.avatar == null}"
+           src="/styles/image/customer/default-avatar.png"
+           alt="Avatar" class="avatar">
+
+      <div class="profile-text">
+        <!-- ✅ Hiển thị tên đầy đủ nếu có -->
+        <h3 th:text="${user != null && user.userProfile != null && user.userProfile.fullName != null 
+                      ? user.userProfile.fullName 
+                      : #authentication.name}">
+          user1
+        </h3>
+      </div>
+    </div>
+
+    <ul class="menu">
+      <li class="menu-item">
+        <a href="#" class="menu-toggle">
+          <i class="fa-solid fa-user"></i> Tài Khoản Của Tôi
+        </a>
+        <ul class="submenu">
+          <li><a th:href="@{/account}">Thông Tin Cá Nhân</a></li>
+          <li><a th:href="@{/account/change-password}">Đổi Mật Khẩu</a></li>
+          <li><a th:href="@{/account/address}">Địa Chỉ</a></li>
+        </ul>
+      </li>
+
+      <li class="menu-item">
+        <a th:href="@{/customer/orders}">
+          <i class="fa-solid fa-box"></i> Đơn Mua
+        </a>
+      </li>
+
+      <li class="menu-item logout">
+        <a th:href="@{/logout}">
+          <i class="fa-solid fa-right-from-bracket"></i> Đăng Xuất
+        </a>
+      </li>
+    </ul>
+  </div>
+</th:block>

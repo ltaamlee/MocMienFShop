@@ -1087,4 +1087,3 @@ input:checked + .slider:before {
     margin-top: 5px;
     height: 1em; /* Giữ khoảng trống để layout không bị nhảy */
 }
-

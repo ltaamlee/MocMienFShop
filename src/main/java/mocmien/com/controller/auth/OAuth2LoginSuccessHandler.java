@@ -39,6 +39,7 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
 
 		String email = oauthUser.getAttribute("email");
 		String fullName = oauthUser.getAttribute("name");
+		oauthUser.getAttributes().forEach((k,v) -> System.out.println(k + " = " + v));
 
 		// Tạo hoặc lấy user đã có
 		User user = userService.createOAuthUser(email, fullName);
