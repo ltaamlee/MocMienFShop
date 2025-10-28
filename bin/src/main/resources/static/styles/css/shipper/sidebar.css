@@ -1,0 +1,108 @@
+/* =============================
+   SHIPPER SIDEBAR - MOBILE NAVIGATION
+   ============================= */
+
+body {
+  margin: 0;
+  padding-bottom: 60px; /* chừa chỗ cho thanh menu cố định */
+  font-family: 'Montserrat', sans-serif;
+  background-color: #f9f9f9;
+}
+
+/* Thanh menu cố định dưới cùng */
+.sidebar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 58px;
+  background-color: #ffffff;
+  border-top: 1px solid #e0e0e0;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.06);
+  z-index: 100;
+}
+
+/* Danh sách menu */
+.sidebar-menu {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  width: 100%;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+/* Item */
+.sidebar-menu li {
+  flex: 1;
+  text-align: center;
+}
+
+.sidebar-menu a {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-decoration: none;
+  color: #555;
+  font-size: 12px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  padding: 6px 0;
+}
+
+/* Icon */
+.sidebar-menu .icon {
+  font-size: 18px;
+  margin-bottom: 3px;
+  transition: transform 0.2s ease;
+}
+
+/* Hover / Active */
+.sidebar-menu a:hover .icon,
+.sidebar-menu a.active .icon {
+  color: #007bff;
+  transform: scale(1.1);
+}
+
+.sidebar-menu a:hover,
+.sidebar-menu a.active {
+  color: #007bff;
+}
+
+/* =============================
+   RESPONSIVE
+   ============================= */
+@media (min-width: 768px) {
+  /* Trên tablet hoặc desktop, sidebar chuyển sang dạng trái */
+  .sidebar {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: 80px;
+    height: 100vh;
+    flex-direction: column;
+    border-top: none;
+    border-right: 1px solid #e0e0e0;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.05);
+    padding-top: 20px;
+  }
+
+  .sidebar-menu {
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .sidebar-menu a {
+    font-size: 11px;
+  }
+
+  .sidebar-menu .icon {
+    font-size: 20px;
+  }
+}
+

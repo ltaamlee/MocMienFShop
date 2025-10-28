@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Đăng ký | Mộc Miên Shipper</title>
+
+<link rel="stylesheet" th:href="@{/styles/css/base.css}">
+
+<link rel="stylesheet" th:href="@{/styles/css/auth.css}">
+
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+</head>
+<body>
+
+	<div class="register-container">
+		<div class="register-card">
+
+			<div class="logo">
+				<img th:src="@{/styles/image/logo.png}" alt="Logo Mộc Miên">
+			</div>
+			<h2>Mộc Miên</h2>
+			<p class="app-description">Đăng ký tài khoản đối tác vận chuyển</p>
+
+			<form th:action="@{/shipper/register}" th:object="${user}"
+				method="post">
+
+				<div class="form-group" th:if="${error}">
+					<div class="alert alert-danger">
+						<span th:text="${error}"></span>
+					</div>
+				</div>
+				<div class="form-group" th:if="${success}">
+					<div class="alert alert-success">
+						<span th:text="${success}"></span>
+					</div>
+				</div>
+
+				<div class="form-group">
+					<label for="fullName">Họ và tên</label>
+					<div class="input-wrapper">
+						<input type="text" id="fullName" name=fullName
+							placeholder="Nguyễn Văn A" required>
+					</div>
+				</div>
+
+				<div class="form-group">
+					<label for="email">Email</label>
+					<div class="input-wrapper">
+						<input type="email" id="email" th:field="*{email}"
+							placeholder="example@gmail.com" required>
+					</div>
+				</div>
+
+				<div class="form-group">
+					<label for="phone">Số điện thoại</label>
+					<div class="input-wrapper">
+						<input type="text" id="phone" th:field="*{phone}"
+							placeholder="09xxxxxxxx" required>
+					</div>
+				</div>
+
+				<div class="form-group">
+					<label for="password">Mật khẩu</label>
+					<div class="input-wrapper">
+						<input type="password" id="password" th:field="*{password}"
+							placeholder="Tạo mật khẩu" required>
+					</div>
+				</div>
+
+				<div class="form-group">
+					<label for="deliveryCompanyId">Đơn vị vận chuyển</label>
+					<div class="input-wrapper has-dropdown">
+						<select id="deliveryCompanyId" name="deliveryCompanyId" required>
+							<option value="" disabled selected>Chọn đơn vị của bạn</option>
+							<option th:each="company : ${deliveryCompanies}"
+								th:value="${company.id}" th:text="${company.deliveryName}">
+							</option>
+						</select>
+
+					</div>
+				</div>
+
+				<div class="form-group">
+					<label for="vehicleType">Loại xe</label>
+					<div class="input-wrapper has-dropdown">
+						<select id="vehicleType" name="vehicleType" required>
+							<option value="" disabled selected>Chọn loại xe</option>
+							<option value="Xe máy">Xe máy</option>
+							<option value="Ô tô">Ô tô</option>
+						</select>
+					</div>
+				</div>
+
+				<div class="form-group">
+					<label for="vehicleNumber">Biển số xe</label>
+					<div class="input-wrapper">
+						<input type="text" id="vehicleNumber" name="vehicleNumber"
+							placeholder="Ví dụ: 59-G1 12345" required>
+					</div>
+				</div>
+
+				<button type="submit" class="btn btn-primary">Đăng ký</button>
+			</form>
+
+			<div class="divider">
+				<span>hoặc</span>
+			</div>
+
+			<div class="social-login">
+				<a href="/oauth2/authorization/google" class="btn btn-social-google">
+					<i class="fab fa-google"></i> Tiếp tục với Google
+				</a>
+			</div>
+
+			<p class="register-link">
+				Đã có tài khoản? <a th:href="@{/shipper/login}">Đăng nhập ngay</a>
+			</p>
+
+		</div>
+	</div>
+</body>
+</html>

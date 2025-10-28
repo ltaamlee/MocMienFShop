@@ -39,7 +39,7 @@ public class Store {
 	private Integer id;
 
 	// Hạng cửa hàng
-	@ManyToOne(fetch = FetchType.LAZY)
+	@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "level", nullable = false)
 	private Level level;
 

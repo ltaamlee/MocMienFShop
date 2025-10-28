@@ -40,7 +40,7 @@ public class Product {
 
 	// Khóa ngoại: Store
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "storeId", referencedColumnName = "id",  nullable = false)
+	@JoinColumn(name = "storeId", referencedColumnName = "id", nullable = false)
 	private Store store;
 
 	@Column(name = "productName", nullable = false, unique = true, length = 500, columnDefinition = "NVARCHAR(500)")
@@ -82,18 +82,14 @@ public class Product {
 	@Column(name = "updateAt")
 	private LocalDateTime updateAt;
 
-	
 	// ProductImage
 	@OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
-	@OrderBy("index ASC")
+	@OrderBy("imageIndex ASC")
 	private List<ProductImage> images;
-	
+
 	// Review
 	@OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Review> reviews;
-	
-	@OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<ProductFlower> productFlowers;
 
 	@PrePersist
 	protected void onCreate() {
@@ -107,4 +103,149 @@ public class Product {
 	protected void onUpdate() {
 		updateAt = LocalDateTime.now();
 	}
+
+	public Integer getId() {
+		return id;
+	}
+
+	public void setId(Integer id) {
+		this.id = id;
+	}
+
+	public Category getCategory() {
+		return category;
+	}
+
+	public void setCategory(Category category) {
+		this.category = category;
+	}
+
+	public Store getStore() {
+		return store;
+	}
+
+	public void setStore(Store store) {
+		this.store = store;
+	}
+
+	public String getProductName() {
+		return productName;
+	}
+
+	public void setProductName(String productName) {
+		this.productName = productName;
+	}
+
+	public String getSlug() {
+		return slug;
+	}
+
+	public void setSlug(String slug) {
+		this.slug = slug;
+	}
+
+	public BigDecimal getPrice() {
+		return price;
+	}
+
+	public void setPrice(BigDecimal price) {
+		this.price = price;
+	}
+
+	public BigDecimal getPromotionalPrice() {
+		return promotionalPrice;
+	}
+
+	public void setPromotionalPrice(BigDecimal promotionalPrice) {
+		this.promotionalPrice = promotionalPrice;
+	}
+
+	public String getSize() {
+		return size;
+	}
+
+	public void setSize(String size) {
+		this.size = size;
+	}
+
+	public Integer getStock() {
+		return stock;
+	}
+
+	public void setStock(Integer stock) {
+		this.stock = stock;
+	}
+
+	public Integer getSold() {
+		return sold;
+	}
+
+	public void setSold(Integer sold) {
+		this.sold = sold;
+	}
+
+	public BigDecimal getRating() {
+		return rating;
+	}
+
+	public void setRating(BigDecimal rating) {
+		this.rating = rating;
+	}
+
+	public Boolean getIsActive() {
+		return isActive;
+	}
+
+	public void setIsActive(Boolean isActive) {
+		this.isActive = isActive;
+	}
+
+	public Boolean getIsSelling() {
+		return isSelling;
+	}
+
+	public void setIsSelling(Boolean isSelling) {
+		this.isSelling = isSelling;
+	}
+
+	public Boolean getIsAvailable() {
+		return isAvailable;
+	}
+
+	public void setIsAvailable(Boolean isAvailable) {
+		this.isAvailable = isAvailable;
+	}
+
+	public LocalDateTime getCreateAt() {
+		return createAt;
+	}
+
+	public void setCreateAt(LocalDateTime createAt) {
+		this.createAt = createAt;
+	}
+
+	public LocalDateTime getUpdateAt() {
+		return updateAt;
+	}
+
+	public void setUpdateAt(LocalDateTime updateAt) {
+		this.updateAt = updateAt;
+	}
+
+	public List<ProductImage> getImages() {
+		return images;
+	}
+
+	public void setImages(List<ProductImage> images) {
+		this.images = images;
+	}
+
+	public List<Review> getReviews() {
+		return reviews;
+	}
+
+	public void setReviews(List<Review> reviews) {
+		this.reviews = reviews;
+	}
+
 }

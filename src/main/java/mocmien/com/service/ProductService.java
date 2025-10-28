@@ -7,12 +7,18 @@ import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import mocmien.com.dto.response.product.ProductDetailResponse;
+import mocmien.com.dto.response.product.ProductListItemResponse;
 import mocmien.com.entity.Category;
 import mocmien.com.entity.Product;
 import mocmien.com.entity.Store;
+import mocmien.com.enums.ProductStatus;
 
 public interface ProductService {
 
+	Page<ProductListItemResponse> list(String keyword, Integer categoryId, ProductStatus status, Pageable pageable);
+    ProductDetailResponse detail(Integer id);
+	
     // ===================== CƠ BẢN =====================
     List<Product> getAllProducts();
     Optional<Product> getProductById(Integer id);

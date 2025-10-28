@@ -21,7 +21,7 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
 	 // ============================================================
     // 🔹 CRUD cơ bản
     // ============================================================
-    @EntityGraph(attributePaths = {"images", "productFlowers", "store", "category"})
+    @EntityGraph(attributePaths = {"images", "store", "category"})
     Optional<Product> findBySlug(String slug);
 
 

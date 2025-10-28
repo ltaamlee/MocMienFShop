@@ -1,389 +1,265 @@
-(() => {
-	let materialIndex = 1;
-	let materialsData = {};
-	let STATUS_CACHE = [];
+const apiBase = '/api/vendor/products';
+let currentPage = 0;
+const pageSize = 10;
 
-	function escapeHtml(str) {
-		if (str == null) return '';
-		return String(str)
-			.replace(/&/g, '&amp;')
-			.replace(/</g, '&lt;')
-			.replace(/>/g, '&gt;')
-			.replace(/"/g, '&quot;')
-			.replace(/'/g, '&#39;');
-	}
+const csrfToken = document.querySelector('meta[name="_csrf"]')?.content;
+const csrfHeader = document.querySelector('meta[name="_csrf_header"]')?.content;
+function authHeaders() {
+	const h = { 'Content-Type': 'application/json' };
+	if (csrfToken && csrfHeader) h[csrfHeader] = csrfToken;
+	return h;
+}
 
-	function initMaterialsDataFromWindow() {
-		try {
-			const arr = window.__MATERIALS__ || [];
-			materialsData = {};
-			arr.forEach(m => { materialsData[m.maNL] = m; });
-		} catch (e) { materialsData = {}; }
-	}
+document.addEventListener('DOMContentLoaded', () => {
+	bindSearch();
+	//loadCategories();
+	loadProducts();
+});
 
-	async function loadStatuses() {
-		if (STATUS_CACHE.length) return STATUS_CACHE;
-		const r = await fetch('/api/vendor/products/statuses');
-		STATUS_CACHE = await r.json(); // [{value, text}]
-		return STATUS_CACHE;
-	}
-
-	function populateStatusSelect(selectEl, statuses, defaultValue = null) {
-		selectEl.innerHTML = '';
-		statuses.forEach(s => {
-			const opt = document.createElement('option');
-			opt.value = s.value;
-			opt.textContent = s.text;
-			if (defaultValue !== null && String(defaultValue) === String(s.value)) opt.selected = true;
-			selectEl.appendChild(opt);
-		});
-	}
-
-	// --- Mở & Đóng modal ---
-	window.openModal = function(modalId) {
-		const modal = document.getElementById(modalId);
-		if (!modal) return;
-		modal.classList.add('show');
-		document.body.classList.add('modal-open');
-	};
-
-	window.closeModal = function(modalId) {
-		const modal = document.getElementById(modalId);
-		if (!modal) return;
-		modal.classList.remove('show');
-		document.body.classList.remove('modal-open');
-		modal.dataset.editingId = '';
-		// reset form
-		const form = modal.querySelector('form');
-		form?.reset();
-		const tbody = modal.querySelector('#materialsTable tbody');
-		if (tbody) {
-			tbody.innerHTML = '';
-			addMaterialRow(); // giữ lại 1 dòng trống
-		}
-		const title = modal.querySelector('.modal-header h2');
-		if (title) title.textContent = 'Thêm Sản Phẩm';
-		const btnSubmit = modal.querySelector('.btn-submit');
-		if (btnSubmit) btnSubmit.textContent = 'Thêm';
-	};
-
-	// Click ngoài modal để đóng
-	document.addEventListener('click', (e) => {
-		if (e.target.classList.contains('modal')) closeModal(e.target.id);
-	});
-
-	// ESC để đóng
-	document.addEventListener('keydown', (e) => {
-		if (e.key === 'Escape') {
-			document.querySelectorAll('.modal.show').forEach(m => closeModal(m.id));
-		}
-	});
-
-	// Review ảnh sản phẩm
-	window.previewProduct = function(event) {
-		const file = event.target.files[0];
-		if (!file) return;
-		const reader = new FileReader();
-		reader.onload = () => (document.getElementById('productPreview').src = reader.result);
-		reader.readAsDataURL(file);
-	};
-
-	// Cập nhật đơn vị tính theo nguyên liệu chọn
-	function updateUnitDisplay(selectElement) {
-		const row = selectElement.closest("tr");
-		const materialId = selectElement.value;
-		const unitCell = row.querySelector(".unit-display");
-		unitCell.textContent = materialsData[materialId]?.donViTinh || "";
-	}
-
-	// Thêm dòng nguyên liệu
-	window.addMaterialRow = function() {
-		const tableBody = document.querySelector("#materialsTable tbody");
-		if (!tableBody) return;
-
-		let template = tableBody.querySelector(".material-row");
-		if (!template) {
-			// clone từ mẫu trong HTML (tr đầu tiên)
-			template = document.createElement('tr');
-			template.className = 'material-row';
-			template.innerHTML = `
-	<td>
-		<select name="materials[0].materialId" required>
-			<option value="">Chọn nguyên liệu</option>
-		</select>
-	</td>
-	<td><input type="number" name="materials[0].soLuong" min="1" value="1" required></td>
-	<td><span class="unit-display"></span></td>
-	<td><button type="button" class="btn-remove">Xóa</button></td>
-	`;
-		}
-
-		const newRow = template.cloneNode(true);
-
-		// set name index
-		newRow.querySelectorAll("select, input").forEach(el => {
-			if (el.name?.includes("materials[0]")) {
-				el.name = el.name.replace("materials[0]", `materials[${materialIndex}]`);
-			}
-			if (el.tagName === "INPUT") el.value = 1;
-		});
-
-		// build options từ materialsData
-		const sel = newRow.querySelector("select[name*='materialId']");
-		if (sel) {
-			sel.innerHTML = `<option value="">Chọn nguyên liệu</option>`;
-			Object.values(materialsData).forEach(m => {
-				const opt = document.createElement('option');
-				opt.value = m.maNL;
-				opt.textContent = m.tenNL;
-				opt.dataset.unit = m.donViTinh || '';
-				sel.appendChild(opt);
-			});
-			sel.addEventListener('change', () => updateUnitDisplay(sel));
-		}
-
-		newRow.querySelector('.btn-remove')?.addEventListener('click', () => {
-			const rows = document.querySelectorAll("#materialsTable .material-row");
-			if (rows.length > 1) newRow.remove();
-		});
-
-		tableBody.appendChild(newRow);
-		materialIndex++;
-	};
-
-	// ==============================
-	// ⚙️ 2) API CRUD SẢN PHẨM
-	// ==============================
-	const API = '/api/vendor/products';
-
-	async function loadProducts() {
-		// dùng endpoint no-paging
-		const form = document.getElementById('searchFilterForm');
-		const keyword = form?.querySelector('[name="keyword"]')?.value ?? '';
-		const status = form?.querySelector('#statusFilter')?.value || '';
-		const categoryId = form?.querySelector('#categoryFilter')?.value || '';
-
-		const q = new URLSearchParams({
-			keyword: keyword.trim(),
-			status: status || '',
-			categoryId: categoryId || ''
-		});
-
-		try {
-			const r = await fetch(`${API}/no-paging?` + q.toString());
-			if (!r.ok) throw new Error('Không tải được danh sách');
-			const data = await r.json(); // List<ProductRowVM>
-
-			const tbody = document.getElementById('productTableBody');
-			if (!tbody) return;
-			tbody.innerHTML = '';
-
-			if (!data.length) {
-				tbody.innerHTML = `<tr><td colspan="7" style="text-align:center">Không có dữ liệu</td></tr>`;
-				return;
-			}
-
-			data.forEach(p => {
-				const tr = document.createElement('tr');
-				tr.innerHTML = `
-					<td>${p.maSP}</td>
-					<td>${escapeHtml(p.tenSP ?? '')}</td>
-					<td>${p.hinhAnh ? `<img src="${p.hinhAnh}" alt="" style="height:128px;border-radius:6px">` : ''}</td>
-					<td class="text-right">${p.giaGoc ?? p.gia ?? ''}</td>
-					<td>${escapeHtml(p.trangThaiText ?? '')}</td>
-					<td class="text-right">
-						<a href="javascript:void(0)" class="btn-edit" data-id="${p.maSP}">
-							<i class="fas fa-edit"></i>
-						</a>
-						<button type="button" class="btn-delete" data-id="${p.maSP}">
-							<i class="fas fa-trash"></i>
-						</button>
-					</td>`;
-				tbody.appendChild(tr);
-			});
-
-			tbody.querySelectorAll('.btn-edit').forEach(btn => btn.addEventListener('click', () => openEdit(btn.dataset.id)));
-			tbody.querySelectorAll('.btn-delete').forEach(btn => btn.addEventListener('click', () => del(btn.dataset.id)));
-		} catch (e) {
-			const tbody = document.getElementById('productTableBody');
-			if (tbody) tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;color:red">${e.message || e}</td></tr>`;
-		}
-	}
-	document.addEventListener('click', (e) => {
-		const editBtn = e.target.closest('.btn-edit');
-		if (editBtn) {
-			const id = editBtn.dataset.id;
-			if (id) openEdit(id);
-			return;
-		}
-
-		const delBtn = e.target.closest('.btn-del');
-		if (delBtn) {
-			const id = delBtn.dataset.id;
-			if (id) del(id);
-			return;
-		}
-	});
-
-	// mở modal Sửa
-	async function openEdit(id) {
-		try {
-			const [detailRes, statuses] = await Promise.all([
-				fetch(`${API}/${id}`),
-				loadStatuses()
-			]);
-			if (!detailRes.ok) throw new Error(`Không tải được sản phẩm #${id}`);
-			const p = await detailRes.json();
-
-			openModal('addProductModal');
-			const modal = document.getElementById('addProductModal');
-			modal.dataset.editingId = id;
-
-			// đổi tiêu đề + nút
-			modal.querySelector('.modal-header h2').textContent = 'Sửa Sản Phẩm';
-			modal.querySelector('.btn-submit').textContent = 'Cập nhật';
-
-			// fill form
-			document.getElementById('tenSP').value = p.tenSP || '';
-			document.getElementById('donViTinh').value = p.donViTinh || '';
-			document.getElementById('gia').value = p.gia || 0;
-			document.getElementById('moTa').value = p.moTa || '';
-			document.getElementById('danhMuc').value = p.maDM || '';
-
-			// trạng thái
-			const selStatus = document.getElementById('trangThai');
-			populateStatusSelect(selStatus, statuses, p.trangThai);
-
-			const preview = document.getElementById('productPreview');
-			if (p.hinhAnh) {
-				preview.src = p.hinhAnh.startsWith('http') ? p.hinhAnh : (window.location.origin + p.hinhAnh);
-			} else {
-				preview.src = '/styles/image/logo.png';
-			}
-
-			// materials
-			const tbody = document.querySelector('#materialsTable tbody');
-			tbody.innerHTML = '';
-			(p.materials || []).forEach(line => {
-				addMaterialRow();
-				const last = tbody.querySelector('tr.material-row:last-child');
-				const sel = last.querySelector('select');
-				const qty = last.querySelector('input[type="number"]');
-				sel.value = String(line.maNL);
-				qty.value = line.soLuongCan || 1;
-				updateUnitDisplay(sel);
-			});
-			if (!(p.materials || []).length) addMaterialRow();
-		} catch (e) {
-			alert(e.message || e);
-		}
-	}
-
-
-	// xóa
-	function del(id) {
-		if (!confirm('Xóa sản phẩm này?')) return;
-		fetch(`${API}/${id}`, { method: 'DELETE' })
-			.then(r => {
-				if (!r.ok) throw new Error('Xóa thất bại');
-				loadProducts();
-			})
-			.catch(err => alert(err.message || err));
-	}
-
-	// submit form (JSON)
-	function bindFormSubmit() {
-		const modal = document.getElementById('addProductModal');
-		const form = modal?.querySelector('form');
-		if (!form) return;
-
-		form.addEventListener('submit', async (e) => {
-			e.preventDefault();
-
-			const tenSP = form.querySelector('#tenSP').value.trim();
-			const donViTinh = form.querySelector('#donViTinh').value.trim();
-			const gia = Number(form.querySelector('#gia').value || 0);
-			const moTa = form.querySelector('#moTa').value || '';
-			const danhMucId = Number(form.querySelector('#danhMuc').value);
-			const trangThai = Number(form.querySelector('#trangThai').value); // ⭐ lấy từ select trạng thái
-
-			const rows = form.querySelectorAll('#materialsTable tbody tr.material-row');
-			const materials = Array.from(rows).map(tr => {
-				const sel = tr.querySelector('select');
-				const qty = tr.querySelector('input[type="number"]');
-				return { maNL: Number(sel.value), soLuongCan: Number(qty.value || 1) };
-			}).filter(x => x.maNL);
-
-			const payload = { tenSP, donViTinh, gia, moTa, danhMucId, trangThai, materials };
-
-			const editingId = modal.dataset.editingId;
-			const method = editingId ? 'PUT' : 'POST';
-			const url = editingId ? `${API}/${editingId}` : API;
-
-			fetch(url, {
-				method,
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify(payload)
-			})
-				.then(async r => {
-					if (!r.ok) throw new Error(await r.text());
-
-					// lấy id sản phẩm để upload ảnh
-					const modal = document.getElementById('addProductModal');
-					const editingId = modal.dataset.editingId;
-					let productId = editingId;
-
-					// nếu là tạo mới, BE của bạn trả 201 + body là ProductDetailResponse.
-					// Nếu controller hiện trả 200, cũng OK: đọc body để lấy id
-					const resBody = await r.json().catch(() => null);
-					if (!productId && resBody && resBody.maSP) {
-						productId = resBody.maSP;
-					}
-
-					const locationHeader = r.headers.get('Location');
-					if (!productId && locationHeader) {
-						const m = locationHeader.match(/\/api\/vendor\/products\/(\d+)/);
-						if (m) productId = m[1];
-					}
-
-
-					// nếu có file thì upload ảnh
-					const fileInput = document.querySelector('#file');
-					const file = fileInput?.files?.[0];
-					if (productId && file) {
-						const fd = new FormData();
-						fd.append('file', file);
-						const up = await fetch(`/api/vendor/products/${productId}/image`, {
-							method: 'POST',
-							body: fd
-						});
-						if (!up.ok) throw new Error('Upload ảnh thất bại');
-						// clear file sau khi upload ok (tuỳ chọn)
-						fileInput.value = '';
-					}
-
-					closeModal('addProductModal');
-					loadProducts();
-				})
-				.catch(err => alert(err.message || err));
-		});
-	}
-
-	// Init
-	document.addEventListener('DOMContentLoaded', async () => {
-		initMaterialsDataFromWindow();
-		addMaterialRow(); // có sẵn 1 dòng nguyên liệu
-		// load mặc định danh sách trạng thái cho modal Thêm
-		const statuses = await loadStatuses();
-		const selStatus = document.getElementById('trangThai');
-		if (selStatus) populateStatusSelect(selStatus, statuses, 1); // default: Đang bán (1)
-		// bind filter submit
-		const formFilter = document.getElementById('searchFilterForm');
-		formFilter?.addEventListener('submit', (e) => {
-			e.preventDefault();
-			loadProducts();
-		});
+function bindSearch() {
+	const form = document.getElementById('searchFilterForm');
+	form.addEventListener('submit', (e) => {
+		e.preventDefault();
+		currentPage = 0;
 		loadProducts();
-		bindFormSubmit();
 	});
-})();
+}
+
+function resetFilters() {
+	const form = document.getElementById('searchFilterForm');
+	form.keyword.value = '';
+	form.categoryId.value = '';
+	form.status.value = '';
+	currentPage = 0;
+	loadProducts();
+}
+
+// ======== CATEGORIES from VendorProductsController
+async function loadCategories() {
+	try {
+		const res = await fetch(`${apiBase}/categories?active=true`);
+		if (!res.ok) throw new Error('Load categories failed');
+		const cats = await res.json();
+		const catFilter = document.getElementById('categoryFilter');
+		const catSelect = document.getElementById('categorySelect');
+
+		if (catFilter) {
+			catFilter.innerHTML = '<option value="">Tất cả</option>';
+			cats.forEach(c => {
+				const op = document.createElement('option');
+				op.value = c.id; op.textContent = c.categoryName;
+				catFilter.appendChild(op);
+			});
+		}
+		if (catSelect) {
+			catSelect.innerHTML = '<option value="">-- Chọn danh mục --</option>';
+			cats.forEach(c => {
+				const op = document.createElement('option');
+				op.value = c.id; op.textContent = c.categoryName;
+				catSelect.appendChild(op);
+			});
+		}
+	} catch (e) { console.error(e); }
+}
+
+// ======== LIST
+async function loadProducts(page = currentPage) {
+	currentPage = page;
+	const form = document.getElementById('searchFilterForm');
+	const keyword = encodeURIComponent(form.keyword.value || '');
+	const categoryId = form.categoryId.value ? `&categoryId=${form.categoryId.value}` : '';
+	const status = form.status.value ? `&status=${form.status.value}` : '';
+	const url = `${apiBase}?keyword=${keyword}${categoryId}${status}&page=${currentPage}&size=${pageSize}`;
+
+	const tbody = document.getElementById('productTableBody');
+	tbody.innerHTML = `<tr><td colspan="7" class="text-center">Đang tải...</td></tr>`;
+
+	const res = await fetch(url);
+	const data = await res.json();
+	renderTable(data.content);
+	renderPagination(data);
+}
+
+function renderTable(items) {
+	const tbody = document.getElementById('productTableBody');
+	if (!items || items.length === 0) {
+		tbody.innerHTML = `<tr><td colspan="7" class="text-center">Không có dữ liệu</td></tr>`;
+		return;
+	}
+	tbody.innerHTML = items.map(p => `
+    <tr>
+      <td>
+        ${p.defaultImage ? `<img src="${p.defaultImage}" style="width:128px;height:128px;object-fit:cover;border-radius:8px">` : ''}
+      </td>
+      <td><strong>${p.productName}</strong></td>
+      <td>${p.categoryName || ''}</td>
+      <td>${fmtMoney(p.promotionalPrice || p.price)}</td>
+      <td>${p.stock}</td>
+      <td>${renderStatusBadge(p.status)}</td>
+      <td class="text-right">
+        <div class="action-buttons">
+          <button class="btn-view" onclick="openEditModal(${p.id})"><i class="fas fa-edit"></i> Sửa</button>
+          <button class="btn-delete" onclick="confirmDelete(${p.id})"><i class="fas fa-trash"></i> Xoá</button>
+        </div>
+      </td>
+    </tr>
+  `).join('');
+}
+
+function renderStatusBadge(st) {
+	if (st === 'SELLING') return `<span class="badge badge-active"><i class="fas fa-dot-circle"></i> Đang bán</span>`;
+	if (st === 'STOPPED') return `<span class="badge badge-inactive"><i class="fas fa-pause-circle"></i> Ngừng bán</span>`;
+	return `<span class="badge badge-blocked"><i class="fas fa-times-circle"></i> Hết hàng</span>`;
+}
+
+function renderPagination({ number, totalPages }) {
+	const el = document.getElementById('productPagination');
+	if (totalPages <= 1) { el.innerHTML = ''; return; }
+	let html = '';
+	const prevDisabled = number === 0 ? 'disabled' : '';
+	const nextDisabled = number >= totalPages - 1 ? 'disabled' : '';
+	html += `<button ${prevDisabled} onclick="loadProducts(${number - 1})">&laquo; Trước</button>`;
+	for (let i = 0; i < totalPages; i++) {
+		const active = i === number ? 'class="active"' : '';
+		html += `<a href="javascript:void(0)" ${active} onclick="loadProducts(${i})">${i + 1}</a>`;
+	}
+	html += `<button ${nextDisabled} onclick="loadProducts(${number + 1})">Sau &raquo;</button>`;
+	el.innerHTML = html;
+}
+
+function fmtMoney(v) {
+	if (v == null) return '0';
+	return Number(v).toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
+}
+
+// ======== Modal & Upload
+function openAddModal() {
+	document.getElementById('modalTitle').textContent = 'Thêm sản phẩm';
+	const f = document.getElementById('productForm');
+	f.reset();
+	f.id.value = '';
+
+	const preview = document.getElementById('imagePreview');
+	const input = document.getElementById('imageFiles');
+	if (input) input.value = '';
+	preview.innerHTML = '';
+	document.querySelector('#productModal').classList.add('show');
+}
+
+function closeProductModal() { document.querySelector('#productModal').classList.remove('show'); }
+
+document.addEventListener('change', e => {
+	if (e.target && e.target.id === 'imageFiles') {
+		const preview = document.getElementById('imagePreview');
+		preview.innerHTML = '';
+		const files = e.target.files || [];
+		Array.from(files).forEach(file => {
+			const url = URL.createObjectURL(file);
+			const img = document.createElement('img');
+			img.src = url;
+			img.style.width = '72px';
+			img.style.height = '72px';
+			img.style.objectFit = 'cover';
+			img.style.borderRadius = '8px';
+			preview.appendChild(img);
+		});
+	}
+});
+
+async function openEditModal(id) {
+	const res = await fetch(`${apiBase}/${id}`);
+	const p = await res.json();
+
+	document.getElementById('modalTitle').textContent = 'Sửa sản phẩm';
+	const f = document.getElementById('productForm');
+	f.id.value = p.id;
+	f.productName.value = p.productName;
+	document.getElementById('categorySelect').value = p.categoryId || '';
+	f.size.value = p.size;
+	f.price.value = p.price;
+	f.stock.value = p.stock;
+	document.getElementById('statusSelect').value = p.status || 'SELLING';
+	f.isActive.checked = !!p.isActive;
+
+	const input = document.getElementById('imageFiles');
+	const preview = document.getElementById('imagePreview');
+	if (input) input.value = '';
+	preview.innerHTML = '';
+	(p.imageUrls || []).forEach(u => {
+		const img = document.createElement('img');
+		img.src = u;
+		img.style.width = '72px'; img.style.height = '72px';
+		img.style.objectFit = 'cover'; img.style.borderRadius = '8px';
+		preview.appendChild(img);
+	});
+
+	document.querySelector('#productModal').classList.add('show');
+}
+
+async function uploadOne(file) {
+	const form = new FormData();
+	form.append('file', file);
+	form.append('folder', 'products');
+	const res = await fetch('/api/upload', { method: 'POST', body: form });
+	const data = await res.json();
+	if (data.error) throw new Error(data.error);
+	return data.url;
+}
+
+async function uploadAll(files) {
+	const list = Array.from(files || []);
+	const urls = [];
+	for (const f of list) urls.push(await uploadOne(f));
+	return urls;
+}
+
+async function submitProduct() {
+	const f = document.getElementById('productForm');
+	const files = document.getElementById('imageFiles').files;
+
+	// Upload ảnh nếu có
+	let imageUrls = [];
+	if (files && files.length) {
+		try {
+			imageUrls = await uploadAll(files);
+		} catch (e) {
+			alert('Upload ảnh thất bại: ' + e.message);
+			return;
+		}
+	} else if (f.id.value) {
+		// đang sửa mà không chọn ảnh mới -> giữ ảnh cũ
+		imageUrls = null;
+	}
+
+	const payload = {
+		productName: f.productName.value.trim(),
+		categoryId: Number(document.getElementById('categorySelect').value),
+		price: Number(f.price.value),
+		size: f.size.value.trim(),
+		stock: Number(f.stock.value),
+		status: document.getElementById('statusSelect').value,
+		isActive: f.isActive.checked
+	};
+	if (imageUrls !== null) payload.imageUrls = imageUrls;
+
+	const isEdit = !!f.id.value;
+	const method = isEdit ? 'PUT' : 'POST';
+	const url = isEdit ? `${apiBase}/${f.id.value}` : apiBase;
+
+	const res = await fetch(url, { method, headers: authHeaders(), body: JSON.stringify(payload) });
+	const text = await res.text();
+	if (!res.ok) {
+		console.error('Save failed', res.status, text);
+		alert(`Lưu thất bại (${res.status})\n${text}`);
+		return;
+	}
+	closeProductModal();
+	loadProducts();
+}
+
+async function confirmDelete(id) {
+	if (!confirm('Xoá sản phẩm này?')) return;
+	const res = await fetch(`${apiBase}/${id}`, { method: 'DELETE', headers: authHeaders() });
+	if (res.ok || res.status === 204) loadProducts();
+	else alert('Xoá không thành công');
+}

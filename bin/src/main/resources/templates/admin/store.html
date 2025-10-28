@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{admin/layout}">
+<head>
+<title>Store</title>
+<th:block layout:fragment="styles">
+	<link rel="stylesheet" href="/styles/css/admin/config.css">
+</th:block>
+</head>
+<body>
+	<div layout:fragment="content">
+
+
+		<div class="stats-cards">
+			<div class="stat-card total">
+				<h3>Tổng số cửa hàng</h3>
+				<div class="value" id="totalStoresStat"
+					th:text="${totalStores} ?: '0'">0</div>
+			</div>
+			<div class="stat-card active">
+				<h3>Đang hoạt động</h3>
+				<div class="value" id="activeStoresStat"
+					th:text="${activeStores} ?: '0'">0</div>
+			</div>
+			<div class="stat-card inactive">
+				<h3>Ngoại tuyến</h3>
+				<div class="value" id="inactiveStoresStat"
+					th:text="${inactiveStores} ?: '0'">0</div>
+			</div>
+			<div class="stat-card blocked">
+				<h3>Bị khóa</h3>
+				<div class="value" id="blockedStoresStat"
+					th:text="${blockedStores} ?: '0'">0</div>
+			</div>
+		</div>
+
+
+		<div class="search-filter-container">
+			<form id="searchFilterForm" th:action="@{/admin/store}" method="get">
+				<div class="search-box">
+					<input type="text" name="keyword"
+						placeholder="Tìm kiếm theo tên, email, hoặc username..."
+						th:value="${keyword}">
+					<button type="submit">
+						<i class="fas fa-search"></i> Tìm kiếm
+					</button>
+				</div>
+
+				<div class="filter-group">
+					<div class="filter-item">
+						<label for="statusFilter">Cấp phép:</label> <select
+							id="statusFilter" name="status">
+							<option value="">Tất cả</option>
+							<option value="true" th:selected="${status == 'true'}">Đang
+								hoạt động</option>
+							<option value="false" th:selected="${status == 'false'}">Bị
+								khóa</option>
+						</select>
+					</div>
+				</div>
+
+			</form>
+		</div>
+
+
+		<div class="table-stores">
+			<table>
+				<thead>
+					<tr>
+						<th>STT</th>
+						<th>Tên cửa hàng</th>
+						<th>Chủ cửa hàng</th>
+						<th>Điểm</th>
+						<th>Rating</th>
+						<th>Trạng thái</th>
+						<th>Cấp phép</th>
+						<th>Thao tác</th>
+					</tr>
+				</thead>
+				<tbody id="storeTableBody">
+					<tr>
+						<td colspan="9" style="text-align: center;">KHÔNG CÓ DỮ LIỆU</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+
+
+
+		<div class="pagination" id="storePagination"></div>
+
+		<div class="modal fade" id="storeDetailModal" tabindex="-1"
+			aria-labelledby="storeDetailModalLabel" aria-hidden="true">
+			<div class="modal-dialog modal-dialog-centered">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="storeDetailModalLabel">Chi
+							tiết cửa hàng</h5>
+						<button type="button" class="btn-close" data-bs-dismiss="modal"
+							aria-label="Close"></button>
+					</div>
+					<div class="modal-body">
+						<p>Đang tải...</p>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-secondary"
+							data-bs-dismiss="modal">Đóng</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		</div>
+	
+	<th:block layout:fragment="scripts">
+		<script th:src="@{/styles/js/admin/store.js}"></script>
+	</th:block>
+</body>
+</html>

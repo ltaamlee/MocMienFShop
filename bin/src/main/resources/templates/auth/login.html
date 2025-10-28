@@ -14,8 +14,21 @@
 <body>
 	<div class="login-container">
 		<div class="login-card">
+
+			<div class="logo">
+				<a href="/home"> <img src="/styles/image/logo.png" alt="Logo">
+				</a>
+			</div>
 			<h2>Mộc Miên</h2>
+
 			<form action="/login" method="post">
+
+				<!-- Hiển thị lỗi -->
+				<div th:if="${error}" class="alert alert-danger">
+					
+					<span th:text="${error}"></span>
+				</div>
+
 				<div class="form-group">
 					<label for="username">Tên đăng nhập</label> <input type="text"
 						id="username" name="username" required>
@@ -26,23 +39,21 @@
 				</div>
 				<button type="submit" class="btn">Đăng nhập</button>
 			</form>
+			<p class="login-link">
+				<a th:href="@{/forgot-password}"> Quên mật khẩu</a>
+			</p>
 
 			<div class="divider">hoặc</div>
 
 			<div class="social-login">
 				<a href="/oauth2/authorization/google" class="btn-google"> <i
 					class="fab fa-google"></i> Đăng nhập với Google
-				</a> <a href="/oauth2/authorization/facebook" class="btn-facebook">
-					<i class="fab fa-facebook-f"></i> Đăng nhập với Facebook
 				</a>
 			</div>
 
-			<p class="register-link">
+			<p class="login-link">
 				Chưa có tài khoản? <a th:href="@{/register}">Đăng ký</a>
 			</p>
-			<div>
-				Quay lại trang chủ
-			</div>
 		</div>
 	</div>
 </body>
