@@ -57,4 +57,6 @@ public interface StoreService {
 
 	long countByIsActive(Boolean isActive);
 
+	List<Store> getAll();
+
 }

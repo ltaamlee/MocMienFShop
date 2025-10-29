@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import mocmien.com.dto.response.category.CategoryResponse;
 import mocmien.com.entity.Category;
+import mocmien.com.entity.Store;
 import mocmien.com.entity.User;
 import mocmien.com.enums.PromotionStatus;
 import mocmien.com.enums.PromotionType;
@@ -21,6 +22,7 @@ import mocmien.com.enums.RoleName;
 import mocmien.com.enums.UserStatus;
 import mocmien.com.security.CustomUserDetails;
 import mocmien.com.service.CategoryService;
+import mocmien.com.service.StoreService;
 import mocmien.com.service.UserService;
 
 @Controller
@@ -32,6 +34,8 @@ public class AdminController {
 	private UserService userService;
 	@Autowired
 	private CategoryService categoryService;
+	@Autowired
+	private StoreService storeService;
 
 	// Trang chủ
 	@GetMapping("/dashboard")
@@ -97,6 +101,8 @@ public class AdminController {
 		}
 		List<Category> categories = categoryService.getActiveCategories();
 		model.addAttribute("categoriesActive", categories);
+		List<Store> allStores = storeService.getAll(); 
+        model.addAttribute("allStores", allStores);
 		return "admin/product";
 	}
 
