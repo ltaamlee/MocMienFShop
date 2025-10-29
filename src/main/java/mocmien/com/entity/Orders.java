@@ -7,6 +7,8 @@ import java.util.List;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -20,6 +22,7 @@ import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import mocmien.com.enums.OrderStatus;
 import mocmien.com.enums.PaymentMethod;
 
 @Entity
@@ -59,17 +62,19 @@ public class Orders {
     private Shipper shipper;
 
     // Trạng thái đơn hàng
+    @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false, columnDefinition = "NVARCHAR(100)")
-    private String status; 
+    private OrderStatus status; 
     // Ví dụ: NEW, CONFIRMED, SHIPPING, DELIVERED, CANCELED, RETURNED
 
     // Thanh toán
     @Column(name = "isPaid", nullable = false)
     private Boolean isPaid = false; // true = đã thanh toán online
     
+    @Enumerated(EnumType.STRING)
     @Column(name = "paymentMethod", columnDefinition = "NVARCHAR(50)", nullable = false)
     private PaymentMethod paymentMethod;
-
+ 
     @Column(name = "amountFromCustomer", nullable = false, columnDefinition = "DECIMAL(18,2)")
     private BigDecimal amountFromCustomer = BigDecimal.ZERO; // khách trả
 
@@ -91,16 +96,16 @@ public class Orders {
     private List<OrderDetail> orderDetails;
 
     // Thời gian
-    @Column(name = "createAt", nullable = false)
-    private LocalDateTime createAt;
+    @Column(name = "createdAt", nullable = false)
+    private LocalDateTime createdAt;
 
-    @Column(name = "updateAt")
-    private LocalDateTime updateAt;
+    @Column(name = "updatedAt")
+    private LocalDateTime updatedAt;
 
     @PrePersist
     protected void onCreate() {
-        createAt = LocalDateTime.now();
-        updateAt = LocalDateTime.now();
+        createdAt = LocalDateTime.now();
+        updatedAt = LocalDateTime.now();
 
         // Nếu chưa có id thì tự tạo theo timestamp
         if (id == null || id.isEmpty()) {
@@ -110,6 +115,144 @@ public class Orders {
 
     @PreUpdate
     protected void onUpdate() {
-        updateAt = LocalDateTime.now();
+        updatedAt = LocalDateTime.now();
     }
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public UserProfile getCustomer() {
+		return customer;
+	}
+
+	public void setCustomer(UserProfile customer) {
+		this.customer = customer;
+	}
+
+	public Store getStore() {
+		return store;
+	}
+
+	public void setStore(Store store) {
+		this.store = store;
+	}
+
+	public Promotion getPromotion() {
+		return promotion;
+	}
+
+	public void setPromotion(Promotion promotion) {
+		this.promotion = promotion;
+	}
+
+	public Delivery getDelivery() {
+		return delivery;
+	}
+
+	public void setDelivery(Delivery delivery) {
+		this.delivery = delivery;
+	}
+
+	public Shipper getShipper() {
+		return shipper;
+	}
+
+	public void setShipper(Shipper shipper) {
+		this.shipper = shipper;
+	}
+
+	public OrderStatus getStatus() {
+		return status;
+	}
+
+	public void setStatus(OrderStatus status) {
+		this.status = status;
+	}
+
+	public Boolean getIsPaid() {
+		return isPaid;
+	}
+
+	public void setIsPaid(Boolean isPaid) {
+		this.isPaid = isPaid;
+	}
+
+	public PaymentMethod getPaymentMethod() {
+		return paymentMethod;
+	}
+
+	public void setPaymentMethod(PaymentMethod paymentMethod) {
+		this.paymentMethod = paymentMethod;
+	}
+
+	public BigDecimal getAmountFromCustomer() {
+		return amountFromCustomer;
+	}
+
+	public void setAmountFromCustomer(BigDecimal amountFromCustomer) {
+		this.amountFromCustomer = amountFromCustomer;
+	}
+
+	public BigDecimal getAmountFromStore() {
+		return amountFromStore;
+	}
+
+	public void setAmountFromStore(BigDecimal amountFromStore) {
+		this.amountFromStore = amountFromStore;
+	}
+
+	public BigDecimal getAmountToStore() {
+		return amountToStore;
+	}
+
+	public void setAmountToStore(BigDecimal amountToStore) {
+		this.amountToStore = amountToStore;
+	}
+
+	public BigDecimal getAmountToSys() {
+		return amountToSys;
+	}
+
+	public void setAmountToSys(BigDecimal amountToSys) {
+		this.amountToSys = amountToSys;
+	}
+
+	public String getNote() {
+		return note;
+	}
+
+	public void setNote(String note) {
+		this.note = note;
+	}
+
+	public List<OrderDetail> getOrderDetails() {
+		return orderDetails;
+	}
+
+	public void setOrderDetails(List<OrderDetail> orderDetails) {
+		this.orderDetails = orderDetails;
+	}
+
+	public LocalDateTime getCreatedAt() {
+		return createdAt;
+	}
+
+	public void setCreatedAt(LocalDateTime createdAt) {
+		this.createdAt = createdAt;
+	}
+
+	public LocalDateTime getUpdatedAt() {
+		return updatedAt;
+	}
+
+	public void setUpdatedAt(LocalDateTime updatedAt) {
+		this.updatedAt = updatedAt;
+	}
+    
+    
 }

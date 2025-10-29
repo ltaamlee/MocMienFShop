@@ -21,27 +21,26 @@ import mocmien.com.service.UserService;
 public class ShipperController {
 	@Autowired
 	private UserService userService;
-	
+
 	@Autowired
 	private DeliveryService deliveryService;
 
 	// Trang chủ
 	@GetMapping("/login")
-    public String showLogin() {
-        return "shipper/login";
-    }
-	
-	@GetMapping("/register")
-	public String showRegister(Model model) {
-	    User user = new User();
-	    model.addAttribute("user", user);
-
-	    List<Delivery> deliveryCompanies = deliveryService.getAllActiveDeliveries();
-	    model.addAttribute("deliveryCompanies", deliveryCompanies);
-
-	    return "shipper/register";
+	public String showLogin() {
+		return "shipper/login";
 	}
 
+	@GetMapping("/register")
+	public String showRegister(Model model) {
+		User user = new User();
+		model.addAttribute("user", user);
+
+		List<Delivery> deliveryCompanies = deliveryService.getAllActiveDeliveries();
+		model.addAttribute("deliveryCompanies", deliveryCompanies);
+
+		return "shipper/register";
+	}
 
 	// Trang chủ
 	@GetMapping("/dashboard")
@@ -77,5 +76,17 @@ public class ShipperController {
 		}
 
 		return "shipper/ewallet";
+	}
+
+	// Đơn hàng
+	@GetMapping("/profile")
+	public String profile(@AuthenticationPrincipal CustomUserDetails userDetails, Model model) {
+
+		if (userDetails != null) {
+			Optional<User> userOpt = userService.findByUsername(userDetails.getUsername());
+			userOpt.ifPresent(user -> model.addAttribute("user", user));
+		}
+
+		return "shipper/profile";
 	}
 }

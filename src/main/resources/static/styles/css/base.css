@@ -151,6 +151,13 @@ main {
 }
 
 /* Filter roles/status */
+.filter-group {
+    display: flex;
+    flex-wrap: wrap; 
+    align-items: center;
+    gap: 24px; 
+}
+
 .filter-item {
     display: flex;
     align-items: center;

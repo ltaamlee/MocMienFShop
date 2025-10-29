@@ -207,7 +207,7 @@ async function handleFetchError(response) {
         try {
             const errorData = JSON.parse(errorText);
             if (errorData && errorData.error) {
-                errorMessage = errorData.error; // Lỗi đẹp: "Tên danh mục này đã tồn tại."
+                errorMessage = errorData.error;
             } else {
                 errorMessage = errorText;
             }

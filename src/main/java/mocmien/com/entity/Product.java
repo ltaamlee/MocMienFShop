@@ -76,11 +76,11 @@ public class Product {
 	@Column(name = "isAvailable", nullable = false)
 	private Boolean isAvailable = true; // Còn hàng hay hết hàng
 
-	@Column(name = "createAt", nullable = false)
-	private LocalDateTime createAt;
+	@Column(name = "createdAt", nullable = false)
+	private LocalDateTime createdAt;
 
-	@Column(name = "updateAt")
-	private LocalDateTime updateAt;
+	@Column(name = "updatedAt")
+	private LocalDateTime updatedAt;
 
 	
 	// ProductImage
@@ -91,20 +91,17 @@ public class Product {
 	// Review
 	@OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Review> reviews;
-	
-	@OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<ProductFlower> productFlowers;
 
 	@PrePersist
 	protected void onCreate() {
-		createAt = LocalDateTime.now();
-		updateAt = LocalDateTime.now();
+		createdAt = LocalDateTime.now();
+		updatedAt = LocalDateTime.now();
 		if (promotionalPrice == null)
 			promotionalPrice = price;
 	}
 
 	@PreUpdate
 	protected void onUpdate() {
-		updateAt = LocalDateTime.now();
+		updatedAt = LocalDateTime.now();
 	}
 }

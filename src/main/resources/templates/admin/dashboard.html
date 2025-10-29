@@ -3,15 +3,97 @@
 	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
 	layout:decorate="~{admin/layout}">
 <head>
-<title>Dashboard</title>
+<title>Tổng quan Doanh thu</title>
 <th:block layout:fragment="styles">
-	<link rel="stylesheet" href="/styles/css/admin/header.css">
+	<link rel="stylesheet" href="/styles/css/admin/config.css">
 </th:block>
 </head>
 <body>
+
 	<div layout:fragment="content">
-		<h1>Chào mừng đến với trang quản trị</h1>
-		<p>Đây là trang chủ dành cho quản trị viên!</p>
+
+		<div class="stats-cards">
+			<div class="stat-card total">
+				<h3>Tổng Doanh Thu</h3>
+				<div class="value" id="totalRevenueStat">0 đ</div>
+			</div>
+			<div class="stat-card active">
+				<h3>Đơn Hàng (30 ngày)</h3>
+				<div class="value" id="totalOrdersStat">0</div>
+			</div>
+			<div class="stat-card inactive">
+				<h3>Khách Hàng Mới</h3>
+				<div class="value" id="newCustomersStat">0</div>
+			</div>
+			<div class="stat-card blocked">
+				<h3>Đối Tác (Sellers)</h3>
+				<div class="value" id="totalPartnersStat">0</div>
+			</div>
+		</div>
+
+		<div class="search-filter-container">
+			<form id="chartFilterForm">
+				<div class="filter-group">
+					<div class="filter-item">
+						<label for="chartType">Xem theo:</label> <select id="chartType"
+							name="type" class="form-select-sm">
+							<option value="daily">7 ngày qua</option>
+							<option value="monthly">12 tháng qua</option>
+							<option value="custom">Tùy chỉnh</option>
+						</select>
+					</div>
+					<div class="filter-item">
+						<label for="chartFromDate">Từ ngày:</label> <input type="date"
+							id="chartFromDate" name="fromDate">
+					</div>
+					<div class="filter-item">
+						<label for="chartToDate">Đến ngày:</label> <input type="date"
+							id="chartToDate" name="toDate">
+					</div>
+					<div class="filter-item">
+						<button type="submit" class="btn btn-primary btn-sm">Lọc
+							Biểu Đồ</button>
+					</div>
+				</div>
+			</form>
+		</div>
+
+		<div class="card shadow-sm mb-4">
+			<div class="card-header">Biểu đồ Doanh thu</div>
+			<div class="card-body">
+				<canvas id="revenueChart"></canvas>
+			</div>
+		</div>
+
+		<div class="card shadow-sm">
+			<div class="card-header">Đơn hàng gần đây</div>
+			<div class="table-responsive">
+				<table class="table table-hover align-middle">
+					<thead class="table-primary">
+						<tr>
+							<th>Mã ĐH</th>
+							<th>Khách hàng</th>
+							<th>Ngày đặt</th>
+							<th>Trạng thái</th>
+							<th>Tổng tiền</th>
+						</tr>
+					</thead>
+					<tbody id="recentOrdersTableBody">
+						<tr>
+							<td colspan="5" class="text-center text-muted py-3">Đang
+								tải...</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+
 	</div>
+
+	<th:block layout:fragment="scripts">
+		<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+		<script th:src="@{/styles/js/admin/dashboard.js}"></script>
+	</th:block>
 </body>
 </html>
