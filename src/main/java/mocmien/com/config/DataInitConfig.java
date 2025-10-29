@@ -118,76 +118,76 @@ public class DataInitConfig {
     }
 
     // 4️⃣ Tạo 3 cửa hàng cho 3 Vendor
-    @Bean
-    CommandLineRunner initStores(StoreRepository storeRepository, 
-                                 UserRepository userRepository, 
-                                 LevelRepository levelRepository) {
-        return args -> {
-            Level defaultLevel = levelRepository.findAll().stream().findFirst().orElse(null);
-            if (defaultLevel == null) {
-                System.out.println("⚠ Không tìm thấy Level mặc định. Bỏ qua tạo Store.");
-                return;
-            }
-
-            // Vendor 1
-            userRepository.findByEmail("vendor1@mocmien.com").ifPresent(vendor -> {
-                if (storeRepository.findByVendor(vendor).isEmpty()) {
-                    Store store = new Store();
-                    store.setStoreName("Cửa hàng Mộc Miên");
-                    store.setVendor(vendor);
-                    store.setLevel(defaultLevel);
-                    store.setActive(true);
-                    store.setOpen(true);
-                    store.setPoint(150);
-                    store.seteWallet(BigDecimal.valueOf(5000));
-                    store.setRating(BigDecimal.valueOf(4.7));
-                    store.setAvatar(null);
-                    store.setCover(null);
-                    store.setFeatureImages(List.of());
-                    storeRepository.save(store);
-                    System.out.println("✓ Store của vendor1 được tạo!");
-                }
-            });
-
-            // Vendor 2
-            userRepository.findByEmail("vendor2@mocmien.com").ifPresent(vendor -> {
-                if (storeRepository.findByVendor(vendor).isEmpty()) {
-                    Store store = new Store();
-                    store.setStoreName("Cửa hàng Hương Quê");
-                    store.setVendor(vendor);
-                    store.setLevel(defaultLevel);
-                    store.setActive(true);
-                    store.setOpen(false);
-                    store.setPoint(100);
-                    store.seteWallet(BigDecimal.valueOf(3000));
-                    store.setRating(BigDecimal.valueOf(4.3));
-                    store.setAvatar(null);
-                    store.setCover(null);
-                    store.setFeatureImages(List.of());
-                    storeRepository.save(store);
-                    System.out.println("✓ Store của vendor2 được tạo!");
-                }
-            });
-
-            // Vendor 3
-            userRepository.findByEmail("vendor3@mocmien.com").ifPresent(vendor -> {
-                if (storeRepository.findByVendor(vendor).isEmpty()) {
-                    Store store = new Store();
-                    store.setStoreName("Cửa hàng Tươi Sạch");
-                    store.setVendor(vendor);
-                    store.setLevel(defaultLevel);
-                    store.setActive(true);
-                    store.setOpen(true);
-                    store.setPoint(120);
-                    store.seteWallet(BigDecimal.valueOf(4000));
-                    store.setRating(BigDecimal.valueOf(4.6));
-                    store.setAvatar(null);
-                    store.setCover(null);
-                    store.setFeatureImages(List.of());
-                    storeRepository.save(store);
-                    System.out.println("✓ Store của vendor3 được tạo!");
-                }
-            });
-        };
-    }
+//    @Bean
+//    CommandLineRunner initStores(StoreRepository storeRepository, 
+//                                 UserRepository userRepository, 
+//                                 LevelRepository levelRepository) {
+//        return args -> {
+//            Level defaultLevel = levelRepository.findAll().stream().findFirst().orElse(null);
+//            if (defaultLevel == null) {
+//                System.out.println("⚠ Không tìm thấy Level mặc định. Bỏ qua tạo Store.");
+//                return;
+//            }
+//
+//            // Vendor 1
+//            userRepository.findByEmail("vendor1@mocmien.com").ifPresent(vendor -> {
+//                if (storeRepository.findByVendor(vendor).isEmpty()) {
+//                    Store store = new Store();
+//                    store.setStoreName("Cửa hàng Mộc Miên");
+//                    store.setVendor(vendor);
+//                    store.setLevel(defaultLevel);
+//                    store.setActive(true);
+//                    store.setOpen(true);
+//                    store.setPoint(150);
+//                    store.seteWallet(BigDecimal.valueOf(5000));
+//                    store.setRating(BigDecimal.valueOf(4.7));
+//                    store.setAvatar(null);
+//                    store.setCover(null);
+//                    store.setFeatureImages(List.of());
+//                    storeRepository.save(store);
+//                    System.out.println("✓ Store của vendor1 được tạo!");
+//                }
+//            });
+//
+//            // Vendor 2
+//            userRepository.findByEmail("vendor2@mocmien.com").ifPresent(vendor -> {
+//                if (storeRepository.findByVendor(vendor).isEmpty()) {
+//                    Store store = new Store();
+//                    store.setStoreName("Cửa hàng Hương Quê");
+//                    store.setVendor(vendor);
+//                    store.setLevel(defaultLevel);
+//                    store.setActive(true);
+//                    store.setOpen(false);
+//                    store.setPoint(100);
+//                    store.seteWallet(BigDecimal.valueOf(3000));
+//                    store.setRating(BigDecimal.valueOf(4.3));
+//                    store.setAvatar(null);
+//                    store.setCover(null);
+//                    store.setFeatureImages(List.of());
+//                    storeRepository.save(store);
+//                    System.out.println("✓ Store của vendor2 được tạo!");
+//                }
+//            });
+//
+//            // Vendor 3
+//            userRepository.findByEmail("vendor3@mocmien.com").ifPresent(vendor -> {
+//                if (storeRepository.findByVendor(vendor).isEmpty()) {
+//                    Store store = new Store();
+//                    store.setStoreName("Cửa hàng Tươi Sạch");
+//                    store.setVendor(vendor);
+//                    store.setLevel(defaultLevel);
+//                    store.setActive(true);
+//                    store.setOpen(true);
+//                    store.setPoint(120);
+//                    store.seteWallet(BigDecimal.valueOf(4000));
+//                    store.setRating(BigDecimal.valueOf(4.6));
+//                    store.setAvatar(null);
+//                    store.setCover(null);
+//                    store.setFeatureImages(List.of());
+//                    storeRepository.save(store);
+//                    System.out.println("✓ Store của vendor3 được tạo!");
+//                }
+//            });
+//        };
+//    }
 }
