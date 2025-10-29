@@ -45,7 +45,7 @@ public class UserProfile {
     @Column(name = "dob", nullable = true)
     private LocalDate dob;
     
-    @Column(name = "gender", nullable = true)
+    @Column(name = "gender", nullable = true, columnDefinition = "nvarchar(10)")
     private String gender;
 
 

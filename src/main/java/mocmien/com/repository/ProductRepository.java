@@ -140,4 +140,6 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
     @Query("SELECT AVG(p.rating) FROM Product p WHERE p.store = :store")
     BigDecimal averageRatingByStore(Store store);
 
+    long countByCategory_Id(Integer categoryId);
+
 }

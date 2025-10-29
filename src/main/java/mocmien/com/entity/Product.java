@@ -248,6 +248,5 @@ public class Product {
 	public void setUpdatedAt(LocalDateTime updatedAt) {
 		this.updatedAt = updatedAt;
 	}
-
 	
 }

@@ -1,14 +1,17 @@
 package mocmien.com.service.impl;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import mocmien.com.dto.response.store.StoreResponse;
@@ -19,7 +22,9 @@ import mocmien.com.entity.User;
 import mocmien.com.enums.UserStatus;
 import mocmien.com.repository.StoreRepository;
 import mocmien.com.service.StoreService;
+
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 @Service
 @Transactional
@@ -145,9 +150,62 @@ public class StoreServiceImpl implements StoreService {
 		return storeRepository.updateAfterOrder(storeId, revenue, rating, points);
 	}
 
-	@Override
 	
-	public Page<Store> findAll(Pageable pageable) {
-	    return storeRepository.findAll(pageable);
+	@Override
+	@Transactional(readOnly = true)
+	public Page<StoreResponse> findAll(String keyword, Boolean isActive, Pageable pageable) {
+		
+		Specification<Store> spec = (root, query, cb) -> null;
+		
+		if (StringUtils.hasText(keyword)) {
+		    spec = spec.and((root, query, cb) -> 
+		        cb.or(
+		            cb.like(cb.lower(root.get("storeName")), "%" + keyword.trim().toLowerCase() + "%"),
+		            cb.like(cb.lower(root.join("vendor").get("email")), "%" + keyword.trim().toLowerCase() + "%")
+		        )
+		    );
+		}
+
+
+	    if (isActive != null) {
+	        spec = spec.and((root, query, cb) ->
+	            cb.equal(root.get("isActive"), isActive)
+	        );
+	    }
+
+	    // fetch bằng EntityGraph -> vendor và userProfile sẽ được load luôn
+	    Page<Store> stores = storeRepository.findAll(spec, pageable);
+
+	    // map sang DTO
+	    return stores.map(store -> {
+	        StoreResponse res = new StoreResponse();
+	        res.setId(store.getId());
+	        res.setStoreName(store.getStoreName());
+
+	        if (store.getVendor() != null && store.getVendor().getUserProfile() != null) {
+	            res.setVendorId(store.getVendor().getUserId());
+	            res.setVendorName(store.getVendor().getUserProfile().getFullName());
+	            res.setVendorEmail(store.getVendor().getEmail());
+	            res.setVendorPhone(store.getVendor().getPhone());
+	        }
+
+	        res.setLevelName(store.getLevel() != null ? store.getLevel().getName().getDisplayName() : null);
+	        res.setPhone(store.getPhone());
+	        res.setAddress(store.getAddress());
+	        res.setAvatar(store.getAvatar());
+	        res.setCover(store.getCover());
+	        res.setPoint(store.getPoint());
+	        res.setRating(store.getRating());
+	        res.seteWallet(store.geteWallet());
+	        res.setActive(store.isActive());
+	        res.setOpen(store.isOpen());
+	        res.setCreateAt(store.getCreateAt());
+	        res.setUpdateAt(store.getUpdateAt());
+
+	        return res;
+	    });
 	}
+
+
+    
 }

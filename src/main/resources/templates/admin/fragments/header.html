@@ -27,16 +27,50 @@
 				</button>
 			</div>
 
-			<div class="user-info">
+			<!-- Toast container -->
+			<div aria-live="polite" aria-atomic="true"
+				style="position: fixed; top: 20px; right: 20px; z-index: 9999999;">
+				<div id="notificationToast" class="toast" role="alert"
+					aria-live="assertive" aria-atomic="true" data-bs-delay="5000">
+					<div class="toast-header">
+						<strong class="me-auto" id="toastTitle">Thông báo</strong> <small
+							class="text-muted" id="toastTime"></small>
+						<button type="button" class="btn-close" data-bs-dismiss="toast"
+							aria-label="Close"></button>
+					</div>
+					<div class="toast-body" id="toastBody">Nội dung thông báo</div>
+				</div>
+			</div>
+
+			<!-- Chuông thông báo -->
+			<div class="notification-bell"
+				style="position: relative; cursor: pointer; margin-left: 20px;">
+				<i class="fa-solid fa-bell fa-lg"></i> <span id="notificationCount"
+					style="position: absolute; top: -5px; right: -5px; background: red; color: white; border-radius: 50%; font-size: 12px; padding: 2px 5px; display: none;">0</span>
+
+				<!-- Dropdown danh sách thông báo -->
+				<div id="notificationDropdown"
+					style="position: absolute; right: 0; top: 30px; width: 250px; max-height: 300px; overflow-y: auto; background: white; border: 1px solid #ccc; display: none; z-index: 999;">
+					<div id="notificationList" style="padding: 10px; font-size: 14px;">
+						Không có thông báo</div>
+				</div>
+			</div>
+
+
+
+
+			<div class="user-info" th:data-user-id="${user.userId}">
 				<div class="user-details">
 					<span class="user-name">Admin</span> <span class="user-role">Quản
 						trị viên</span>
 				</div>
-				<img th:src="${user.avatar != null} ? ${user.avatar}" alt="Avatar" class="user-avatar">
+				<img th:src="${user.avatar != null} ? ${user.avatar}" alt="Avatar"
+					class="user-avatar">
 			</div>
 
 		</div>
 	</header>
+
 
 </body>
 </html>

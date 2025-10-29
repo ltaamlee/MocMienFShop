@@ -105,6 +105,6 @@ public class Category {
 	public void setUpdatedAt(LocalDateTime updatedAt) {
 		this.updatedAt = updatedAt;
 	}	
-	
+
 
 }

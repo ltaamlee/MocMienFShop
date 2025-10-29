@@ -87,24 +87,24 @@ public class Store {
 	@Column(name = "isOpen", nullable = false)
 	private boolean isOpen = true;
 
-	@Column(name = "createAt")
-	private LocalDateTime createAt;
+	@Column(name = "createdAt")
+	private LocalDateTime createdAt;
 
-	@Column(name = "updateAt")
-	private LocalDateTime updateAt;
+	@Column(name = "updatedAt")
+	private LocalDateTime updatedAt;
 
 	// ==============================
 	// Callback tự động cập nhật ngày
 	// ==============================
 	@PrePersist
 	protected void onCreate() {
-		createAt = LocalDateTime.now();
-		updateAt = LocalDateTime.now();
+		createdAt = LocalDateTime.now();
+		updatedAt = LocalDateTime.now();
 	}
 
 	@PreUpdate
 	protected void onUpdate() {
-		updateAt = LocalDateTime.now();
+		updatedAt = LocalDateTime.now();
 	}
 
 	public Integer getId() {
@@ -220,19 +220,19 @@ public class Store {
 	}
 
 	public LocalDateTime getCreateAt() {
-		return createAt;
+		return createdAt;
 	}
 
 	public void setCreateAt(LocalDateTime createAt) {
-		this.createAt = createAt;
+		this.createdAt = createAt;
 	}
 
 	public LocalDateTime getUpdateAt() {
-		return updateAt;
+		return updatedAt;
 	}
 
 	public void setUpdateAt(LocalDateTime updateAt) {
-		this.updateAt = updateAt;
+		this.updatedAt = updateAt;
 	}
 
 	

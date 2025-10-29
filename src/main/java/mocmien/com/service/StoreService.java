@@ -17,6 +17,9 @@ public interface StoreService {
 	
 	//Thống kê
 	StoreStats getStoreStatistics();
+	
+	Page<StoreResponse> findAll(String keyword, Boolean isActive, Pageable pageable);
+	
 
 	// CRUD cơ bản
     Store save(Store store);
@@ -54,5 +57,4 @@ public interface StoreService {
 
 	long countByIsActive(Boolean isActive);
 
-	Page<Store> findAll(Pageable pageable);
 }

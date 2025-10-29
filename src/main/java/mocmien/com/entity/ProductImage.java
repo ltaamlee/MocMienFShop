@@ -59,6 +59,7 @@ public class ProductImage {
         updateAt = LocalDateTime.now();
     }
 
+
 	public Integer getId() {
 		return id;
 	}
@@ -114,6 +115,5 @@ public class ProductImage {
 	public void setUpdateAt(LocalDateTime updateAt) {
 		this.updateAt = updateAt;
 	}
-    
     
 }

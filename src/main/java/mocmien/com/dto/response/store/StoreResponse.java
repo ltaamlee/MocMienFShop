@@ -12,7 +12,13 @@ import lombok.NoArgsConstructor;
 public class StoreResponse {
     private Integer id;
     private String storeName;
+    
+    // Thông tin vendor
+    private Integer vendorId;
     private String vendorName;
+    private String vendorEmail;
+    private String vendorPhone;
+    
     private String levelName;
     private String phone;
     private String address;
@@ -37,11 +43,29 @@ public class StoreResponse {
 	public void setStoreName(String storeName) {
 		this.storeName = storeName;
 	}
+	public Integer getVendorId() {
+		return vendorId;
+	}
+	public void setVendorId(Integer vendorId) {
+		this.vendorId = vendorId;
+	}
 	public String getVendorName() {
 		return vendorName;
 	}
 	public void setVendorName(String vendorName) {
 		this.vendorName = vendorName;
+	}
+	public String getVendorEmail() {
+		return vendorEmail;
+	}
+	public void setVendorEmail(String vendorEmail) {
+		this.vendorEmail = vendorEmail;
+	}
+	public String getVendorPhone() {
+		return vendorPhone;
+	}
+	public void setVendorPhone(String vendorPhone) {
+		this.vendorPhone = vendorPhone;
 	}
 	public String getLevelName() {
 		return levelName;
@@ -115,5 +139,7 @@ public class StoreResponse {
 	public void setUpdateAt(LocalDateTime updateAt) {
 		this.updateAt = updateAt;
 	}
-   
+    
+    
+    
 }

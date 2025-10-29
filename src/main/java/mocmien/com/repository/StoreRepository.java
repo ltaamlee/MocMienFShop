@@ -6,19 +6,27 @@ import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import mocmien.com.dto.response.store.StoreResponse;
 import mocmien.com.entity.Store;
 import mocmien.com.entity.User;
 
 @Repository
-public interface StoreRepository extends JpaRepository<Store, Integer> {
-//
+public interface StoreRepository extends JpaRepository<Store, Integer>, JpaSpecificationExecutor<Store> {
+		
+	@EntityGraph(attributePaths = {"vendor", "vendor.userProfile", "level"})
+	Page<Store> findAll(Specification<Store> spec, Pageable pageable);
+
+	
 //	Optional<Store> findByVendor_UserId(Integer vendorId);
 	@Query("select s from Store s where s.vendor.userId = :uid")
 	Optional<Store> findByVendorUserId(@Param("uid") Integer uid);
@@ -31,8 +39,10 @@ public interface StoreRepository extends JpaRepository<Store, Integer> {
 
 	List<Store> findByStoreNameContainingIgnoreCase(String keyword);
 
+	@EntityGraph(attributePaths = {"vendor", "vendor.userProfile", "level"})
 	Page<Store> findByStoreNameContainingIgnoreCaseAndIsActive(String keyword, boolean isActive, Pageable pageable);
 
+	@EntityGraph(attributePaths = {"vendor", "vendor.userProfile", "level"})
 	Page<Store> findByIsActive(boolean isActive, Pageable pageable);
 
 	// -----------------------

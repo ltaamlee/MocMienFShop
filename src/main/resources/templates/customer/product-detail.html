@@ -3,14 +3,15 @@
 	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
 	layout:decorate="~{customer/layout}">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title th:text="${product.tenSP}"></title>
-<th:block layout:fragment="styles">
-	<link rel="stylesheet" href="/styles/css/customer/base.css">
-	<link rel="stylesheet" href="/styles/css/customer/product-detail.css">
-	<link rel="stylesheet" href="/styles/css/customer/product.css">
-</th:block>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title th:text="${product.tenSP}"></title>
+
+	<th:block layout:fragment="styles">
+		<link rel="stylesheet" href="/styles/css/customer/base.css">
+		<link rel="stylesheet" href="/styles/css/customer/product-detail.css">
+		<link rel="stylesheet" href="/styles/css/customer/product.css">
+	</th:block>
 </head>
 
 <body>
@@ -19,39 +20,22 @@
 		<!-- ========== Chi tiết sản phẩm ========== -->
 		<section class="product-detail">
 			<div class="left">
-				<div class="promo-ribbon" th:if="${product.bannerKhuyenMai != null}">
-					<span
-						th:text="
-        ${product.loaiKhuyenMai == 'PERCENT' ? 'SALE OFF ' + product.giamPhanTram + '%' :
-          'Quà tặng'}">
-					</span>
-				</div>
 				<img th:src="@{${product.hinhAnh}}" th:alt="${product.tenSP}">
 			</div>
 
 			<div class="right">
 				<h1 th:text="${product.tenSP}"></h1>
-				<!-- 🔹 Nếu có khuyến mãi -->
-				<p class="price sale"
-					th:if="${product.giaSauKhuyenMai != null and product.giaSauKhuyenMai < product.gia}">
-					<span class="old-price"
-						th:text="${#numbers.formatDecimal(product.gia, 0, 'COMMA', 0, 'POINT')} + ' ₫'"></span>
-					<span class="new-price"
-						th:text="${#numbers.formatDecimal(product.giaSauKhuyenMai, 0, 'COMMA', 0, 'POINT')} + ' ₫'"></span>
-				</p>
 
-				<!-- 🔹 Nếu không có khuyến mãi -->
-				<p class="price"
-					th:if="${product.giaSauKhuyenMai == null or product.giaSauKhuyenMai >= product.gia}"
-					th:text="${#numbers.formatDecimal(product.gia, 0, 'COMMA', 0, 'POINT')} + ' ₫'"></p>
+				<!-- Hiển thị giá -->
+				<p class="price" th:text="${#numbers.formatDecimal(product.gia, 0, 'COMMA', 0, 'POINT')} + ' ₫'"></p>
 
 				<!-- ⭐ Tổng đánh giá trung bình -->
 				<div class="rating">
-					<i class="fa-solid fa-star" style="color: #f7b500;"></i> <span
-						th:text="${#numbers.formatDecimal(avgRating, 1, 'COMMA', 1, 'POINT')}"></span>
-					/ 5
+					<i class="fa-solid fa-star" style="color: #f7b500;"></i>
+					<span th:text="${#numbers.formatDecimal(avgRating, 1, 'COMMA', 1, 'POINT')}"></span> / 5
 				</div>
 
+				<!-- Mô tả sản phẩm -->
 				<p class="desc" th:text="${product.moTa}"></p>
 
 				<div class="quantity">
@@ -62,12 +46,9 @@
 				</div>
 
 				<div class="buttons">
-					<button id="addCart" th:data-id="${product.maSP}">🛒 Thêm
-						vào giỏ hàng</button>
-					<button id="buyNow" th:data-id="${product.maSP}">⚡ Mua
-						ngay</button>
+					<button id="addCart" th:data-id="${product.maSP}">🛒 Thêm vào giỏ hàng</button>
+					<button id="buyNow" th:data-id="${product.maSP}">⚡ Mua ngay</button>
 				</div>
-
 			</div>
 		</section>
 
@@ -75,16 +56,12 @@
 		<section class="reviews">
 			<h2>Đánh giá sản phẩm</h2>
 
-			<!-- 💬 Danh sách đánh giá -->
 			<div class="review-list" th:if="${!#lists.isEmpty(reviews)}">
 				<div class="review-item" th:each="r : ${reviews}">
 					<div class="review-header">
-						<!-- Username -->
-						<strong
-							th:text="${r.nguoiDanhGia != null ? r.nguoiDanhGia.username : 'Ẩn danh'}"></strong>
+						<strong th:text="${r.nguoiDanhGia != null ? r.nguoiDanhGia.username : 'Ẩn danh'}"></strong>
 					</div>
 
-					<!-- ⭐ Sao của từng người -->
 					<div class="review-rating">
 						<i class="fa-solid fa-star"
 							th:each="i : ${#numbers.sequence(1,5)}"
@@ -104,41 +81,16 @@
 		<section class="related">
 			<h2>Sản phẩm liên quan</h2>
 			<div class="related-grid">
-
 				<div th:each="r : ${relatedProducts}" class="card">
-					<a th:href="@{'/product/' + ${r.maSP}}"> <!-- Ribbon khuyến mãi (nếu có) -->
-						<div class="promo-ribbon" th:if="${r.bannerKhuyenMai != null}">
-							<span
-								th:text="
-            ${r.loaiKhuyenMai == 'PERCENT' ? 'SALE OFF ' + r.giamPhanTram + '%' :
-              r.loaiKhuyenMai == 'AMOUNT' ? 'GIẢM ' + #numbers.formatInteger(r.gia - (r.giaSauKhuyenMai?:r.gia), 0, 'COMMA') + '₫' :
-              'Ưu đãi'}">
-							</span>
-						</div> <img th:src="@{${r.hinhAnh}}" th:alt="${r.tenSP}">
+					<a th:href="@{'/product/' + ${r.maSP}}">
+						<img th:src="@{${r.hinhAnh}}" th:alt="${r.tenSP}">
 						<h3 th:text="${r.tenSP}"></h3>
-						<p class="price sale"
-							th:if="${r.giaSauKhuyenMai != null and r.giaSauKhuyenMai < r.gia}">
-							<span class="old-price"
-								th:text="${#numbers.formatDecimal(r.gia, 0, 'COMMA', 0, 'POINT')} + ' ₫'"></span>
-							<span class="new-price"
-								th:text="${#numbers.formatDecimal(r.giaSauKhuyenMai, 0, 'COMMA', 0, 'POINT')}"></span><span>
-								₫</span>
-
-						</p>
-
 						<p class="price"
-							th:if="${r.giaSauKhuyenMai == null or r.giaSauKhuyenMai >= r.gia}"
 							th:text="${#numbers.formatDecimal(r.gia, 0, 'COMMA', 0, 'POINT')} + ' ₫'"></p>
 					</a>
-
-
-
 				</div>
-
 			</div>
 		</section>
-
-
 	</div>
 
 	<th:block layout:fragment="scripts">

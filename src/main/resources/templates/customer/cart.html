@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{customer/layout}">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Giỏ hàng | 4Petals</title>
+
+<th:block layout:fragment="styles">
+	<link rel="stylesheet" href="/styles/css/customer/base.css">
+	<link rel="stylesheet" href="/styles/css/customer/cart.css">
+	<link rel="stylesheet"
+		href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
+</th:block>
+</head>
+
+<body>
+	<div layout:fragment="content" class="home-page">
+
+		<section class="cart-page">
+			<!-- 🛒 Danh sách sản phẩm -->
+			<div class="cart-items">
+				<!-- Nếu giỏ hàng trống -->
+				<div th:if="${#lists.isEmpty(items)}" class="empty-cart">
+					<img src="/styles/image/customer/empty-cart.png" alt="Empty Cart">
+					<h2>Giỏ hàng của bạn đang trống</h2>
+					<p>Hãy chọn những bó hoa xinh đẹp để làm đầy giỏ hàng nhé 💐</p>
+					<a th:href="@{/product}" class="btn-continue">Tiếp tục mua sắm</a>
+				</div>
+
+				<!-- Lặp qua từng CartItem -->
+				<div th:each="c : ${items}" class="cart-item">
+					<input type="checkbox" checked>
+
+					<!-- Ảnh sản phẩm -->
+					<img
+						th:if="${c.product.images != null and !#lists.isEmpty(c.product.images)}"
+						th:src="@{${c.product.images[0].imageUrl}}"
+						th:alt="${c.product.productName}">
+
+					<!-- ảnh mặc định nếu sản phẩm không có ảnh -->
+					<img
+						th:if="${c.product.images == null or #lists.isEmpty(c.product.images)}"
+						src="/styles/image/no-image.jpg" alt="No image available">
+
+					<!-- Thông tin sản phẩm -->
+					<div class="info">
+						<h4 th:text="${c.product.productName}">Tên sản phẩm</h4>
+						<p
+							th:text="${#numbers.formatDecimal(c.product.price, 0, 'COMMA', 0, 'POINT')} + ' ₫'">
+							0 ₫</p>
+					</div>
+
+					<!-- Số lượng -->
+					<div class="quantity">
+						<button class="minus">−</button>
+						<input type="number" min="1" th:value="${c.quantity}"
+							th:data-id="${c.id}">
+						<button class="plus">+</button>
+					</div>
+
+					<!-- Xóa -->
+					<button class="remove" th:data-id="${c.id}">×</button>
+				</div>
+			</div>
+
+			<!-- 💰 Tổng cộng -->
+			<div class="summary">
+				<h3>Thanh toán</h3>
+				<p>
+					Tạm tính: <span class="subtotal"
+						th:text="${#numbers.formatDecimal(total, 0, 'COMMA', 0, 'POINT')} + ' ₫'">0
+						₫</span>
+				</p>
+				<p class="total">
+					Tổng cộng: <strong
+						th:text="${#numbers.formatDecimal(total, 0, 'COMMA', 0, 'POINT')} + ' ₫'">0
+						₫</strong>
+				</p>
+
+				<form id="checkoutForm" th:action="@{/checkout}" method="get">
+					<input type="hidden" name="selectedIds" id="selectedIds">
+					<button type="submit" class="checkout">Mua hàng</button>
+				</form>
+			</div>
+		</section>
+
+	</div>
+
+	<th:block layout:fragment="scripts">
+		<script src="/styles/js/customer/header.js"></script>
+		<script th:src="@{/styles/js/customer/avatar.js}"></script>
+		<script th:src="@{/styles/js/customer/cart.js}"></script>
+	</th:block>
+</body>
+</html>

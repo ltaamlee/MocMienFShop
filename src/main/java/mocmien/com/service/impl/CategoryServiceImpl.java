@@ -19,6 +19,7 @@ import mocmien.com.dto.response.category.CategoryResponse;
 import mocmien.com.dto.response.category.CategoryStats;
 import mocmien.com.entity.Category;
 import mocmien.com.repository.CategoryRepository;
+import mocmien.com.repository.ProductRepository;
 import mocmien.com.service.CategoryService;
 
 @Service
@@ -26,6 +27,8 @@ public class CategoryServiceImpl implements CategoryService{
 	
 	@Autowired
 	private CategoryRepository categoryRepository;
+	@Autowired
+	private ProductRepository productRepository;
 	
 	
 	@Override
@@ -107,6 +110,10 @@ public class CategoryServiceImpl implements CategoryService{
 
     @Override
     public void deleteCategory(Integer id) {
+    	long count = productRepository.countByCategory_Id(id);
+        if (count > 0) {
+            throw new IllegalStateException("Không thể xóa danh mục vì vẫn còn sản phẩm đang sử dụng.");
+        }
         categoryRepository.deleteById(id);
     }
 
@@ -142,10 +149,8 @@ public class CategoryServiceImpl implements CategoryService{
             return cb.and(predicates.toArray(new Predicate[0]));
         };
 
-        // Gọi hàm findAll có sẵn của JpaSpecificationExecutor
         Page<Category> categories = categoryRepository.findAll(spec, pageable);
 
-        // Map sang DTO và trả về
         return categories.map(this::toResponse);
     }
 

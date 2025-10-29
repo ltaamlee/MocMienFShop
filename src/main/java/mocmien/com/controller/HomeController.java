@@ -1,6 +1,8 @@
 package mocmien.com.controller;
 
 
+import java.util.List;
+
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -8,8 +10,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestParam;
 
-
+import mocmien.com.service.ProductService;
 import mocmien.com.service.UserService;
+import mocmien.com.dto.product.ProductRowVM;
 import mocmien.com.entity.User;
 
 
@@ -17,9 +20,11 @@ import mocmien.com.entity.User;
 public class HomeController {
 	
 	private final UserService userService;
+	private final ProductService productService;
 
-	public HomeController(UserService userService) {
+	public HomeController(UserService userService, ProductService productService) {
 		this.userService = userService;
+		this.productService = productService;
 	}
 
 	@GetMapping("/")
@@ -37,10 +42,13 @@ public class HomeController {
 	}
 	
 	@GetMapping("/product")
-	public String productPage(Model model, Authentication authentication) {
+	public String showProducts(Model model, Authentication authentication) {
 		addUserToModel(model, authentication);
-		return "customer/product";
+	    List<ProductRowVM> products = productService.getAllProductRows();
+	    model.addAttribute("products", products);
+	    return "customer/product";
 	}
+
 
 	@GetMapping("/contact")
 	public String contact(Model model, Authentication authentication) {
