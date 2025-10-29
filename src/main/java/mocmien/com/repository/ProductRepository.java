@@ -1,6 +1,7 @@
 package mocmien.com.repository;
 
 import java.math.BigDecimal;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,6 +18,23 @@ import mocmien.com.entity.Store;
 
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Integer> {
+	
+
+    List<Product> findByStore_IdAndIdIn(Integer storeId, Collection<Integer> ids);
+    interface IdName {
+        Integer getId();
+        String getProductName();
+    }
+
+    @Query("""
+        select p.id as id, p.productName as productName
+        from Product p
+        where p.store.id = :storeId and
+              (p.isActive = true or p.isActive is null) and
+              (p.isAvailable = true or p.isAvailable is null)
+        order by p.productName asc
+    """)
+    List<IdName> findOptionsByStoreId(Integer storeId);
 
 	 // ============================================================
     // 🔹 CRUD cơ bản

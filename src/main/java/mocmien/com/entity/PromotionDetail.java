@@ -91,4 +91,118 @@ public class PromotionDetail {
     protected void onUpdate() {
         updateAt = LocalDateTime.now();
     }
+
+	public Integer getId() {
+		return id;
+	}
+
+	public void setId(Integer id) {
+		this.id = id;
+	}
+
+	public Promotion getPromotion() {
+		return promotion;
+	}
+
+	public void setPromotion(Promotion promotion) {
+		this.promotion = promotion;
+	}
+
+	public Product getProduct() {
+		return product;
+	}
+
+	public void setProduct(Product product) {
+		this.product = product;
+	}
+
+	public Level getLevel() {
+		return level;
+	}
+
+	public void setLevel(Level level) {
+		this.level = level;
+	}
+
+	public PromotionType getType() {
+		return type;
+	}
+
+	public void setType(PromotionType type) {
+		this.type = type;
+	}
+
+	public BigDecimal getValue() {
+		return value;
+	}
+
+	public void setValue(BigDecimal value) {
+		this.value = value;
+	}
+
+	public String getBanner() {
+		return banner;
+	}
+
+	public void setBanner(String banner) {
+		this.banner = banner;
+	}
+
+	public String getRibbon() {
+		return ribbon;
+	}
+
+	public void setRibbon(String ribbon) {
+		this.ribbon = ribbon;
+	}
+
+	public LocalDateTime getStartDate() {
+		return startDate;
+	}
+
+	public void setStartDate(LocalDateTime startDate) {
+		this.startDate = startDate;
+	}
+
+	public LocalDateTime getEndDate() {
+		return endDate;
+	}
+
+	public void setEndDate(LocalDateTime endDate) {
+		this.endDate = endDate;
+	}
+
+	public Integer getPriority() {
+		return priority;
+	}
+
+	public void setPriority(Integer priority) {
+		this.priority = priority;
+	}
+
+	public Boolean getIsActive() {
+		return isActive;
+	}
+
+	public void setIsActive(Boolean isActive) {
+		this.isActive = isActive;
+	}
+
+	public LocalDateTime getCreateAt() {
+		return createAt;
+	}
+
+	public void setCreateAt(LocalDateTime createAt) {
+		this.createAt = createAt;
+	}
+
+	public LocalDateTime getUpdateAt() {
+		return updateAt;
+	}
+
+	public void setUpdateAt(LocalDateTime updateAt) {
+		this.updateAt = updateAt;
+	}
+
+	
 }
