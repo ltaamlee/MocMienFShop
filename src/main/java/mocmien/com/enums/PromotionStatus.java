@@ -4,7 +4,7 @@ public enum PromotionStatus {
     INACTIVE("Chưa kích hoạt"),
     ACTIVE("Đang hoạt động"),
     EXPIRED("Đã hết hạn"),
-    SCHEDULED("Hẹn giờ");
+    SCHEDULED("Sắp bắt đầu");
 
     private final String displayName;
 

@@ -28,4 +28,6 @@ public interface CategoryService {
 
 	void toggleCategoryStatus(Integer id);
 
+	List<Category> getActiveCategories();
+
 }

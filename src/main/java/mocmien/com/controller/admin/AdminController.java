@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import mocmien.com.dto.response.category.CategoryResponse;
 import mocmien.com.entity.Category;
 import mocmien.com.entity.User;
+import mocmien.com.enums.PromotionStatus;
+import mocmien.com.enums.PromotionType;
 import mocmien.com.enums.RoleName;
 import mocmien.com.enums.UserStatus;
 import mocmien.com.security.CustomUserDetails;
@@ -45,7 +47,8 @@ public class AdminController {
 
 	// Trang chủ
 	@GetMapping("/user")
-	public String user(@AuthenticationPrincipal CustomUserDetails userDetails, Model model, @RequestParam(defaultValue = "10") int size) {
+	public String user(@AuthenticationPrincipal CustomUserDetails userDetails, Model model,
+			@RequestParam(defaultValue = "10") int size) {
 
 		if (userDetails != null) {
 			Optional<User> userOpt = userService.findByUsername(userDetails.getUsername());
@@ -53,7 +56,6 @@ public class AdminController {
 		}
 		model.addAttribute("statuses", UserStatus.values());
 		model.addAttribute("roles", RoleName.values());
-
 
 		return "admin/user";
 	}
@@ -78,10 +80,10 @@ public class AdminController {
 			Optional<User> userOpt = userService.findByUsername(userDetails.getUsername());
 			userOpt.ifPresent(user -> model.addAttribute("user", user));
 		}
-		
-        List<CategoryResponse> categories = categoryService.getAllCategories();
-        model.addAttribute("categories", categories);
-        
+
+		List<CategoryResponse> categories = categoryService.getAllCategories();
+		model.addAttribute("categories", categories);
+
 		return "admin/category";
 	}
 
@@ -93,7 +95,8 @@ public class AdminController {
 			Optional<User> userOpt = userService.findByUsername(userDetails.getUsername());
 			userOpt.ifPresent(user -> model.addAttribute("user", user));
 		}
-
+		List<Category> categories = categoryService.getActiveCategories();
+		model.addAttribute("categoriesActive", categories);
 		return "admin/product";
 	}
 
@@ -106,6 +109,8 @@ public class AdminController {
 			userOpt.ifPresent(user -> model.addAttribute("user", user));
 		}
 
+		model.addAttribute("promotionTypes", PromotionType.values());
+		model.addAttribute("promotionStatuses", PromotionStatus.values());
 		return "admin/promotion";
 	}
 

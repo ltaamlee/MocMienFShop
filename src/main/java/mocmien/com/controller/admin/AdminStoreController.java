@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import mocmien.com.dto.response.store.StoreResponse;
+import mocmien.com.dto.response.store.AdminStoreResponse;
 import mocmien.com.dto.response.store.StoreStats;
 import mocmien.com.entity.Store;
 import mocmien.com.service.StoreService;
@@ -43,12 +43,12 @@ public class AdminStoreController {
 	}
 
 	@GetMapping
-	public ResponseEntity<Page<StoreResponse>> searchStores(@RequestParam(defaultValue = "0") int page,
+	public ResponseEntity<Page<AdminStoreResponse>> searchStores(@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "10") int size, @RequestParam(required = false) String keyword,
 			@RequestParam(required = false) Boolean isActive) {
 
 		Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
-		Page<StoreResponse> responsePage;
+		Page<AdminStoreResponse> responsePage;
 
 		responsePage = storeService.findAll(keyword, isActive, pageable);
 
@@ -67,7 +67,7 @@ public class AdminStoreController {
 		}
 
 		Store store = storeOpt.get();
-		StoreResponse response = convertToResponse(store);
+		AdminStoreResponse response = convertToResponse(store);
 
 		return ResponseEntity.ok(response);
 	}
@@ -107,8 +107,8 @@ public class AdminStoreController {
 	// -----------------------
 	// HELPER: Convert Entity -> DTO
 	// -----------------------
-	private StoreResponse convertToResponse(Store store) {
-		StoreResponse dto = new StoreResponse();
+	private AdminStoreResponse convertToResponse(Store store) {
+		AdminStoreResponse dto = new AdminStoreResponse();
 		dto.setId(store.getId());
 		dto.setStoreName(store.getStoreName());
 		dto.setVendorName(store.getVendor() != null ? store.getVendor().getUsername() : "N/A");

@@ -24,6 +24,7 @@ public class ProductListItemResponse {
     private Integer storeId;
     private String storeName;
         
+	
 	public Integer getStoreId() {
 		return storeId;
 	}

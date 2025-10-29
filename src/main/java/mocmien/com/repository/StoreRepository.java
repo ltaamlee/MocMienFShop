@@ -16,7 +16,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import mocmien.com.dto.response.store.StoreResponse;
+import mocmien.com.dto.response.store.AdminStoreResponse;
 import mocmien.com.entity.Store;
 import mocmien.com.entity.User;
 

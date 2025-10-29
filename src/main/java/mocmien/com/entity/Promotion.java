@@ -66,29 +66,29 @@ public class Promotion {
 	@Column(name = "isActive", nullable = false)
 	private Boolean isActive = false; // Khuyến mãi đang được kích hoạt hay không
 
-	@Column(name = "createAt", nullable = false)
-	private LocalDateTime createAt;
+	@Column(name = "createdAt", nullable = false)
+	private LocalDateTime createdAt;
 
-	@Column(name = "updateAt")
-	private LocalDateTime updateAt;
+	@Column(name = "updatedAt")
+	private LocalDateTime updatedAt;
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "status", nullable = false, columnDefinition = "NVARCHAR(20)")
 	private PromotionStatus status = PromotionStatus.INACTIVE;
-
+	
 	public boolean isExpiredNow() {
 		return endDate != null && endDate.isBefore(java.time.LocalDateTime.now());
 	}
 
 	@PrePersist
 	protected void onCreate() {
-		createAt = LocalDateTime.now();
-		updateAt = LocalDateTime.now();
+		createdAt = LocalDateTime.now();
+		updatedAt = LocalDateTime.now();
 	}
 
 	@PreUpdate
 	protected void onUpdate() {
-		updateAt = LocalDateTime.now();
+		updatedAt = LocalDateTime.now();
 	}
 
 	public Integer getId() {
@@ -171,20 +171,20 @@ public class Promotion {
 		this.isActive = isActive;
 	}
 
-	public LocalDateTime getCreateAt() {
-		return createAt;
+	public LocalDateTime getCreatedAt() {
+		return createdAt;
 	}
 
-	public void setCreateAt(LocalDateTime createAt) {
-		this.createAt = createAt;
+	public void setCreatedAt(LocalDateTime createdAt) {
+		this.createdAt = createdAt;
 	}
 
-	public LocalDateTime getUpdateAt() {
-		return updateAt;
+	public LocalDateTime getUpdatedAt() {
+		return updatedAt;
 	}
 
-	public void setUpdateAt(LocalDateTime updateAt) {
-		this.updateAt = updateAt;
+	public void setUpdatedAt(LocalDateTime updatedAt) {
+		this.updatedAt = updatedAt;
 	}
 
 	public PromotionStatus getStatus() {
@@ -194,6 +194,8 @@ public class Promotion {
 	public void setStatus(PromotionStatus status) {
 		this.status = status;
 	}
+
+	
 	
 	
 }

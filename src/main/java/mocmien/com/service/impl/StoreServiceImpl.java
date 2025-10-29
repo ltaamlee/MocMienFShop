@@ -14,7 +14,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import mocmien.com.dto.response.store.StoreResponse;
+import mocmien.com.dto.response.store.AdminStoreResponse;
 import mocmien.com.dto.response.store.StoreStats;
 import mocmien.com.dto.response.users.UserStats;
 import mocmien.com.entity.Store;
@@ -153,7 +153,7 @@ public class StoreServiceImpl implements StoreService {
 	
 	@Override
 	@Transactional(readOnly = true)
-	public Page<StoreResponse> findAll(String keyword, Boolean isActive, Pageable pageable) {
+	public Page<AdminStoreResponse> findAll(String keyword, Boolean isActive, Pageable pageable) {
 		
 		Specification<Store> spec = (root, query, cb) -> null;
 		
@@ -178,7 +178,7 @@ public class StoreServiceImpl implements StoreService {
 
 	    // map sang DTO
 	    return stores.map(store -> {
-	        StoreResponse res = new StoreResponse();
+	        AdminStoreResponse res = new AdminStoreResponse();
 	        res.setId(store.getId());
 	        res.setStoreName(store.getStoreName());
 

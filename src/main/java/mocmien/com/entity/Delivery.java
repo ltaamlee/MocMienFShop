@@ -44,21 +44,95 @@ public class Delivery {
 	@Column(name = "isActive", nullable = false)
 	private Boolean isActive = false;
 
-	@Column(name = "createAt")
-	private LocalDateTime createAt;
+	@Column(name = "createdAt")
+	private LocalDateTime createdAt;
 
-	@Column(name = "updateAt")
-	private LocalDateTime updateAt;
+	@Column(name = "updatedAt")
+	private LocalDateTime updatedAt;
 
 	@PrePersist
 	public void prePersist() {
-		createAt = LocalDateTime.now();
+		createdAt = LocalDateTime.now();
 		if (isActive == null)
 			isActive = false;
 	}
 
 	@PreUpdate
 	public void preUpdate() {
-		updateAt = LocalDateTime.now();
+		updatedAt = LocalDateTime.now();
 	}
+
+	public Integer getId() {
+		return id;
+	}
+
+	public void setId(Integer id) {
+		this.id = id;
+	}
+
+	public String getDeliveryName() {
+		return deliveryName;
+	}
+
+	public void setDeliveryName(String deliveryName) {
+		this.deliveryName = deliveryName;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public BigDecimal getBasePrice() {
+		return basePrice;
+	}
+
+	public void setBasePrice(BigDecimal basePrice) {
+		this.basePrice = basePrice;
+	}
+
+	public BigDecimal getPricePerKM() {
+		return pricePerKM;
+	}
+
+	public void setPricePerKM(BigDecimal pricePerKM) {
+		this.pricePerKM = pricePerKM;
+	}
+
+	public Integer getMaxDistance() {
+		return maxDistance;
+	}
+
+	public void setMaxDistance(Integer maxDistance) {
+		this.maxDistance = maxDistance;
+	}
+
+	public Boolean getIsActive() {
+		return isActive;
+	}
+
+	public void setIsActive(Boolean isActive) {
+		this.isActive = isActive;
+	}
+
+	public LocalDateTime getCreatedAt() {
+		return createdAt;
+	}
+
+	public void setCreatedAt(LocalDateTime createdAt) {
+		this.createdAt = createdAt;
+	}
+
+	public LocalDateTime getUpdatedAt() {
+		return updatedAt;
+	}
+
+	public void setUpdatedAt(LocalDateTime updatedAt) {
+		this.updatedAt = updatedAt;
+	}
+
+
 }

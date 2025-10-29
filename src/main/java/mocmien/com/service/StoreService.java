@@ -7,7 +7,7 @@ import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import mocmien.com.dto.response.store.StoreResponse;
+import mocmien.com.dto.response.store.AdminStoreResponse;
 import mocmien.com.dto.response.store.StoreStats;
 import mocmien.com.entity.Store;
 import mocmien.com.entity.User;
@@ -18,7 +18,7 @@ public interface StoreService {
 	//Thống kê
 	StoreStats getStoreStatistics();
 	
-	Page<StoreResponse> findAll(String keyword, Boolean isActive, Pageable pageable);
+	Page<AdminStoreResponse> findAll(String keyword, Boolean isActive, Pageable pageable);
 	
 
 	// CRUD cơ bản

@@ -47,7 +47,7 @@ public class VendorPromotionsController {
 			@RequestParam(defaultValue = "") String keyword, @RequestParam(required = false) PromotionStatus status,
 			@RequestParam(required = false) PromotionType type, @RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "10") int size) {
-		Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createAt"));
+		Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
 		return service.list(uid(ud), keyword, status, type, pageable);
 	}
 

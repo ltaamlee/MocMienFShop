@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import mocmien.com.dto.request.store.StoreRegisterRequest;
 import mocmien.com.dto.request.store.ToggleOpenRequest;
-import mocmien.com.dto.response.store.StoreResponse;
+import mocmien.com.dto.response.store.AdminStoreResponse;
 import mocmien.com.entity.Level;
 import mocmien.com.entity.Store;
 import mocmien.com.entity.User;
@@ -166,8 +166,8 @@ public class VendorStoreController {
         return null;
     }
 
-    private StoreResponse buildStoreResponse(Store s) {
-        StoreResponse r = new StoreResponse();
+    private AdminStoreResponse buildStoreResponse(Store s) {
+        AdminStoreResponse r = new AdminStoreResponse();
         r.setId(s.getId());
         r.setStoreName(s.getStoreName());
         r.setAddress(s.getAddress());

@@ -5,7 +5,7 @@
 <head>
 <title>Profile</title>
 <th:block layout:fragment="styles">
-	<link rel="stylesheet" href="/styles/css/admin/header.css">
+	<link rel="stylesheet" href="/styles/css/admin/config.css">
 	<link rel="stylesheet" href="/styles/css/component/modal.css">
 
 </th:block>
@@ -14,10 +14,10 @@
 	<div layout:fragment="content">
 
 
-		<!-- THỐNG KÊ NHÀ VẬN CHUYỂN -->
+		<!-- THỐNG KÊ ĐƠN VỊ VẬN CHUYỂN -->
 		<div class="stats-cards">
 			<div class="stat-card total">
-				<h3>Tổng số nhà vận chuyển</h3>
+				<h3>Tổng phương thức vận chuyển</h3>
 				<div class="value" id="totalDeliveriesStat"
 					th:text="${totalDeliveries} ?: '0'">0</div>
 			</div>
@@ -33,10 +33,38 @@
 			</div>
 		</div>
 
-
 		<!-- Nút mở modal -->
-		<button type="button" class="btn btn-primary" data-bs-toggle="modal"
-			data-bs-target="#addDeliveryModal">+ Thêm nhà vận chuyển</button>
+		<div class="d-flex justify-content-between align-items-center mb-3">
+
+			<button type="button" class="btn btn-primary" data-bs-toggle="modal"
+				data-bs-target="#addDeliveryModal">+ Thêm phương thức vận
+				chuyển</button>
+		</div>
+
+
+		<div class="table-deliveries">
+			<table>
+				<thead>
+					<tr>
+						<th>STT</th>
+						<th>Tên phương thức</th>
+						<th>Giá cơ bản (₫)</th>
+						<th>Giá/km (₫)</th>
+						<th>Max K.cách (km)</th>
+						<th>Mô tả</th>
+						<th>Trạng thái</th>
+						<th>Ngày tạo</th>
+						<th>Thao tác</th>
+					</tr>
+				</thead>
+				<tbody id="deliveryTableBody">
+					<tr>
+						<td colspan="9" style="text-align: center;">KHÔNG CÓ DỮ LIỆU</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		<div class="pagination" id="deliveryPagination"></div>
 
 		<!-- Modal -->
 		<div class="modal fade" id="addDeliveryModal" tabindex="-1"
@@ -45,8 +73,8 @@
 				<div class="modal-content">
 
 					<div class="modal-header bg-primary text-white">
-						<h5 class="modal-title" id="addDeliveryModalLabel">Thêm Nhà
-							Vận Chuyển</h5>
+						<h5 class="modal-title" id="addDeliveryModalLabel">Thêm
+							phương thức vận chuyển</h5>
 						<button type="button" class="btn-close btn-close-white"
 							data-bs-dismiss="modal" aria-label="Close"></button>
 					</div>
@@ -56,7 +84,7 @@
 						<div class="modal-body">
 
 							<div class="mb-3">
-								<label class="form-label">Tên nhà vận chuyển *</label> <input
+								<label class="form-label">Tên phương thức vận chuyển *</label> <input
 									type="text" class="form-control" name="deliveryName" required
 									placeholder="Ví dụ: Giao Hàng Nhanh">
 							</div>
@@ -70,17 +98,18 @@
 							<div class="row">
 								<div class="col-md-4 mb-3">
 									<label class="form-label">Giá cơ bản (₫)</label> <input
-										type="number" step="0.01" class="form-control"
+										type="number" min=0 step="0.01" class="form-control"
 										name="basePrice" required>
 								</div>
 								<div class="col-md-4 mb-3">
 									<label class="form-label">Giá mỗi km (₫)</label> <input
-										type="number" step="0.01" class="form-control"
+										type="number" min=0 step="0.01" class="form-control"
 										name="pricePerKM">
 								</div>
 								<div class="col-md-4 mb-3">
-									<label class="form-label">Khoảng cách tối đa (km)</label> <input
-										type="number" class="form-control" name="maxDistance">
+									<label class="form-label">Khoảng cách tối đa hỗ trợ
+										(km)</label> <input type="number" class="form-control"
+										name="maxDistance">
 								</div>
 							</div>
 
@@ -88,7 +117,7 @@
 								<input class="form-check-input" type="checkbox" name="isActive"
 									value="true" id="isActiveSwitch"> <label
 									class="form-check-label" for="isActiveSwitch">Kích hoạt
-									nhà vận chuyển</label>
+									phương thức vận chuyển</label>
 							</div>
 
 						</div>
