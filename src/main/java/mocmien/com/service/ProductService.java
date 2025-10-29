@@ -7,16 +7,24 @@ import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import mocmien.com.dto.response.product.ProductDetailResponse;
+import mocmien.com.dto.response.product.ProductListItemResponse;
 import mocmien.com.entity.Category;
 import mocmien.com.entity.Product;
 import mocmien.com.entity.Store;
+import mocmien.com.enums.ProductStatus;
 
 public interface ProductService {
 
+	Page<ProductListItemResponse> list(String keyword, Integer categoryId, ProductStatus status, Pageable pageable);
+    ProductDetailResponse detail(Integer id);
+	Page<ProductListItemResponse> list(String keyword, Integer categoryId, ProductStatus status, Store store,
+			Pageable pageable);
+	
     // ===================== CƠ BẢN =====================
     List<Product> getAllProducts();
     Optional<Product> getProductById(Integer id);
-    Optional<Product> getBySlug(String slug);
+    Optional<Product> getBySlug(String slug, Store store);
     Product saveProduct(Product product);
     void deleteProduct(Integer id);
 
@@ -45,4 +53,5 @@ public interface ProductService {
     long countDiscounted();
     long countOutOfStock();
     BigDecimal averageRatingByStore(Store store);
+
 }

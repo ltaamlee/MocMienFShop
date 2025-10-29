@@ -1,6 +1,7 @@
 package mocmien.com.repository;
 
 import java.math.BigDecimal;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,12 +18,30 @@ import mocmien.com.entity.Store;
 
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Integer> {
+	
+
+    List<Product> findByStore_IdAndIdIn(Integer storeId, Collection<Integer> ids);
+    interface IdName {
+        Integer getId();
+        String getProductName();
+    }
+
+    @Query("""
+        select p.id as id, p.productName as productName
+        from Product p
+        where p.store.id = :storeId and
+              (p.isActive = true or p.isActive is null) and
+              (p.isAvailable = true or p.isAvailable is null)
+        order by p.productName asc
+    """)
+    List<IdName> findOptionsByStoreId(Integer storeId);
 
 	 // ============================================================
     // 🔹 CRUD cơ bản
     // ============================================================
-    @EntityGraph(attributePaths = {"images", "productFlowers", "store", "category"})
-    Optional<Product> findBySlug(String slug);
+    @EntityGraph(attributePaths = {"images", "store", "category"})
+    Optional<Product> findBySlugAndStore(String slug, Store store);
+
 
 
 
@@ -56,12 +75,16 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
     @EntityGraph(attributePaths = {"images", "store", "category"})
     Page<Product> findByProductNameContainingIgnoreCase(String keyword, Pageable pageable);
 
-    @EntityGraph(attributePaths = {"images", "category"})
+    @EntityGraph(attributePaths = {"images", "store"})
     Page<Product> findByStore(Store store, Pageable pageable);
 
-    @EntityGraph(attributePaths = {"images", "store"})
+    @EntityGraph(attributePaths = {"images", "category"})
     Page<Product> findByCategory(Category category, Pageable pageable);
 
+    @EntityGraph(attributePaths = {"images", "category", "store"})
+	Page<Product> findByStoreAndCategory(Store store, Category cat, Pageable pageable);
+
+    
     @EntityGraph(attributePaths = {"images"})
     Page<Product> findByPriceBetween(BigDecimal minPrice, BigDecimal maxPrice, Pageable pageable);
 
@@ -116,4 +139,5 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
     // 🟢 Thống kê trung bình rating theo cửa hàng
     @Query("SELECT AVG(p.rating) FROM Product p WHERE p.store = :store")
     BigDecimal averageRatingByStore(Store store);
+
 }

@@ -3,6 +3,7 @@
   max-width: 1200px;
   margin: 0 auto;
   padding: 2rem 1.5rem;
+  padding-top: calc(var(--header-height) + 20px);
 }
 
 

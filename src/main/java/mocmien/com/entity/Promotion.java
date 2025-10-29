@@ -17,7 +17,10 @@ import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import mocmien.com.enums.PromotionStatus;
 import mocmien.com.enums.PromotionType;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 
 @Entity
 @Table(name = "Promotion")
@@ -69,6 +72,14 @@ public class Promotion {
 	@Column(name = "updateAt")
 	private LocalDateTime updateAt;
 
+	@Enumerated(EnumType.STRING)
+	@Column(name = "status", nullable = false, columnDefinition = "NVARCHAR(20)")
+	private PromotionStatus status = PromotionStatus.INACTIVE;
+
+	public boolean isExpiredNow() {
+		return endDate != null && endDate.isBefore(java.time.LocalDateTime.now());
+	}
+
 	@PrePersist
 	protected void onCreate() {
 		createAt = LocalDateTime.now();
@@ -79,4 +90,110 @@ public class Promotion {
 	protected void onUpdate() {
 		updateAt = LocalDateTime.now();
 	}
+
+	public Integer getId() {
+		return id;
+	}
+
+	public void setId(Integer id) {
+		this.id = id;
+	}
+
+	public Store getStore() {
+		return store;
+	}
+
+	public void setStore(Store store) {
+		this.store = store;
+	}
+
+	public User getUser() {
+		return user;
+	}
+
+	public void setUser(User user) {
+		this.user = user;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public PromotionType getType() {
+		return type;
+	}
+
+	public void setType(PromotionType type) {
+		this.type = type;
+	}
+
+	public BigDecimal getValue() {
+		return value;
+	}
+
+	public void setValue(BigDecimal value) {
+		this.value = value;
+	}
+
+	public String getBanner() {
+		return banner;
+	}
+
+	public void setBanner(String banner) {
+		this.banner = banner;
+	}
+
+	public LocalDateTime getStartDate() {
+		return startDate;
+	}
+
+	public void setStartDate(LocalDateTime startDate) {
+		this.startDate = startDate;
+	}
+
+	public LocalDateTime getEndDate() {
+		return endDate;
+	}
+
+	public void setEndDate(LocalDateTime endDate) {
+		this.endDate = endDate;
+	}
+
+	public Boolean getIsActive() {
+		return isActive;
+	}
+
+	public void setIsActive(Boolean isActive) {
+		this.isActive = isActive;
+	}
+
+	public LocalDateTime getCreateAt() {
+		return createAt;
+	}
+
+	public void setCreateAt(LocalDateTime createAt) {
+		this.createAt = createAt;
+	}
+
+	public LocalDateTime getUpdateAt() {
+		return updateAt;
+	}
+
+	public void setUpdateAt(LocalDateTime updateAt) {
+		this.updateAt = updateAt;
+	}
+
+	public PromotionStatus getStatus() {
+		return status;
+	}
+
+	public void setStatus(PromotionStatus status) {
+		this.status = status;
+	}
+	
+	
 }

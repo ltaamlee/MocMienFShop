@@ -1,0 +1,116 @@
+/* base.css - Mobile App (Shipper) */
+
+:root {
+    /* 1. Brand Colors (Giữ nguyên) */
+    --primary-color: #CA4C59;
+    --secondary-color: #650D1B;
+    --third-color: #FFD0D5;
+    --fourth-color: #F9BEBD;
+    --fifth-color: #AEB182;
+    --background-color: rgba(255, 208, 213, 0.25);
+    --text1-color: #000000;
+    --text2-color: #ffffff;
+    
+    /* 2. Status Colors (Giữ nguyên) */
+    --color-success: #4caf50;
+    --color-warning: #ff9800;
+    --color-danger: #f44336;
+    --color-info: #2196f3;
+
+    /* 3. Font Family (Giữ nguyên) */
+    --font-family: 'Montserrat', sans-serif;
+    --font-serif: 'Cormorant Garamond', serif;
+    
+    /* 4. Font Sizes (Đã sửa - Dùng rem cố định cho app) */
+    --font-h1: 2rem;       /* 32px */
+    --font-h2: 1.5rem;     /* 24px */
+    --font-h3: 1.25rem;    /* 20px */
+    --font-body: 1rem;       /* 16px */
+    --font-small: 0.875rem;  /* 14px */
+    --font-brand: 2.5rem;    /* 40px */
+    --font-subtitle: 1.125rem; /* 18px */
+    
+    /* 5. Layout Variables (Đã sửa - Bỏ sidebar, thêm bottom-nav) */
+    --header-height: 3.5rem;      /* 56px (Ví dụ) */
+    --bottom-nav-height: 5rem;  /* 80px (Ví dụ) */
+}
+
+/* * Reset Toàn cục
+ */
+* {
+    margin: 0;
+    padding: 0; 
+    box-sizing: border-box;
+    font-family: var(--font-family);
+    /* Chống highlight màu xám khi nhấn vào link/button trên mobile */
+    -webkit-tap-highlight-color: transparent; 
+}
+
+html {
+    /* Đặt font-size 100% để 1rem = 16px và tôn trọng cài đặt của người dùng */
+    font-size: 100%; 
+    scroll-behavior: smooth;
+    /* Ngăn cuộn ngang ngoài ý muốn */
+    overflow-x: hidden;
+    /* Ngăn hành vi "pull-to-refresh" ở cấp độ trang */
+    overscroll-behavior: contain; 
+}
+
+body {
+    font-size: var(--font-body);
+    background-color: var(--background-color);
+    color: var(--text1-color);
+    line-height: 1.5; /* Giảm nhẹ line-height cho UI app */
+
+    /* * ĐÂY LÀ THAY ĐỔI QUAN TRỌNG NHẤT:
+     * 1. Đã XÓA 'padding-left' của sidebar.
+     * 2. Thêm 'padding-bottom' để nội dung cuối cùng không bị
+     * thanh điều hướng cố định (bottom nav) che mất.
+     */
+    padding-bottom: var(--bottom-nav-height);
+    
+    /* Đảm bảo body chiếm ít nhất toàn bộ chiều cao màn hình */
+    min-height: 100dvh; /* dvh là đơn vị tốt hơn vh cho mobile */
+}
+
+/*
+ * Kiểu chữ cơ bản
+ */
+h1, h2, h3 {
+    /* Tăng độ sát cho tiêu đề */
+    line-height: 1.2; 
+    margin-bottom: 1rem;
+    font-weight: 600; /* Thường thì font app sẽ đậm hơn */
+}
+
+h1 {
+    font-size: var(--font-h1);
+    font-family: var(--font-serif);
+    color: #333;
+    font-weight: 400;
+    font-style: italic;
+    text-align: center;
+    margin-bottom: 2rem; /* Tăng margin cho h1 */
+}
+
+h2 {
+    font-size: var(--font-h2);
+}
+
+h3 {
+    font-size: var(--font-h3);
+}
+
+main {
+    /* Padding cho nội dung chính bên trong */
+    /* 1.5rem trên dưới, 1rem trái phải là hợp lý cho mobile */
+    padding: 1.5rem 1rem;
+}
+
+/* Các lớp tiện ích (Utility classes) bạn có thể cần */
+.container {
+    width: 100%;
+    max-width: 900px; /* Vẫn nên có max-width phòng khi xem trên tablet */
+    margin: 0 auto;
+    padding: 0 1rem;
+}

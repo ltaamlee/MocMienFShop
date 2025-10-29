@@ -39,7 +39,7 @@ public class Store {
 	private Integer id;
 
 	// Hạng cửa hàng
-	@ManyToOne(fetch = FetchType.LAZY)
+	@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "level", nullable = false)
 	private Level level;
 
@@ -62,6 +62,9 @@ public class Store {
 
 	@Column(name = "cover", columnDefinition = "varchar(MAX)")
 	private String cover;
+
+    @Column(name = "slug", unique = true, columnDefinition = "nvarchar(500)")
+    private String slug;
 
 
 	// Danh sách ảnh nổi bật

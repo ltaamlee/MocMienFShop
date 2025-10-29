@@ -8,7 +8,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-
+import mocmien.com.repository.CategoryRepository; 
 import mocmien.com.entity.User;
 import mocmien.com.security.CustomUserDetails;
 import mocmien.com.service.UserService;
@@ -20,7 +20,9 @@ public class VendorController {
 
 	@Autowired
 	private UserService userService;
-
+	@Autowired
+	private CategoryRepository categoryRepository;
+	
 	private void addUserToModel(CustomUserDetails userDetails, Model model) {
 		if (userDetails != null) {
 			Optional<User> userOpt = userService.findByUsername(userDetails.getUsername());
@@ -45,6 +47,8 @@ public class VendorController {
 	@GetMapping("/products")
 	public String products(@AuthenticationPrincipal CustomUserDetails userDetails, Model model) {
 		addUserToModel(userDetails, model);
+		model.addAttribute("categoriesActive",
+				categoryRepository.findByIsActiveTrueOrderByCategoryNameAsc());
 		return "vendor/products";
 	}
 

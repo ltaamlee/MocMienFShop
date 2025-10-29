@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Xác thực OTP | Mộc Miên Flower Shop</title>
+
+<!-- Font & Icon -->
+<link
+	href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap"
+	rel="stylesheet">
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
+
+<!-- Custom CSS -->
+<link rel="stylesheet" th:href="@{/styles/css/auth.css}">
+</head>
+<body>
+	<div class="verify-container">
+		<div class="verify-card">
+				<div class="logo">
+					<img src="/styles/image/logo.png" alt="Logo">
+				</div>
+
+				<form th:action="@{/verify-otp}" method="post" id="otpForm">
+					<h2>Xác thực mã OTP</h2>
+
+				<div class="form-group">
+					Nhập mã OTP 6 số được gửi đến email của bạn
+				</div>
+				
+					<p th:if="${error}" th:text="${error}" class="alert alert-danger"></p>
+					<p th:if="${success}" th:text="${success}"
+						class="text-success mt-2"></p>
+
+					<div class="otp-input-container">
+						<input type="text" name="otp1" maxlength="1" class="otp-input"required> 
+						<input type="text" name="otp2" maxlength="1" class="otp-input" required> 
+						<input type="text" name="otp3" maxlength="1" class="otp-input" required> 
+						<input type="text" name="otp4" maxlength="1" class="otp-input" required>
+						<input type="text" name="otp5" maxlength="1" class="otp-input" required> 
+						<input type="text" name="otp6" maxlength="1" class="otp-input" required>
+					</div>
+    				<input type="hidden" name="otp" id="otpHidden">
+
+					<button type="submit" class="btn btn-login mt-3">Xác nhận
+					</button>
+
+					<p class="login-link">
+						<a th:href="@{/resend-otp}" class="fst-italic">Gửi lại mã OTP</a>
+					</p>
+				</form>
+			</div>
+	</div>
+	<script>
+        const inputs = document.querySelectorAll(".otp-input");
+        inputs.forEach((input, index) => {
+            input.addEventListener("input", () => {
+                if (input.value.length === 1 && index < inputs.length - 1) {
+                    inputs[index + 1].focus();
+                }
+            });
+            input.addEventListener("keydown", (e) => {
+                if (e.key === "Backspace" && input.value === "" && index > 0) {
+                    inputs[index - 1].focus();
+                }
+            });
+        });
+        
+        const otpHidden = document.getElementById("otpHidden");
+        const form = document.getElementById("otpForm");
+
+        inputs.forEach((input, index) => {
+            input.addEventListener("input", () => {
+                if (input.value.length === 1 && index < inputs.length - 1) {
+                    inputs[index + 1].focus();
+                }
+            });
+            input.addEventListener("keydown", (e) => {
+                if (e.key === "Backspace" && input.value === "" && index > 0) {
+                    inputs[index - 1].focus();
+                }
+            });
+        });
+
+        form.addEventListener("submit", (e) => {
+            let otpValue = "";
+            inputs.forEach(inp => otpValue += inp.value);
+            otpHidden.value = otpValue; // ✅ gán vào input ẩn
+        });
+    </script> 
+</body>
+</html>

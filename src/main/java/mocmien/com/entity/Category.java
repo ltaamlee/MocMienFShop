@@ -106,7 +106,5 @@ public class Category {
 		this.updatedAt = updatedAt;
 	}	
 	
-	//Getter và Setter
-	
 
 }

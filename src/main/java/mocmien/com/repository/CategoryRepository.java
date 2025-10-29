@@ -34,4 +34,64 @@ public interface CategoryRepository extends JpaRepository<Category, Integer>, Jp
 	Optional<Category> findByCategoryName(String categoryName);
 
 	Optional<Category> findBySlug(String slug);
+
+	// CRUD cơ bản
+	// -----------------------
+	@Override
+	<S extends Category> S save(S category);
+
+	@Override
+	void delete(Category category);
+
+	@Override
+	void deleteById(Integer id);
+
+	@Override
+	Optional<Category> findById(Integer id);
+
+	@Override
+	List<Category> findAll();
+
+	List<Category> findByIsActiveTrueOrderByCategoryNameAsc();
+
+	// -----------------------
+	// Tìm kiếm nâng cao
+	// -----------------------
+
+	List<Category> findByCategoryNameContainingIgnoreCase(String keyword);
+
+	// -----------------------
+	// Trạng thái active
+	// -----------------------
+	List<Category> findByIsActive(Boolean isActive);
+
+	// -----------------------
+	// Phân trang
+	// -----------------------
+	Page<Category> findByIsActive(Boolean isActive, Pageable pageable);
+
+	Page<Category> findByCategoryNameContainingIgnoreCase(String keyword, Pageable pageable);
+
+	// -----------------------
+	// Kiểm tra tồn tại
+	// -----------------------
+	boolean existsByCategoryName(String categoryName);
+
+	boolean existsBySlug(String slug);
+
+	// -----------------------
+	// Thống kê
+	// -----------------------
+	long countByIsActive(Boolean isActive);
+
+	// -----------------------
+	// Sắp xếp (Sort)
+	// -----------------------
+	List<Category> findAll(Sort sort); // Lấy tất cả category với sort
+
+	List<Category> findByIsActive(Boolean isActive, Sort sort); // Lấy theo trạng thái và sort
+
+	List<Category> findByCategoryNameContainingIgnoreCase(String keyword, Sort sort); // tìm kiếm và sort
 }
+
+

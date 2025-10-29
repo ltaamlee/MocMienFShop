@@ -5,30 +5,27 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title layout:title-pattern="$CONTENT_TITLE - Vendor"></title>
+<title layout:title-pattern="$CONTENT_TITLE - vendor"></title>
 <link
 	href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap"
 	rel="stylesheet">
 <link rel="stylesheet"
 	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" />
+<link rel="stylesheet" href="/styles/css/base.css">
+<link rel="stylesheet" href="/styles/css/sidebar.css">
 <th:block layout:fragment="styles">
 </th:block>
 </head>
 <body>
-	<div th:replace="~{manager/fragments/header :: header}"></div>
-	<div th:replace="~{manager/fragments/sidebar :: sidebar}"></div>
+	<div th:replace="~{vendor/fragments/header :: header}"></div>
+	<div th:replace="~{vendor/fragments/sidebar :: sidebar}"></div>
 
 	<main>
 		<div layout:fragment="content">
-		hihiiihihihihih
+		vendor
 		</div>
 	</main>
-	<div th:replace="~{web/fragments/spinner :: spinner}"></div>
-
-
-	<script th:src="@{/styles/js/spinner.js}"></script>
 	<script th:src="@{/styles/js/sidebar.js}"></script>
-	
 	
 	<th:block layout:fragment="scripts"></th:block>
 </body>

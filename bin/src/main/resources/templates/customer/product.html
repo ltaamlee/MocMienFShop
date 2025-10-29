@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{customer/layout}">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>4Petals - Sản phẩm</title>
+<th:block layout:fragment="styles">
+	<link rel="stylesheet" href="/styles/css/customer/base.css">
+	<link rel="stylesheet" href="/styles/css/customer/product.css">
+	<link rel="stylesheet" href="/styles/css/customer/banner.css">
+	<link rel="stylesheet"
+		href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
+</th:block>
+</head>
+<body>
+	<div layout:fragment="content" class="home-page">
+		<!-- Banner Slider -->
+		<section class="banner-slider">
+			<div class="slides">
+				<div class="slide active">
+					<img src="/styles/image/customer/banner1.jpg" alt="Banner 1">
+				</div>
+				<div class="slide">
+					<img src="/styles/image/customer/banner2.png" alt="Banner 2">
+				</div>
+				<div class="slide">
+					<img src="/styles/image/customer/banner3.png" alt="Banner 3">
+				</div>
+			</div>
+
+			<!-- Nút điều hướng -->
+			<button class="prev">
+				<i class="fa-solid fa-chevron-left"></i>
+			</button>
+			<button class="next">
+				<i class="fa-solid fa-chevron-right"></i>
+			</button>
+
+			<!-- Chấm chuyển slide -->
+			<div class="dots">
+				<span class="dot active"></span> <span class="dot"></span> <span
+					class="dot"></span>
+			</div>
+		</section>
+
+		<!-- Bộ lọc & danh mục -->
+		<section class="filters-section">
+			<aside class="category">
+				<h3>Danh mục hoa</h3>
+				<form th:action="@{/product}" method="get" id="filterForm">
+					<!-- Hidden input để giữ sort khi filter -->
+					<input type="hidden" name="sort" th:value="${sort}"> <input
+						type="hidden" name="q" th:value="${keyword}">
+
+					<ul>
+						<li th:each="cat : ${categories}"><label> <input
+								type="checkbox" name="categoryIds" th:value="${cat.maDM}"
+								th:checked="${#lists.contains(selectedCategories, cat.maDM)}">
+								<span th:text="${cat.tenDM}"></span>
+						</label></li>
+					</ul>
+				</form>
+			</aside>
+
+			<div class="product-area">
+				<!-- Thanh Sort -->
+				<div class="sort-bar">
+					<a
+						th:href="@{/product(q=${keyword}, categoryIds=${selectedCategories})}"
+						th:classappend="${sort == null or sort == ''} ? 'active'"> Mặc
+						định </a> <a
+						th:href="@{/product(q=${keyword}, sort='asc', categoryIds=${selectedCategories})}"
+						th:classappend="${sort == 'asc'} ? 'active'"> Giá từ thấp tới
+						cao </a> <a
+						th:href="@{/product(q=${keyword}, sort='desc', categoryIds=${selectedCategories})}"
+						th:classappend="${sort == 'desc'} ? 'active'"> Giá từ cao tới
+						thấp </a> <a
+						th:href="@{/product(q=${keyword}, sort='newest', categoryIds=${selectedCategories})}"
+						th:classappend="${sort == 'newest'} ? 'active'"> Mới nhất </a>
+				</div>
+				<!-- Danh sách sản phẩm -->
+				<div class="product-section">
+					<h3>Sản phẩm đề cử</h3>
+					<div class="product-grid">
+						<div class="product-card" th:each="p : ${products}"
+							th:classappend="${p.trangThai == -1} ? ' out-of-stock' :
+						                     (${p.trangThai == 0} ? ' stopped-sale' : '')">
+
+							<div class="product-image">
+								<!-- 🔹 Ribbon khuyến mãi -->
+								<div class="promo-ribbon" th:if="${p.bannerKhuyenMai != null}">
+									<span
+										th:text="
+										${p.loaiKhuyenMai == 'PERCENT' ? 'SALE OFF ' + p.giamPhanTram + '%' :
+										  'Quà tặng'}">
+									</span>
+								</div>
+
+								<!-- Hình ảnh sản phẩm -->
+								<a th:href="@{'/product/' + ${p.maSP}}"
+									th:if="${p.trangThai == 1}"> <img th:src="@{${p.hinhAnh}}"
+									alt="product image">
+								</a> <img th:if="${p.trangThai != 1}" th:src="@{${p.hinhAnh}}"
+									alt="product image">
+
+								<!-- Overlay khi hết hàng -->
+								<div class="overlay" th:if="${p.trangThai == -1}">
+									<span>Hết hàng</span>
+								</div>
+
+								<!-- Overlay khi ngừng bán -->
+								<div class="overlay stopped" th:if="${p.trangThai == 0}">
+									<span>Ngừng bán</span>
+								</div>
+							</div>
+
+							<div class="product-info">
+								<h4>
+									<a th:href="@{'/product/' + ${p.maSP}}" th:text="${p.tenSP}"
+										th:classappend="${p.trangThai != 1} ? ' disabled-link' : ''">
+									</a>
+								</h4>
+
+								<!-- 🔹 Nếu có khuyến mãi -->
+								<p class="price sale"
+									th:if="${p.giaSauKhuyenMai != null and p.giaSauKhuyenMai < p.gia}">
+									<span class="old-price"
+										th:text="${#numbers.formatDecimal(p.gia, 0, 'COMMA', 0, 'POINT')} + ' ₫'"></span>
+									<span class="new-price"
+										th:text="${#numbers.formatDecimal(p.giaSauKhuyenMai, 0, 'COMMA', 0, 'POINT')} + ' ₫'"></span>
+								</p>
+
+								<!-- 🔹 Nếu không có khuyến mãi -->
+								<p class="price"
+									th:if="${p.giaSauKhuyenMai == null or p.giaSauKhuyenMai >= p.gia}"
+									th:text="${#numbers.formatDecimal(p.gia, 0, 'COMMA', 0, 'POINT')} + ' ₫'"></p>
+
+								<!-- Hiển thị trạng thái -->
+								<p class="status-text"
+									th:text="${p.trangThai == 1 ? 'Đang bán' : (p.trangThai == 0 ? 'Ngừng bán' : 'Hết hàng')}">
+								</p>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+	</div>
+
+	<th:block layout:fragment="scripts">
+		<script src="/styles/js/customer/header.js"></script>
+		<script th:src="@{/styles/js/customer/avatar.js}"></script>
+		<script>
+			document.querySelectorAll('input[name="categoryIds"]').forEach(cb => {
+				cb.addEventListener('change', () => {
+					document.getElementById('filterForm').submit();
+				});
+			});
+		</script>
+	</th:block>
+</body>
+</html>
