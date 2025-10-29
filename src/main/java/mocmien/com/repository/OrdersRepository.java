@@ -7,6 +7,7 @@ import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
@@ -20,6 +21,19 @@ import mocmien.com.enums.OrderStatus;
 
 @Repository
 public interface OrdersRepository extends JpaRepository<Orders, String>, JpaSpecificationExecutor<Orders> {
+	Page<Orders> findByStore_Id(Integer storeId, Pageable pageable);
+
+	Page<Orders> findByStore_IdAndStatusIn(Integer storeId, List<OrderStatus> statuses, Pageable pageable);
+
+	@EntityGraph(attributePaths = { "customer", "store" })
+	Page<Orders> findByStore_IdOrderByCreatedAtDesc(Integer storeId, Pageable pageable);
+
+	@EntityGraph(attributePaths = { "customer", "store" })
+	Page<Orders> findByStore_IdAndStatusInOrderByCreatedAtDesc(Integer storeId, List<OrderStatus> statuses,
+			Pageable pageable);
+
+	@EntityGraph(attributePaths = { "customer", "store" })
+	Optional<Orders> findByIdAndStore_Id(String id, Integer storeId);
 
 	@Query("SELECT SUM(o.amountFromCustomer) FROM Orders o WHERE o.status = 'DELIVERED'")
 	Optional<BigDecimal> getAdminTotalRevenue(OrderStatus delivered);
@@ -30,28 +44,17 @@ public interface OrdersRepository extends JpaRepository<Orders, String>, JpaSpec
 	@Query("SELECT o FROM Orders o ORDER BY o.createdAt DESC")
 	List<Orders> findRecentOrders(Pageable pageable);
 
-	@Query("SELECT YEAR(o.createdAt) as orderYear, " +
-	           "       MONTH(o.createdAt) as orderMonth, " +
-	           "       DAY(o.createdAt) as orderDay, " +
-	           "       SUM(o.amountFromCustomer) as total " +
-	           "FROM Orders o " +
-	           "WHERE o.status = :status AND o.createdAt >= :startDate AND o.createdAt < :endDate " +
-	           "GROUP BY YEAR(o.createdAt), MONTH(o.createdAt), DAY(o.createdAt) " +
-	           "ORDER BY orderYear ASC, orderMonth ASC, orderDay ASC")
-	    List<Object[]> findDailyRevenue(
-	            @Param("status") OrderStatus status,
-	            @Param("startDate") LocalDateTime startDate,
-	            @Param("endDate") LocalDateTime endDate
-	    );
+	@Query("SELECT YEAR(o.createdAt) as orderYear, " + "       MONTH(o.createdAt) as orderMonth, "
+			+ "       DAY(o.createdAt) as orderDay, " + "       SUM(o.amountFromCustomer) as total " + "FROM Orders o "
+			+ "WHERE o.status = :status AND o.createdAt >= :startDate AND o.createdAt < :endDate "
+			+ "GROUP BY YEAR(o.createdAt), MONTH(o.createdAt), DAY(o.createdAt) "
+			+ "ORDER BY orderYear ASC, orderMonth ASC, orderDay ASC")
+	List<Object[]> findDailyRevenue(@Param("status") OrderStatus status, @Param("startDate") LocalDateTime startDate,
+			@Param("endDate") LocalDateTime endDate);
 
-	    @Query("SELECT YEAR(o.createdAt) as orderYear, MONTH(o.createdAt) as orderMonth, SUM(o.amountFromCustomer) as total " +
-	            "FROM Orders o " +
-	            "WHERE o.status = :status AND o.createdAt >= :startDate AND o.createdAt < :endDate " +
-	            "GROUP BY YEAR(o.createdAt), MONTH(o.createdAt) " +
-	            "ORDER BY orderYear ASC, orderMonth ASC")
-	     List<Object[]> findMonthlyRevenue(
-	             @Param("status") OrderStatus status,
-	             @Param("startDate") LocalDateTime startDate,
-	             @Param("endDate") LocalDateTime endDate
-	     );
+	@Query("SELECT YEAR(o.createdAt) as orderYear, MONTH(o.createdAt) as orderMonth, SUM(o.amountFromCustomer) as total "
+			+ "FROM Orders o " + "WHERE o.status = :status AND o.createdAt >= :startDate AND o.createdAt < :endDate "
+			+ "GROUP BY YEAR(o.createdAt), MONTH(o.createdAt) " + "ORDER BY orderYear ASC, orderMonth ASC")
+	List<Object[]> findMonthlyRevenue(@Param("status") OrderStatus status, @Param("startDate") LocalDateTime startDate,
+			@Param("endDate") LocalDateTime endDate);
 }
