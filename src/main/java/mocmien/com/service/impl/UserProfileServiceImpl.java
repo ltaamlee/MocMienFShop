@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import mocmien.com.entity.User;
 import mocmien.com.entity.UserProfile;
 import mocmien.com.repository.UserProfileRepository;
+import mocmien.com.repository.UserRepository;
 import mocmien.com.service.UserProfileService;
 
 @Service
@@ -15,6 +16,9 @@ public class UserProfileServiceImpl implements UserProfileService {
 
 	@Autowired
 	private UserProfileRepository userProfileRepository;
+	
+	@Autowired 
+	private UserRepository userRepo;
 	
 	@Override
     public Optional<UserProfile> findByUser(User user) {
@@ -24,5 +28,11 @@ public class UserProfileServiceImpl implements UserProfileService {
 	@Override
 	public UserProfile save(UserProfile profile) {
         return userProfileRepository.save(profile);
+    }
+	
+	@Override
+    public Optional<UserProfile> findByUsername(String username) {
+        return userRepo.findByUsername(username)
+                       .flatMap(user -> userProfileRepository.findByUser(user));
     }
 }

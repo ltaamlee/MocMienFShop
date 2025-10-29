@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{admin/layout}">
+<head>
+<title>Quản lý người dùng</title>
+<th:block layout:fragment="styles">
+	<link rel="stylesheet" href="/styles/css/admin/config.css">
+
+</th:block>
+</head>
+<body>
+	<div layout:fragment="content">
+
+		<!-- THỐNG KÊ NHANH NGƯỜI DÙNG -->
+		<div class="stats-cards">
+			<div class="stat-card total">
+				<h3>Tổng số người dùng</h3>
+				<div class="value" id="totalUsersStat"
+					th:text="${totalUsers} ?: '0'">0</div>
+			</div>
+			<div class="stat-card active">
+				<h3>Đang hoạt động</h3>
+				<div class="value" id="activeUsersStat"
+					th:text="${activeUsers} ?: '0'">0</div>
+			</div>
+			<div class="stat-card inactive">
+				<h3>Ngoại tuyến</h3>
+				<div class="value" id="inactiveUsersStat"
+					th:text="${inactiveUsers} ?: '0'">0</div>
+			</div>
+			<div class="stat-card blocked">
+				<h3>Bị khóa</h3>
+				<div class="value" id="blockedUsersStat"
+					th:text="${blockedUsers} ?: '0'">0</div>
+			</div>
+		</div>
+
+
+		<!-- SEARCH + FILTER -->
+		<div class="search-filter-container">
+			<form id="searchFilterForm" th:action="@{/admin/user}" method="get">
+				<div class="search-box">
+					<input type="text" name="keyword"
+						placeholder="Tìm kiếm theo tên, email, hoặc username..."
+						th:value="${keyword}">
+					<button type="submit">
+						<i class="fas fa-search"></i> Tìm kiếm
+					</button>
+				</div>
+
+				<div class="filter-group">
+					<div class="filter-item">
+						<label for="statusFilter">Trạng thái:</label> <select
+							id="statusFilter" name="status">
+							<option value="">Tất cả</option>
+							<option th:each="s : ${statuses}" th:value="${s.name()}"
+								th:text="${s}" th:selected="${status == s}"></option>
+						</select>
+					</div>
+					<div class="filter-item">
+						<label for="roleFilter">Vai trò:</label> <select id="roleFilter"
+							name="role">
+							<option value="">Tất cả</option>
+							<option th:each="r : ${roles}" th:value="${r.name()}"
+								th:text="${r.displayName}" th:selected="${role == r.name()}">
+							</option>
+
+						</select>
+
+					</div>
+				</div>
+			</form>
+		</div>
+
+		<!--DANH SÁCH NGƯỜI DÙNG -->
+
+		<div class="table-users">
+			<table>
+				<thead>
+					<tr>
+						<th>STT</th>
+						<th>Tên đăng nhập</th>
+						<th>Họ tên</th>
+						<th>Email</th>
+						<th>Số điện thoại</th>
+						<th>Vai trò</th>
+						<th>Trạng thái</th>
+						<th>Lần đăng nhập cuối</th>
+						<th>Thao tác</th>
+					</tr>
+				</thead>
+				<tbody id="userTableBody">
+					<tr>
+						<td colspan="9" style="text-align: center;">KHÔNG CÓ DỮ LIỆU</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+
+
+		<div class="pagination" id="userPagination"></div>
+
+	</div>
+
+	<th:block layout:fragment="scripts">
+		<script th:src="@{/styles/js/admin/user.js}"></script>
+	</th:block>
+</body>
+</html>

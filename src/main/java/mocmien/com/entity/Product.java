@@ -2,6 +2,7 @@ package mocmien.com.entity;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.persistence.CascadeType;
@@ -40,7 +41,7 @@ public class Product {
 
 	// Khóa ngoại: Store
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "storeId", referencedColumnName = "id",  nullable = false)
+	@JoinColumn(name = "storeId", referencedColumnName = "id", nullable = false)
 	private Store store;
 
 	@Column(name = "productName", nullable = false, unique = true, length = 500, columnDefinition = "NVARCHAR(500)")
@@ -76,192 +77,179 @@ public class Product {
 	@Column(name = "isAvailable", nullable = false)
 	private Boolean isAvailable = true; // Còn hàng hay hết hàng
 
-	@Column(name = "createAt", nullable = false)
-	private LocalDateTime createAt;
+	@Column(name = "createdAt", nullable = false)
+	private LocalDateTime createdAt;
 
-	@Column(name = "updateAt")
-	private LocalDateTime updateAt;
+	@Column(name = "updatedAt")
+	private LocalDateTime updatedAt;
 
-	
 	// ProductImage
 	@OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
 	@OrderBy("imageIndex ASC")
-	private List<ProductImage> images;
 
-	
+	private List<ProductImage> images = new ArrayList<>();
+
+
 	// Review
 	@OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<Review> reviews;
-	
-	@OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<ProductFlower> productFlowers;
+	private List<Review> reviews = new ArrayList<>();
 
 	@PrePersist
 	protected void onCreate() {
-		createAt = LocalDateTime.now();
-		updateAt = LocalDateTime.now();
+		createdAt = LocalDateTime.now();
+		updatedAt = LocalDateTime.now();
 		if (promotionalPrice == null)
 			promotionalPrice = price;
 	}
 
 	@PreUpdate
 	protected void onUpdate() {
-		updateAt = LocalDateTime.now();
+		updatedAt = LocalDateTime.now();
 	}
-	
-	// ---------- GETTERS & SETTERS ----------
 
-    public Integer getId() {
-        return id;
-    }
+	public Integer getId() {
+		return id;
+	}
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
+	public void setId(Integer id) {
+		this.id = id;
+	}
 
-    public Category getCategory() {
-        return category;
-    }
+	public Category getCategory() {
+		return category;
+	}
 
-    public void setCategory(Category category) {
-        this.category = category;
-    }
+	public void setCategory(Category category) {
+		this.category = category;
+	}
 
-    public Store getStore() {
-        return store;
-    }
+	public Store getStore() {
+		return store;
+	}
 
-    public void setStore(Store store) {
-        this.store = store;
-    }
+	public void setStore(Store store) {
+		this.store = store;
+	}
 
-    public String getProductName() {
-        return productName;
-    }
+	public String getProductName() {
+		return productName;
+	}
 
-    public void setProductName(String productName) {
-        this.productName = productName;
-    }
+	public void setProductName(String productName) {
+		this.productName = productName;
+	}
 
-    public String getSlug() {
-        return slug;
-    }
+	public String getSlug() {
+		return slug;
+	}
 
-    public void setSlug(String slug) {
-        this.slug = slug;
-    }
+	public void setSlug(String slug) {
+		this.slug = slug;
+	}
 
-    public BigDecimal getPrice() {
-        return price;
-    }
+	public BigDecimal getPrice() {
+		return price;
+	}
 
-    public void setPrice(BigDecimal price) {
-        this.price = price;
-    }
+	public void setPrice(BigDecimal price) {
+		this.price = price;
+	}
 
-    public BigDecimal getPromotionalPrice() {
-        return promotionalPrice;
-    }
+	public BigDecimal getPromotionalPrice() {
+		return promotionalPrice;
+	}
 
-    public void setPromotionalPrice(BigDecimal promotionalPrice) {
-        this.promotionalPrice = promotionalPrice;
-    }
+	public void setPromotionalPrice(BigDecimal promotionalPrice) {
+		this.promotionalPrice = promotionalPrice;
+	}
 
-    public String getSize() {
-        return size;
-    }
+	public String getSize() {
+		return size;
+	}
 
-    public void setSize(String size) {
-        this.size = size;
-    }
+	public void setSize(String size) {
+		this.size = size;
+	}
 
-    public Integer getStock() {
-        return stock;
-    }
+	public Integer getStock() {
+		return stock;
+	}
 
-    public void setStock(Integer stock) {
-        this.stock = stock;
-    }
+	public void setStock(Integer stock) {
+		this.stock = stock;
+	}
 
-    public Integer getSold() {
-        return sold;
-    }
+	public Integer getSold() {
+		return sold;
+	}
 
-    public void setSold(Integer sold) {
-        this.sold = sold;
-    }
+	public void setSold(Integer sold) {
+		this.sold = sold;
+	}
 
-    public BigDecimal getRating() {
-        return rating;
-    }
+	public BigDecimal getRating() {
+		return rating;
+	}
 
-    public void setRating(BigDecimal rating) {
-        this.rating = rating;
-    }
+	public void setRating(BigDecimal rating) {
+		this.rating = rating;
+	}
 
-    public Boolean getIsActive() {
-        return isActive;
-    }
+	public Boolean getIsActive() {
+		return isActive;
+	}
 
-    public void setIsActive(Boolean isActive) {
-        this.isActive = isActive;
-    }
+	public void setIsActive(Boolean isActive) {
+		this.isActive = isActive;
+	}
 
-    public Boolean getIsSelling() {
-        return isSelling;
-    }
+	public Boolean getIsSelling() {
+		return isSelling;
+	}
 
-    public void setIsSelling(Boolean isSelling) {
-        this.isSelling = isSelling;
-    }
+	public void setIsSelling(Boolean isSelling) {
+		this.isSelling = isSelling;
+	}
 
-    public Boolean getIsAvailable() {
-        return isAvailable;
-    }
+	public Boolean getIsAvailable() {
+		return isAvailable;
+	}
 
-    public void setIsAvailable(Boolean isAvailable) {
-        this.isAvailable = isAvailable;
-    }
+	public void setIsAvailable(Boolean isAvailable) {
+		this.isAvailable = isAvailable;
+	}
 
-    public LocalDateTime getCreateAt() {
-        return createAt;
-    }
+	public List<ProductImage> getImages() {
+		return images;
+	}
 
-    public void setCreateAt(LocalDateTime createAt) {
-        this.createAt = createAt;
-    }
+	public void setImages(List<ProductImage> images) {
+		this.images = images;
+	}
 
-    public LocalDateTime getUpdateAt() {
-        return updateAt;
-    }
+	public List<Review> getReviews() {
+		return reviews;
+	}
 
-    public void setUpdateAt(LocalDateTime updateAt) {
-        this.updateAt = updateAt;
-    }
+	public void setReviews(List<Review> reviews) {
+		this.reviews = reviews;
+	}
 
-    public List<ProductImage> getImages() {
-        return images;
-    }
+	public LocalDateTime getCreatedAt() {
+		return createdAt;
+	}
 
-    public void setImages(List<ProductImage> images) {
-        this.images = images;
-    }
+	public void setCreatedAt(LocalDateTime createdAt) {
+		this.createdAt = createdAt;
+	}
 
-    public List<Review> getReviews() {
-        return reviews;
-    }
+	public LocalDateTime getUpdatedAt() {
+		return updatedAt;
+	}
 
-    public void setReviews(List<Review> reviews) {
-        this.reviews = reviews;
-    }
+	public void setUpdatedAt(LocalDateTime updatedAt) {
+		this.updatedAt = updatedAt;
+	}
 
-    public List<ProductFlower> getProductFlowers() {
-        return productFlowers;
-    }
-
-    public void setProductFlowers(List<ProductFlower> productFlowers) {
-        this.productFlowers = productFlowers;
-    }
-	
 	
 }

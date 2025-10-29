@@ -183,3 +183,16 @@
   font-size: 1.1rem;
   line-height: 1.8;
 }
+
+.product-link {
+	text-decoration: none; /* Bỏ gạch chân */
+	color: inherit; /* Giữ nguyên màu chữ của cha */
+	cursor: pointer; /* Con trỏ bàn tay khi hover */
+}
+
+/* Khi hover hoặc click vẫn không đổi màu */
+.product-link:hover, .product-link:active, .product-link:focus,
+	.product-link:visited {
+	text-decoration: none;
+	color: inherit;
+}

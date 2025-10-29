@@ -13,7 +13,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import mocmien.com.service.ProductService;
 import mocmien.com.service.UserService;
 import mocmien.com.dto.product.ProductRowVM;
+import mocmien.com.entity.Category;
 import mocmien.com.entity.User;
+import mocmien.com.repository.CategoryRepository;
 
 
 @Controller
@@ -21,10 +23,12 @@ public class HomeController {
 	
 	private final UserService userService;
 	private final ProductService productService;
+	private final CategoryRepository categoryRepository;
 
-	public HomeController(UserService userService, ProductService productService) {
+	public HomeController(UserService userService, ProductService productService, CategoryRepository categoryRepository) {
 		this.userService = userService;
 		this.productService = productService;
+		this.categoryRepository = categoryRepository;
 	}
 
 	@GetMapping("/")
@@ -36,16 +40,41 @@ public class HomeController {
 
 	@GetMapping("/home")
 	public String guestHome(Model model, Authentication authentication) {
-		addUserToModel(model, authentication);
-		model.addAttribute("title", "Trang Guest Home");
-		return "customer/home";
-	}
-	
-	@GetMapping("/product")
-	public String showProducts(Model model, Authentication authentication) {
-		addUserToModel(model, authentication);
+	    addUserToModel(model, authentication);
+	    model.addAttribute("title", "MocMien Flower Shop");
+
+	    // ✅ Lấy danh sách sản phẩm hiển thị ra trang home
 	    List<ProductRowVM> products = productService.getAllProductRows();
 	    model.addAttribute("products", products);
+
+	    return "customer/home";
+	}
+
+	
+	@GetMapping("/product")
+	public String showProducts(
+	        @RequestParam(value = "q", required = false) String keyword,
+	        @RequestParam(value = "sort", required = false) String sort,
+	        @RequestParam(value = "categoryIds", required = false) List<Integer> categoryIds,
+	        Model model,
+	        Authentication authentication) {
+	    addUserToModel(model, authentication);
+
+	    List<Category> categories = categoryRepository.findByIsActiveTrueOrderByCategoryNameAsc();
+	    model.addAttribute("categories", categories);
+
+	    // ✅ Xử lý filter (nếu chưa chọn category nào thì set rỗng)
+	    model.addAttribute("selectedCategories",
+	            categoryIds != null ? categoryIds : List.of());
+
+	    // ✅ Giữ lại keyword và sort
+	    model.addAttribute("keyword", keyword);
+	    model.addAttribute("sort", sort);
+
+	    // ✅ Lấy danh sách sản phẩm theo filter + sort
+	    List<ProductRowVM> products = productService.getAllProductRows(); // hoặc service filter theo categoryIds/sort
+	    model.addAttribute("products", products);
+
 	    return "customer/product";
 	}
 

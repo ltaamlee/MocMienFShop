@@ -1,0 +1,466 @@
+.checkout-container {
+  font-family: "Montserrat", sans-serif;
+  color: var(--text-color);
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+  margin-top: calc(var(--header-height) + 15px);
+}
+
+/* ====== ĐỊA CHỈ NHẬN HÀNG ====== */
+.address-section {
+  background: #fff;
+  border-radius: 12px;
+  padding: 1rem 2rem;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+  margin-bottom: 1.5rem;
+}
+
+.address-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--secondary-color);
+}
+
+.address-info {
+  margin-top: 0.8rem;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: #444;
+  position: relative;
+}
+
+.change-btn {
+  color: var(--primary-color);
+  position: absolute;
+  right: 0;
+  top: 0;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+/* ====== BẢNG SẢN PHẨM ====== */
+.cart-section {
+  background: #fff;
+  border-radius: 12px;
+  padding: 1rem 2rem;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+}
+
+.cart-section h3 {
+  margin-bottom: 1rem;
+  color: var(--secondary-color);
+}
+
+.cart-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.cart-table th {
+  text-align: left;
+  color: var(--secondary-color);
+  font-weight: 600;
+  padding: 10px 0;
+  border-bottom: 2px solid #f5c4c4;
+}
+
+.cart-table td {
+  padding: 12px 0;
+  border-bottom: 1px solid #f7e1e1;
+}
+
+.product-info {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.product-info img {
+  width: 70px;
+  height: 70px;
+  object-fit: cover;
+  border-radius: 10px;
+  border: 1px solid #f2d1d1;
+}
+
+.p-name {
+  font-weight: 600;
+  color: #222;
+}
+
+.p-type {
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.cart-summary {
+  text-align: right;
+  margin-top: 1rem;
+  font-size: 1rem;
+}
+
+.cart-summary strong {
+  color: var(--primary-color);
+  font-size: 1.2rem;
+}
+
+/* ====== PHƯƠNG THỨC THANH TOÁN ====== */
+.payment-section {
+  background: #fff;
+  border: 1px solid #f5c4c4;
+  border-radius: 12px;
+  padding: 1.5rem 2rem;
+  margin-top: 2rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.payment-section h3 {
+  color: var(--secondary-color);
+  margin-bottom: 1rem;
+}
+
+.payment-options {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.payment-tab {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #fff; 
+  border: 2px solid #f5c4c4; 
+  border-radius: 10px;
+  padding: 10px 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.payment-tab:hover {
+  background: #fff7f8; 
+}
+
+.payment-tab.active {
+  background: #ffe6eb; 
+  border-color: var(--primary-color); 
+  box-shadow: 0 2px 6px rgba(255, 105, 135, 0.2);
+}
+
+.payment-tab img {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+}
+
+
+/* ====== MÃ QR ====== */
+.qr-box {
+  display: none;
+  margin-top: 1.5rem;
+  text-align: center;
+  background: #fff8f8;
+  border-radius: 12px;
+  border: 1px dashed var(--primary-color);
+  padding: 1rem;
+}
+
+.qr-box img {
+  width: 200px;
+  height: 200px;
+  margin: 0.5rem auto;
+  border-radius: 10px;
+  border: 2px solid #f5c4c4;
+}
+
+/* ====== TỔNG KẾT ====== */
+.payment-summary {
+  margin-top: 2rem;
+  text-align: right;
+  border-top: 1px solid #f0bcbc;
+  padding-top: 1rem;
+}
+
+.summary-line {
+  display: flex;
+  justify-content: flex-end;
+  gap: 5rem;
+  margin: 0.3rem 0;
+}
+
+.summary-line.total strong {
+  color: var(--primary-color);
+  font-size: 1.3rem;
+}
+
+.btn-order {
+  margin-top: 1rem;
+  background: var(--primary-color);
+  color: #fff;
+  border: none;
+  padding: 12px 40px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.btn-order:hover {
+  background: var(--secondary-color);
+}
+
+/* ===== 🌸 POPUP CHỌN ĐỊA CHỈ ===== */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999; /* thấp hơn popup thêm địa chỉ */
+  transition: opacity 0.3s ease;
+}
+
+.modal.hidden {
+  display: none;
+}
+
+.modal-content {
+  background: #fff;
+  border-radius: 10px;
+  padding: 20px 25px;
+  width: 500px;
+  max-height: 80vh;
+  overflow-y: auto;
+  position: relative;
+  z-index: 10000;
+  animation: fadeIn 0.3s ease;
+}
+
+/* ===== 🌸 POPUP THÊM ĐỊA CHỈ ===== */
+#addAddressModal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6); /* hơi tối hơn */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 11000; /* cao hơn modal chọn địa chỉ */
+  transition: opacity 0.3s ease;
+}
+
+#addAddressModal.hidden {
+  display: none;
+}
+
+#addAddressModal .modal-content {
+  background: #fff;
+  border-radius: 12px;
+  padding: 25px 28px;
+  width: 520px;
+  max-width: 95%;
+  max-height: 85vh;
+  overflow-y: auto;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+  animation: fadeIn 0.25s ease;
+}
+
+/* ===== 🌸 ANIMATION HIỆU ỨNG ===== */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ===== 🌸 NÚT BÊN TRONG POPUP ===== */
+.btn-cancel, .btn-save, .btn-add, .btn-confirm {
+  padding: 10px 18px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.25s ease;
+}
+
+.btn-cancel { background: #ddd; color: #333; }
+.btn-cancel:hover { background: #ccc; }
+
+.btn-save, .btn-confirm, .btn-add {
+  background: var(--primary-color);
+  color: #fff;
+}
+.btn-save:hover, .btn-confirm:hover, .btn-add:hover {
+  background: var(--secondary-color);
+}
+
+/* Đảm bảo popup không bị che bởi header hoặc các lớp khác */
+body {
+  overflow-x: hidden;
+}
+
+/* 🌸 POPUP DANH SÁCH ĐỊA CHỈ */
+.address-list-popup h3 {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--secondary-color);
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.address-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 1rem 0;
+}
+
+.address-list li {
+  background: #fff8f8;
+  border: 1px solid #f5c4c4;
+  border-radius: 8px;
+  padding: 10px 14px;
+  margin-bottom: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  transition: all 0.2s ease;
+}
+
+.address-list li:hover {
+  background: #fff2f4;
+  transform: translateY(-2px);
+}
+
+.address-list label {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  width: 100%;
+  cursor: pointer;
+}
+
+.address-list input[type="radio"] {
+  accent-color: var(--primary-color);
+  margin-top: 4px;
+}
+
+.address-list strong {
+  color: #333;
+  font-size: 1rem;
+}
+
+.address-list span {
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.update-btn {
+  color: var(--primary-color);
+  font-size: 0.9rem;
+  text-decoration: underline;
+  cursor: pointer;
+  align-self: flex-end;
+}
+
+/* 🌸 NÚT TRONG POPUP DANH SÁCH */
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.btn-add, .btn-cancel, .btn-confirm {
+  font-size: 1rem;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 16px;
+  cursor: pointer;
+  transition: 0.25s ease;
+}
+
+.btn-add {
+  background: var(--primary-color);
+  color: #fff;
+  font-weight: 600;
+}
+.btn-add:hover {
+  background: var(--secondary-color);
+}
+
+.btn-cancel {
+  background: #f2b5b5;
+  color: #fff;
+  font-weight: 600;
+}
+.btn-cancel:hover {
+  background: #e18c8c;
+}
+
+.btn-confirm {
+  background: var(--secondary-color);
+  color: #fff;
+  font-weight: 600;
+}
+.btn-confirm:hover {
+  background: var(--primary-color);
+}
+
+/* 🌸 POPUP THÊM ĐỊA CHỈ */
+#addAddressModal .modal-content h3 {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--secondary-color);
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+#addAddressModal input,
+#addAddressModal select,
+#addAddressModal textarea {
+  width: 100%;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 10px 12px;
+  margin-bottom: 10px;
+  font-size: 0.95rem;
+  font-family: "Montserrat", sans-serif;
+}
+
+#addAddressModal select {
+  width: 32%;
+}
+
+#addAddressModal .row {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+#addAddressModal .form-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+#addAddressModal .btn-cancel {
+  background: #f2b5b5;
+  color: #fff;
+}
+#addAddressModal .btn-save {
+  background: var(--primary-color);
+  color: #fff;
+}
+#addAddressModal .btn-save:hover {
+  background: var(--secondary-color);
+}
+
+
+

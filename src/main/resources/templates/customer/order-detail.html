@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{customer/layout}">
+<head>
+<meta charset="UTF-8">
+<title>Chi tiết đơn hàng</title>
+
+<th:block layout:fragment="styles">
+	<link rel="stylesheet" href="/styles/css/customer/base.css">
+	<link rel="stylesheet" href="/styles/css/customer/account-sidebar.css">
+	<link rel="stylesheet" href="/styles/css/customer/order-detail.css">
+	<link rel="stylesheet"
+		href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
+</th:block>
+</head>
+
+<body>
+	<div layout:fragment="content">
+		<div class="account-layout">
+
+			<!-- 🔹 Sidebar -->
+			<div th:replace="~{customer/fragments/account-sidebar :: sidebar}"></div>
+
+			<!-- 🔹 Main content -->
+			<div class="account-content">
+				<div class="order-detail-page">
+					<div class="order-detail-card">
+
+						<h2>
+							Chi tiết đơn hàng #<span th:text="${order.id}"></span>
+						</h2>
+
+						<div class="info-box">
+							<p>
+								<strong>Ngày đặt:</strong> <span
+									th:text="${#temporals.format(order.createdAt, 'dd/MM/yyyy HH:mm')}"></span>
+							</p>
+							<p>
+								<strong>Trạng thái:</strong> <span class="status"
+									th:text="${order.status.displayName}"></span>
+
+							</p>
+							<p>
+								<strong>Phương thức thanh toán:</strong> <span
+									th:text="${order.paymentMethod}"></span>
+							</p>
+
+							<!-- nếu có thông tin địa chỉ giao hàng -->
+							<p th:if="${order.delivery != null}">
+								<strong>Đơn vị giao hàng:</strong> <span
+									th:text="${order.delivery.deliveryName}"></span>
+							</p>
+
+							<p th:if="${order.delivery != null}">
+								<strong>Phí vận chuyển:</strong> <span
+									th:text="${#numbers.formatDecimal(order.delivery.fee, 0, 'COMMA', 0, 'POINT')} + ' ₫'"></span>
+							</p>
+						</div>
+
+						<h2>Danh sách sản phẩm</h2>
+						<table class="order-detail-table">
+							<thead>
+								<tr>
+									<th>Ảnh</th>
+									<th>Tên sản phẩm</th>
+									<th>Số lượng</th>
+									<th>Giá</th>
+									<th>Thành tiền</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr th:each="d : ${details}">
+									<td><a th:href="@{'/product/' + ${d.product.id}}"> <img
+											th:src="@{${d.product.images[0].imageUrl}}"
+											alt="Ảnh sản phẩm" class="product-thumb">
+									</a></td>
+									<td><a th:href="@{'/product/' + ${d.product.id}}"
+										th:text="${d.product.productName}" class="product-link"></a></td>
+									<td th:text="${d.quantity}"></td>
+									<td
+										th:text="${#numbers.formatDecimal(d.promotionalPrice != null ? d.promotionalPrice : d.price, 0, 'COMMA', 0, 'POINT')} + ' ₫'"></td>
+									<td
+										th:text="${#numbers.formatDecimal((d.promotionalPrice != null ? d.promotionalPrice : d.price) * d.quantity, 0, 'COMMA', 0, 'POINT')} + ' ₫'"></td>
+								</tr>
+							</tbody>
+						</table>
+
+						<!-- 🔹 Tổng tiền -->
+						<div class="order-summary-wrapper">
+							<div class="order-summary">
+								<div class="summary-row">
+									<span>Tổng tiền hàng:</span> <span
+										th:text="${#numbers.formatDecimal(order.getTotalAmount() != null ? order.getTotalAmount() : order.amountFromCustomer, 0, 'COMMA', 0, 'POINT')} + ' ₫'"></span>
+								</div>
+
+								<div class="summary-row" th:if="${order.delivery != null}">
+									<span>Phí vận chuyển:</span> <span
+										th:text="${#numbers.formatDecimal(order.delivery.fee, 0, 'COMMA', 0, 'POINT')} + ' ₫'"></span>
+								</div>
+
+								<div class="summary-row total-row">
+									<strong>Tổng thanh toán:</strong> <strong
+										th:text="${#numbers.formatDecimal(order.amountFromCustomer, 0, 'COMMA', 0, 'POINT')} + ' ₫'"></strong>
+								</div>
+							</div>
+						</div>
+
+						<a href="/customer/orders" class="btn-back"> <i
+							class="fa fa-arrow-left"></i> Quay lại
+						</a>
+
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<th:block layout:fragment="scripts">
+		<script src="/styles/js/customer/header.js"></script>
+		<script th:src="@{/styles/js/customer/avatar.js}"></script>
+		<script src="/styles/js/customer/account-sidebar.js"></script>
+	</th:block>
+</body>
+</html>

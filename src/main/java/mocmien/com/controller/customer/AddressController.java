@@ -121,4 +121,31 @@ public class AddressController {
         }
         return "redirect:/account/address";
     }
+    
+    @PostMapping("/add-ajax")
+    @ResponseBody
+    public CustomerAddress addAddressAjax(@ModelAttribute CustomerAddress address, Principal principal) {
+        if (principal == null) throw new RuntimeException("Chưa đăng nhập!");
+
+        String username = principal.getName();
+        User user = userService.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy người dùng"));
+        UserProfile profile = user.getUserProfile();
+        if (profile == null) {
+            profile = new UserProfile();
+            profile.setUser(user);
+            user.setUserProfile(profile);
+            userProfileService.save(profile);
+        }
+
+        address.setCustomer(profile);
+
+        // Nếu là địa chỉ đầu tiên thì đặt mặc định
+        if (addressService.findByCustomer(profile).isEmpty()) {
+            address.setIsDefault(true);
+        }
+
+        return addressService.save(address);
+    }
+
 }

@@ -52,10 +52,11 @@ public class SecurityConfig {
                     "/styles/**", "/css/**", "/js/**", "/images/**",
                     "/image/**", "/webjars/**", "/forgot-password/**",
                     "/verify-otp/**","/reset-password/**", "/api/payment/momo/callback",
-                    "/oauth2/**" // OAuth2 endpoints
+                    "/oauth2/**", "/shipper/**"// OAuth2 endpoints
                 ).permitAll()
                 // Chỉ admin mới truy cập /admin/**
                 .requestMatchers("/admin/**").hasRole("ADMIN")
+                .requestMatchers("/vendor/**").hasRole("VENDOR")
                 .anyRequest().authenticated()
             )
             // OAuth2 login

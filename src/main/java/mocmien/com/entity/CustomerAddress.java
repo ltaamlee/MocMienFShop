@@ -44,7 +44,7 @@ public class CustomerAddress {
 	private BigDecimal longitude;
 
 
-	@Column(name = "line", columnDefinition = "varchar(200)")
+	@Column(name = "line", columnDefinition = "nvarchar(200)")
 	private String line; // số nhà
 
 	@Column(name = "ward", columnDefinition = "nvarchar(200)")

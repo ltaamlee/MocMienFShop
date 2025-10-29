@@ -4,10 +4,11 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
 import mocmien.com.entity.Role;
 import mocmien.com.enums.RoleName;
-
+@Repository 
 public interface RoleRepository extends JpaRepository<Role, Integer> {
 
 	List<Role> findAll();
@@ -19,3 +20,4 @@ public interface RoleRepository extends JpaRepository<Role, Integer> {
 	boolean existsByRoleName(RoleName roleName);
 
 }
+ 

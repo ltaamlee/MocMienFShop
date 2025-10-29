@@ -46,4 +46,6 @@ public class ProductRowVM {
 	public void setTrangThai(Integer trangThai) {
 		this.trangThai = trangThai;
 	}
+	
+	
 }

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{customer/layout}">
+<head>
+<meta charset="UTF-8">
+<title>Đặt hàng thành công</title>
+<link rel="stylesheet" href="/styles/css/customer/base.css">
+<link rel="stylesheet" href="/styles/css/customer/success.css">
+</head>
+<body>
+	<div layout:fragment="content" class="success-container">
+		<div class="success-box">
+			<i class="fa fa-check-circle"></i>
+			<h2>Đặt hàng thành công!</h2>
+			<p>
+				Cảm ơn bạn đã mua sắm tại <strong>4Petals</strong> 🌸
+			</p>
+			<p>Chúng tôi sẽ liên hệ để xác nhận đơn hàng trong thời gian sớm
+				nhất.</p>
+			<a href="/product" class="btn-home">Tiếp tục mua sắm</a>
+		</div>
+	</div>
+	<th:block layout:fragment="scripts">
+		<script src="/styles/js/customer/header.js"></script>
+		<script th:src="@{/styles/js/customer/avatar.js}"></script>
+	</th:block>
+</body>
+</html>

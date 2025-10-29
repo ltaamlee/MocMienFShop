@@ -1,0 +1,81 @@
+.pagination {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.pagination button,
+.pagination a {
+    padding: 10px 15px;
+    border: 1px solid #ddd;
+    background: white;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    color: #666;
+    font-weight: 600;
+    font-size: 14px;
+    min-width: 40px;
+    text-align: center;
+}
+
+.pagination button:hover:not(:disabled):not(.disabled),
+.pagination a:hover:not(.disabled) {
+    background: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+}
+
+.pagination button:disabled,
+.pagination button.disabled,
+.pagination a.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+    background: #f5f5f5;
+}
+
+.pagination .active {
+    background: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+}
+
+.pagination .pagination-dots {
+    padding: 0 5px;
+    color: #666;
+    font-weight: 600;
+}
+
+
+badge {
+    display: inline-block;
+    padding: 0.4em 0.75em;    /* Tăng padding 1 chút */
+    font-size: 0.8em;         /* Hơi nhỏ hơn 1 chút */
+    font-weight: 600;
+    line-height: 1;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: baseline;
+    border-radius: 0.375rem; /* Bo góc mềm mại */
+    text-transform: uppercase; /* In hoa cho chuyên nghiệp */
+    letter-spacing: 0.05em;
+    
+    /* Reset lại màu sắc của Bootstrap để ta tự định nghĩa */
+    background-color: #e5e7eb; 
+    color: #374151;
+}
+
+
+.status-delivered { background-color: #d1fae5; color: #065f46; }
+.status-shipping  { background-color: #fef3c7; color: #92400e; }
+.status-canceled  { background-color: #fee2e2; color: #991b1b; }
+.status-confirmed { background-color: #dbeafe; color: #1d4ed8; }
+.status-new       { background-color: #e0e7ff; color: #3730a3; }
+.status-pending   { background-color: #e5e7eb; color: #374151; }
+.status-refunded  { background-color: #d1d5db; color: #111827; }
+.status-unknown   { background-color: #f3f4f6; color: #4b5563; }
+

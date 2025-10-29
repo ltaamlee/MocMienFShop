@@ -1,10 +1,11 @@
 .about-container {
   max-width: 1000px;
-  margin: 50px auto;
+  margin: 0px auto;
   display: flex;
   flex-direction: column;
   gap: 30px;
   padding: 0 20px;
+  padding-top: calc(var(--header-height) + 20px);
 }
 
 .about-card {
@@ -21,7 +22,6 @@
   flex-direction: column;
   justify-content: space-between; /* Giữ bố cục đều */
 }
-
 .about-card:hover {
   transform: translateY(-4px);
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);

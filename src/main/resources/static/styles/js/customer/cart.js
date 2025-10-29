@@ -80,7 +80,44 @@ document.addEventListener("DOMContentLoaded", () => {
   document.querySelectorAll(".cart-item input[type='checkbox']").forEach(cb => {
     cb.addEventListener("change", updateSummary);
   });
+  
+  // === Khi ấn nút Mua hàng ===
+    const checkoutBtn = document.querySelector(".checkout");
+    if (checkoutBtn) {
+      checkoutBtn.addEventListener("click", function (e) {
+        e.preventDefault();
+
+        const selectedIds = [];
+        document.querySelectorAll(".cart-item input[type='checkbox']:checked").forEach(cb => {
+          const id = cb.closest(".cart-item").querySelector("input[type='number']").dataset.id;
+          selectedIds.push(id);
+        });
+
+        if (selectedIds.length === 0) {
+          alert("Vui lòng chọn ít nhất 1 sản phẩm để thanh toán!");
+          return;
+        }
+
+        const selectedInput = document.getElementById("selectedIds");
+        const form = document.getElementById("checkoutForm");
+
+        if (selectedInput && form) {
+          selectedInput.value = selectedIds.join(",");
+          form.submit();
+        } else {
+          console.error("Không tìm thấy form checkout hoặc input hidden 'selectedIds'");
+        }
+      });
+    }
 
   // Cập nhật tổng ban đầu
   updateSummary();
 });
+
+document.querySelectorAll('input[name="paymentMethod"]').forEach(radio => {
+    radio.addEventListener('change', function() {
+        document.getElementById('paymentMethodInput').value = this.value;
+    });
+});
+
+

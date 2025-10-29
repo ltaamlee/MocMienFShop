@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{customer/layout}">
+<head>
+<meta charset="UTF-8">
+<title>Mộc Miên - Chính sách giao nhận & kiểm hàng</title>
+<link rel="stylesheet" href="/styles/css/customer/base.css">
+<link rel="stylesheet" href="/styles/css/customer/policy.css">
+</head>
+
+<body>
+	<div layout:fragment="content">
+		<section class="policy">
+			<h1>Chính sách giao nhận và kiểm hàng</h1>
+
+			<p>
+				Mộc Miên cam kết giao hoa tận nơi với chất lượng tốt nhất, đảm bảo mỗi bó hoa đến tay khách hàng
+				đều tươi mới, đúng hẹn và đúng với hình ảnh mẫu trên website.
+			</p>
+
+			<p><strong>1. Phạm vi giao hàng</strong></p>
+			<p>
+				Chúng tôi hiện cung cấp dịch vụ giao hàng tại TP. Hồ Chí Minh và các khu vực lân cận.
+				Với những địa chỉ nằm ngoài khu vực phục vụ, nhân viên tư vấn sẽ liên hệ để thống nhất phương án phù hợp nhất.
+			</p>
+
+			<p><strong>2. Thời gian giao hàng</strong></p>
+			<p>
+			- Giao trong ngày: áp dụng cho đơn hàng đặt trước 17h cùng ngày. <br>
+			- Đặt trước 1 ngày: dành cho các đơn yêu cầu số lượng lớn hoặc thiết kế đặc biệt. <br>
+			- Thời gian giao hàng: từ 8:00 – 20:00 mỗi ngày (bao gồm cả cuối tuần và ngày lễ).
+			</p>
+
+			<p><strong>3. Phí vận chuyển</strong></p>
+			<p>
+				- Phí vận chuyển nội thành TP.HCM: từ <strong>25.000đ</strong> đến <strong>35.000đ</strong> tùy khu vực. <br>
+				- Miễn phí vận chuyển cho đơn hàng từ <strong>500.000đ</strong> trở lên. <br>
+				- Đối với khu vực ngoại thành hoặc tỉnh lân cận, phí sẽ được thông báo cụ thể khi xác nhận đơn hàng.
+			</p>
+
+			<p><strong>4. Kiểm hàng khi nhận</strong></p>
+			<p>
+				Khách hàng có quyền kiểm tra sản phẩm trước khi nhận hàng. Nếu phát hiện sản phẩm bị hư hại,
+				sai mẫu, hoặc không đạt yêu cầu, có thể từ chối nhận hàng. <br>
+				Trong trường hợp người khác nhận thay, vui lòng xác nhận tình trạng sản phẩm ngay sau khi nhận để bảo đảm quyền lợi.
+			</p>
+
+			<p><strong>5. Cam kết của Mộc Miên</strong></p>
+			<p>
+				Mỗi bó hoa Mộc Miên gửi đi đều mang trong mình lời chúc và cảm xúc chân thành.
+				Chúng tôi cam kết giao hàng đúng thời gian, đúng mẫu mã, và đúng với thông điệp mà bạn muốn gửi gắm.
+			</p>
+		</section>
+	</div>
+
+	<th:block layout:fragment="scripts">
+		<script src="/styles/js/customer/header.js"></script>
+		<script th:src="@{/styles/js/customer/avatar.js}"></script>
+	</th:block>
+</body>
+</html>

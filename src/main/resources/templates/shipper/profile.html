@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{shipper/layout}">
+<head>
+    <title>Profile Shipper</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <h2 class="text-2xl font-bold mb-6 text-pink-600">👤 Profile Tài Xế</h2>
+
+    <div class="bg-white rounded-2xl shadow-lg p-6 mb-6">
+        <div class="flex items-center justify-between border-b pb-3 mb-4">
+            <h3 class="text-xl font-semibold text-gray-700"><i class="fas fa-id-card mr-2"></i> Thông tin cơ bản</h3>
+            <a th:href="@{/shipper/profile/edit}" class="text-sm text-pink-600 hover:text-pink-800 transition"><i class="fas fa-edit mr-1"></i> Chỉnh sửa</a>
+        </div>
+        
+        <div class="flex items-center mb-6">
+            <img th:src="${shipper.user.avatar != null} ? ${shipper.user.avatar} : '/styles/image/default-avatar.png'" 
+                 alt="Avatar" class="w-24 h-24 rounded-full mr-6 object-cover border-4 border-pink-200">
+            <div>
+                <p class="text-2xl font-bold text-gray-800" th:text="${shipper.user.userProfile.fullName}">Tên Đầy Đủ</p>
+                <p class="text-sm text-gray-500 mt-1"><i class="fas fa-envelope mr-1"></i> <span th:text="${shipper.user.email}">email@example.com</span></p>
+                <p class="text-sm text-gray-500"><i class="fas fa-phone mr-1"></i> <span th:text="${shipper.user.phone}">0901234567</span></p>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 text-sm">
+            <div class="p-3 bg-gray-50 rounded-lg">
+                <p class="text-xs text-gray-500 uppercase">Username</p>
+                <p class="font-medium mt-1" th:text="${shipper.user.username}">username123</p>
+            </div>
+            <div class="p-3 bg-gray-50 rounded-lg">
+                <p class="text-xs text-gray-500 uppercase">Ngày sinh</p>
+                <p class="font-medium mt-1" th:text="${#temporals.format(shipper.user.userProfile.dob, 'dd/MM/yyyy')}">01/01/2000</p>
+            </div>
+            <div class="p-3 bg-gray-50 rounded-lg">
+                <p class="text-xs text-gray-500 uppercase">Giới tính</p>
+                <p class="font-medium mt-1" th:text="${shipper.user.userProfile.gender}">Nam</p>
+            </div>
+            <div class="p-3 bg-gray-50 rounded-lg">
+                <p class="text-xs text-gray-500 uppercase">CCCD/CMND</p>
+                <p class="font-medium mt-1" th:text="${shipper.user.userProfile.idCard}">000000000000</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="bg-white rounded-2xl shadow-lg p-6">
+        <h3 class="text-xl font-semibold mb-4 border-b pb-3 text-gray-700"><i class="fas fa-motorcycle mr-2"></i> Thông tin giao hàng</h3>
+        
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 text-sm">
+            <div class="p-3 bg-gray-50 rounded-lg">
+                <p class="text-xs text-gray-500 uppercase">Đơn vị Vận chuyển</p>
+                <p class="font-medium mt-1 text-pink-600" th:text="${shipper.delivery.deliveryName}">MocMien Express</p>
+            </div>
+            <div class="p-3 bg-gray-50 rounded-lg">
+                <p class="text-xs text-gray-500 uppercase">Biển số xe</p>
+                <p class="font-medium mt-1" th:text="${shipper.vehicleNumber}">59-A1 123.45</p>
+            </div>
+            <div class="p-3 bg-gray-50 rounded-lg">
+                <p class="text-xs text-gray-500 uppercase">Loại xe</p>
+                <p class="font-medium mt-1" th:text="${shipper.vehicleType}">Xe máy</p>
+            </div>
+            <div class="p-3 bg-gray-50 rounded-lg">
+                <p class="text-xs text-gray-500 uppercase">Trạng thái</p>
+                <p class="font-bold mt-1" 
+                   th:classappend="${shipper.isActive} ? 'text-green-600' : 'text-red-600'">
+                    <span th:if="${shipper.isActive}"><i class="fas fa-circle mr-1 text-xs"></i> Đang hoạt động</span>
+                    <span th:unless="${shipper.isActive}"><i class="fas fa-times-circle mr-1 text-xs"></i> Tạm dừng</span>
+                </p>
+            </div>
+            
+            <div class="p-3 bg-gray-50 rounded-lg">
+                <p class="text-xs text-gray-500 uppercase">Tổng đơn đã giao</p>
+                <p class="text-xl font-bold mt-1" th:text="${shipper.totalDelivery}">500</p>
+            </div>
+            <div class="p-3 bg-gray-50 rounded-lg">
+                <p class="text-xs text-gray-500 uppercase">Đánh giá TB</p>
+                <p class="text-xl font-bold mt-1 text-yellow-500">
+                    <i class="fas fa-star text-base"></i> 
+                    <span th:text="${shipper.rating}">4.8</span>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

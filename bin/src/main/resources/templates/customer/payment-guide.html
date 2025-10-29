@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{customer/layout}">
+<head>
+<meta charset="UTF-8">
+<title>Mộc Miên - Hướng dẫn thanh toán</title>
+<link rel="stylesheet" href="/styles/css/customer/base.css">
+<link rel="stylesheet" href="/styles/css/customer/policy.css">
+
+</head>
+<body>
+	<div layout:fragment="content">
+		<section class="policy">
+			<h1>Hướng dẫn thanh toán</h1>
+
+			<p>Để mang lại sự tiện lợi tối đa cho khách hàng, 4Petals hỗ trợ
+				nhiều hình thức thanh toán linh hoạt và an toàn. Bạn có thể lựa chọn
+				hình thức phù hợp nhất trong quá trình đặt hàng.</p>
+
+			<p><strong>1. Thanh toán khi nhận hàng (COD)</strong></p>
+			<p>Với hình thức COD, khách hàng sẽ thanh toán trực tiếp cho nhân
+				viên giao hàng sau khi nhận và kiểm tra sản phẩm. Phù hợp với những
+				khách hàng muốn xem hàng trước khi thanh toán hoặc đặt tặng cho
+				người thân, bạn bè.</p>
+
+			<p><strong>2. Thanh toán qua ví MoMo</strong></p>
+			<p>
+				4Petals hiện tích hợp thanh toán tự động qua cổng <strong>MoMo</strong>.
+				Sau khi xác nhận đơn hàng, hệ thống sẽ chuyển hướng bạn đến trang
+				thanh toán của MoMo.
+			</p>
+			<ul>
+				<li>Quét mã QR trên màn hình.</li>
+				<li>Kiểm tra kỹ thông tin đơn và số tiền cần thanh toán.</li>
+				<li>Quét mã và tiền hành thanh toán trên ứng dụng của bạn</li>
+				<li>Hệ thống thống báo đặt hàng thành công thi bạn đã thanh toán đơn hàng</li>
+			</ul>
+
+			<p><strong>3. Thanh toán qua chuyển khoản ngân hàng</strong></p>
+			<p>Nếu bạn muốn thanh toán qua ngân hàng, vui lòng chuyển khoản
+				theo thông tin sau:</p>
+			<ul>
+				<li><strong>Ngân hàng:</strong> Vietcombank – CN Thủ Đức</li>
+				<li><strong>Chủ tài khoản:</strong> MocMien Flower Shop</li>
+				<li><strong>Số tài khoản:</strong> 0123456789</li>
+				<li><strong>Nội dung chuyển khoản:</strong> [Tên khách hàng] +
+					[Mã đơn hàng]</li>
+			</ul>
+			<p>Sau khi thanh toán, vui lòng gửi xác nhận qua email hoặc
+				hotline để đơn hàng được xử lý nhanh hơn.</p>
+
+			<p><strong>4. Bảo mật thanh toán</strong></p>
+			<p>Tất cả các giao dịch tại 4Petals đều được mã hóa SSL và bảo
+				mật tuyệt đối. Chúng tôi không lưu trữ thông tin thẻ của khách hàng
+				dưới bất kỳ hình thức nào. Mọi thông tin thanh toán chỉ được sử dụng
+				cho mục đích xử lý đơn hàng.</p>
+
+			<p><strong>5. Hỗ trợ & khiếu nại</strong></p>
+			<p>Nếu bạn gặp bất kỳ khó khăn nào trong quá trình thanh toán,
+				hãy liên hệ ngay với chúng tôi qua:</p>
+			<ul>
+				<li>📞 Hotline: 19001515</li>
+				<li>✉️ Email: contact@mocmien.com</li>
+			</ul>
+			<p>
+				Đội ngũ chăm sóc khách hàng của Mộc Miên luôn sẵn sàng hỗ trợ bạn từ
+				<strong>8:00 – 20:00</strong> mỗi ngày.
+			</p>
+		</section>
+
+
+
+	</div>
+	<th:block layout:fragment="scripts">
+		<script src="/styles/js/customer/header.js"></script>
+		<script th:src="@{/styles/js/customer/avatar.js}"></script>
+	</th:block>
+</body>
+</html>

@@ -3,19 +3,155 @@
 	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
 	layout:decorate="~{admin/layout}">
 <head>
-<title>Category</title>
+<title>Quản lý danh mục</title>
 <th:block layout:fragment="styles">
-	<link rel="stylesheet" href="/styles/css/admin/header.css">
+	<link rel="stylesheet" href="/styles/css/admin/config.css">
 </th:block>
 </head>
 <body>
 	<div layout:fragment="content">
-		<h1>Chào mừng đến với trang quản trị</h1>
-		<p>Quản lý cửa hàng</p>
-		<div>
-		Thống kê danh mục
-		
+
+		<div class="stats-cards">
+			<div class="stat-card total">
+				<h3>Tổng số danh mục</h3>
+				<div class="value" id="totalCategoriesStat"
+					th:text="${total} ?: '0'">0</div>
+			</div>
+			<div class="stat-card active">
+				<h3>Đang hoạt động</h3>
+				<div class="value" id="activeCategoriesStat"
+					th:text="${active} ?: '0'">0</div>
+			</div>
+			<div class="stat-card inactive">
+				<h3>Ngừng hoạt động</h3>
+				<div class="value" id="inactiveCategoriesStat"
+					th:text="${inactive} ?: '0'">0</div>
+			</div>
+		</div>
+
+		<!-- SEARCH + FILTER -->
+		<div class="search-filter-container">
+			<form id="searchFilterForm" th:action="@{/admin/category}"
+				method="get">
+				<div class="search-box">
+					<input type="text" name="keyword"
+						placeholder="Tìm kiếm theo tên danh mục..." th:value="${keyword}">
+					<button type="submit">
+						<i class="fas fa-search"></i> Tìm kiếm
+					</button>
+				</div>
+
+				<div class="filter-group">
+					<div class="filter-item">
+						<label for="statusFilter">Trạng thái:</label> <select
+							id="statusFilter" name="isActive">
+							<option value="">Tất cả</option>
+							<option value="true" th:selected="${isActive == true}">Đang
+								hoạt động</option>
+							<option value="false" th:selected="${isActive == false}">Ngừng
+								hoạt động</option>
+						</select>
+					</div>
+
+					<div class="filter-item">
+						<label for="sortFilter">Sắp xếp:</label> <select id="sortFilter"
+							name="sort">
+							<option value="createdAt,desc">Mới nhất</option>
+							<option value="createdAt,asc">Cũ nhất</option>
+							<option value="categoryName,asc">Tên (A-Z)</option>
+							<option value="categoryName,desc">Tên (Z-A)</option>
+						</select>
+					</div>
+
+					<div class="filter-item">
+						<label for="fromDate">Từ ngày:</label> <input type="date"
+							id="fromDate" name="fromDate" class="form-control-sm">
+					</div>
+
+					<div class="filter-item">
+						<label for="toDate">Đến ngày:</label> <input type="date"
+							id="toDate" name="toDate" class="form-control-sm">
+					</div>
+				</div>
+			</form>
+		</div>
+
+		<div class="d-flex justify-content-between align-items-center mb-3">
+			<button class="btn btn-success" onclick="openAddCategoryModal()">
+				<i class="fas fa-plus-circle"></i> Thêm danh mục
+			</button>
+		</div>
+
+
+		<!-- DANH SÁCH DANH MỤC -->
+		<div class="table-categories">
+			<table>
+				<thead>
+					<tr>
+						<th>STT</th>
+						<th>Tên danh mục</th>
+						<th>Slug</th>
+						<th>Trạng thái</th>
+						<th>Ngày tạo</th>
+						<th>Thao tác</th>
+					</tr>
+				</thead>
+				<tbody id="categoryTableBody">
+					<tr>
+						<td colspan="6" style="text-align: center;">KHÔNG CÓ DỮ LIỆU</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+
+		<div class="pagination" id="categoryPagination"></div>
+
+
+		<!-- MODAL THÊM / CHỈNH SỬA DANH MỤC -->
+		<div id="categoryModal" class="modal fade" tabindex="-1"
+			aria-hidden="true">
+			<div class="modal-dialog modal-dialog-centered">
+				<div class="modal-content rounded-4">
+					<div class="modal-header bg-primary text-white">
+						<h5 class="modal-title" id="categoryModalTitle">Thêm danh mục</h5>
+						<button type="button" class="btn-close" data-bs-dismiss="modal"
+							aria-label="Close"></button>
+					</div>
+					<div class="modal-body">
+						<form id="categoryForm">
+							<input type="hidden" id="categoryId" name="id">
+
+							<div class="mb-3">
+								<label for="categoryName" class="form-label">Tên danh
+									mục</label> <input type="text" class="form-control" id="categoryName"
+									name="categoryName" required>
+							</div>
+
+							<div class="mb-3">
+								<label for="slug" class="form-label">Slug</label> <input
+									type="text" class="form-control" id="slug" name="slug"
+									placeholder="Tự động sinh nếu để trống">
+							</div>
+
+							<div class="form-check mb-3">
+								<input class="form-check-input" type="checkbox" id="isActive"
+									name="isActive" checked> <label
+									class="form-check-label" for="isActive">Đang hoạt động</label>
+							</div>
+
+							<div class="text-end">
+								<button type="button" class="btn btn-secondary"
+									data-bs-dismiss="modal">Hủy</button>
+								<button type="submit" class="btn btn-primary">Lưu</button>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
 		</div>
 	</div>
+	<th:block layout:fragment="scripts">
+		<script th:src="@{/styles/js/admin/category.js}"></script>
+	</th:block>
 </body>
 </html>

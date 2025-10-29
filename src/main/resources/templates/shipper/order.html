@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{shipper/layout}">
+<head>
+    <title>Quản lý Đơn hàng</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <h2 class="text-2xl font-bold mb-6 text-pink-600">📦 Quản lý Đơn hàng</h2>
+
+    <div class="flex border-b border-gray-200 mb-6 sticky top-0 bg-gray-50 z-10 p-2 -mx-2">
+        <a th:href="@{/shipper/order}" th:classappend="${status == null || status == 'ALL'} ? 'border-b-2 border-pink-600 text-pink-600' : 'text-gray-500 hover:text-pink-600'"
+           class="px-4 py-2 font-medium transition duration-150">Tất cả</a>
+        <a th:href="@{/shipper/order(status='PENDING_PICKUP')}" th:classappend="${status == 'PENDING_PICKUP'} ? 'border-b-2 border-pink-600 text-pink-600' : 'text-gray-500 hover:text-pink-600'"
+           class="px-4 py-2 font-medium transition duration-150">Chờ lấy hàng</a>
+        <a th:href="@{/shipper/order(status='IN_DELIVERY')}" th:classappend="${status == 'IN_DELIVERY'} ? 'border-b-2 border-pink-600 text-pink-600' : 'text-gray-500 hover:text-pink-600'"
+           class="px-4 py-2 font-medium transition duration-150">Đang giao</a>
+        <a th:href="@{/shipper/order(status='DELIVERED')}" th:classappend="${status == 'DELIVERED'} ? 'border-b-2 border-pink-600 text-pink-600' : 'text-gray-500 hover:text-pink-600'"
+           class="px-4 py-2 font-medium transition duration-150">Đã giao</a>
+    </div>
+
+    <div th:if="${#lists.isEmpty(orders)}" class="text-center py-10 bg-white rounded-xl shadow-md text-gray-500">
+         <i class="fas fa-truck-loading text-5xl mb-3 text-pink-200"></i>
+         <p class="text-lg">Không có đơn hàng nào trong danh mục này.</p>
+    </div>
+
+    <div class="space-y-4">
+        <div th:each="order : ${orders}" class="bg-white rounded-xl shadow-md p-4 hover:shadow-lg transition duration-300 border-l-4" 
+             th:classappend="${order.status == 'DELIVERED'} ? 'border-green-500' : (${order.status == 'IN_DELIVERY'} ? 'border-blue-500' : 'border-orange-500')">
+            
+            <div class="flex justify-between items-start mb-2">
+                <h3 class="font-bold text-lg text-gray-800">Đơn hàng #<span th:text="${order.id}">1001</span></h3>
+                <span th:classappend="${order.status == 'DELIVERED'} ? 'bg-green-100 text-green-700' : (${order.status == 'IN_DELIVERY'} ? 'bg-blue-100 text-blue-700' : 'bg-orange-100 text-orange-700')"
+                      class="text-xs font-semibold px-3 py-1 rounded-full uppercase">
+                      <span th:text="${order.status}">PENDING_PICKUP</span>
+                </span>
+            </div>
+
+            <div class="grid grid-cols-2 gap-x-6 gap-y-2 text-sm text-gray-600 border-t pt-2">
+                <div>
+                    <p class="font-medium text-gray-700">Người nhận:</p>
+                    <p><i class="fas fa-user mr-2"></i> <span th:text="${order.customerName}">Nguyễn Văn B</span></p>
+                    <p><i class="fas fa-map-marker-alt mr-2"></i> <span th:text="${order.deliveryAddress}">123 Đường A, Quận B, TP HCM</span></p>
+                </div>
+                
+                <div class="text-right">
+                    <p class="font-medium text-gray-700">Giá trị đơn & Phí:</p>
+                    <p><i class="fas fa-money-bill-wave mr-2"></i> COD: <span class="font-semibold text-red-500" th:text="${order.codAmount}">₫500,000</span></p>
+                    <p><i class="fas fa-coins mr-2"></i> Phí giao: <span class="font-semibold" th:text="${order.deliveryFee}">₫30,000</span></p>
+                </div>
+            </div>
+
+            <div class="mt-4 flex justify-end space-x-2 border-t pt-3">
+                <a th:href="@{/shipper/order/{id}(id=${order.id})}" class="px-3 py-1 text-sm bg-pink-500 text-white rounded hover:bg-pink-600 transition">
+                    <i class="fas fa-info-circle mr-1"></i> Chi tiết
+                </a>
+                <button th:if="${order.status == 'PENDING_PICKUP'}" 
+                        class="px-3 py-1 text-sm bg-blue-500 text-white rounded hover:bg-blue-600 transition">
+                    <i class="fas fa-hand-paper mr-1"></i> Đã Lấy Hàng
+                </button>
+            </div>
+        </div>
+        </div>
+</div>
+</body>
+</html>

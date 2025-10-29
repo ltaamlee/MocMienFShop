@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{customer/layout}">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Thanh toán</title>
+
+<th:block layout:fragment="styles">
+	<link rel="stylesheet" href="/styles/css/customer/base.css">
+	<link rel="stylesheet" href="/styles/css/customer/checkout.css">
+</th:block>
+</head>
+<body>
+	<div layout:fragment="content" class="checkout-container">
+
+		<!-- 🌸 ====== ĐỊA CHỈ NHẬN HÀNG ====== -->
+		<section class="address-section">
+			<div class="address-header">
+				<i class="fa fa-location-dot"></i>
+				<h3>Địa chỉ nhận hàng</h3>
+			</div>
+
+			<div class="address-info">
+				<p class="receiver">
+					<span class="name" id="selectedName"
+						th:text="${defaultAddress != null ? defaultAddress.fullName : 'Chưa chọn người nhận'}"></span>
+					(<span class="phone" id="selectedPhone"
+						th:text="${defaultAddress != null ? defaultAddress.phone : '---'}"></span>)
+				</p>
+
+				<p class="address" id="selectedAddress"
+					th:text="${defaultAddress != null ? 
+						(defaultAddress.line + ', ' + defaultAddress.ward + ', ' + 
+						defaultAddress.district + ', ' + defaultAddress.province) 
+						: 'Chưa có địa chỉ giao hàng'}">
+				</p>
+
+				<a href="#" class="change-btn"
+					th:text="${defaultAddress != null ? 'Thay đổi' : '+ Thêm địa chỉ'}"></a>
+			</div>
+		</section>
+
+		<!-- 🛒 ====== DANH SÁCH SẢN PHẨM ====== -->
+		<section class="cart-section">
+			<h3>Sản phẩm</h3>
+			<table class="cart-table">
+				<thead>
+					<tr>
+						<th>Sản phẩm</th>
+						<th>Đơn giá</th>
+						<th>Số lượng</th>
+						<th>Thành tiền</th>
+					</tr>
+				</thead>
+				<tbody th:if="${cartItems != null and !#lists.isEmpty(cartItems)}">
+					<tr th:each="item : ${cartItems}">
+						<td class="product-info"><img
+							th:src="@{${item.product.images[0].imageUrl}}" alt="Ảnh sản phẩm">
+							<div class="p-name" th:text="${item.product.productName}"></div>
+						</td>
+						<td
+							th:text="${#numbers.formatDecimal(item.product.price, 0, 'COMMA', 0, 'POINT')} + ' ₫'"></td>
+						<td th:text="${item.quantity}"></td>
+						<td
+							th:text="${#numbers.formatDecimal(item.product.price * item.quantity, 0, 'COMMA', 0, 'POINT')} + ' ₫'"></td>
+					</tr>
+				</tbody>
+				<tbody th:if="${#lists.isEmpty(cartItems)}">
+					<tr>
+						<td colspan="4" style="text-align: center;">Không có sản phẩm
+							nào để thanh toán.</td>
+					</tr>
+				</tbody>
+			</table>
+
+			<div class="cart-summary" th:if="${!#lists.isEmpty(cartItems)}">
+				<p>
+					Tổng tiền (<span th:text="${#lists.size(cartItems)}">0</span> sản
+					phẩm): <strong
+						th:text="${#numbers.formatDecimal(total, 0, 'COMMA', 0, 'POINT')} + ' ₫'"></strong>
+				</p>
+			</div>
+		</section>
+
+		<!-- 💳 ====== PHƯƠNG THỨC THANH TOÁN ====== -->
+		<section class="payment-section">
+			<h3>Phương thức thanh toán</h3>
+			<div class="payment-options">
+				<label class="payment-tab active"> <input type="radio"
+					name="paymentMethod" value="COD" checked> <img
+					src="/styles/image/icons/cash-on-delivery.png" alt="COD"
+					class="payment-icon"> <span>Thanh toán khi nhận hàng
+						(Ship COD)</span>
+				</label> <label class="payment-tab"> <input type="radio"
+					name="paymentMethod" value="QR"> <img
+					src="/styles/image/icons/momo.svg" alt="MoMo" class="payment-icon">
+					<span>Thanh toán Online (MoMo)</span>
+				</label>
+			</div>
+
+			<!-- 🧾 ====== TỔNG KẾT & NÚT ĐẶT HÀNG ====== -->
+			<div class="payment-summary">
+				<div class="summary-line">
+					<span>Tổng tiền hàng</span> <span
+						th:text="${#numbers.formatDecimal(total, 0, 'COMMA', 0, 'POINT')} + ' ₫'"></span>
+				</div>
+				<div class="summary-line">
+					<span>Phí vận chuyển</span> <span
+						th:text="${#numbers.formatDecimal(shippingFee, 0, 'COMMA', 0, 'POINT')} + ' ₫'"></span>
+				</div>
+				<div class="summary-line total">
+					<span>Tổng thanh toán</span> <strong
+						th:text="${grandTotal != null ? #numbers.formatDecimal(grandTotal.doubleValue(), 0, 'COMMA', 0, 'POINT') : '0'} + ' ₫'"></strong>
+				</div>
+
+				<form th:action="@{/checkout/confirm}" method="post"
+					id="checkoutForm">
+					<input type="hidden" name="receiver"
+						th:value="${defaultAddress != null ? defaultAddress.fullName : ''}">
+					<input type="hidden" name="phone"
+						th:value="${defaultAddress != null ? defaultAddress.phone : ''}">
+					<input type="hidden" name="address"
+						th:value="${defaultAddress != null ? 
+							(defaultAddress.line + ', ' + defaultAddress.ward + ', ' + 
+							defaultAddress.district + ', ' + defaultAddress.province) 
+							: ''}">
+
+					<!-- Mua ngay -->
+					<input type="hidden" name="productId" th:value="${param.productId}">
+					<input type="hidden" name="quantity" th:value="${param.quantity}">
+
+					<!-- Mua từ giỏ hàng -->
+					<input type="hidden" id="cartItemIds" name="cartItemIds"
+						th:value="${param.selectedIds}" />
+
+
+					<!-- Phương thức thanh toán -->
+					<input type="hidden" name="paymentMethod" id="paymentMethodInput"
+						value="COD">
+
+					<button type="submit" class="btn-order">Đặt hàng</button>
+				</form>
+			</div>
+		</section>
+
+		<!-- 🌸 Modal chọn địa chỉ -->
+		<div id="addressModal" class="modal hidden">
+			<div class="modal-content address-list-popup">
+				<h3>Địa Chỉ Của Tôi</h3>
+				<ul id="addressList" class="address-list">
+					<li th:each="addr : ${addresses}"><label> <input
+							type="radio" name="selectedAddress" th:value="${addr.id}">
+							<div>
+								<strong th:text="${addr.fullName}"></strong> (<span
+									th:text="${addr.phone}"></span>)<br> <span
+									th:text="${addr.line + ', ' + addr.ward + ', ' + addr.district + ', ' + addr.province}"></span>
+							</div>
+					</label> <a href="#" class="update-btn" th:data-id="${addr.id}">Cập
+							nhật</a></li>
+				</ul>
+
+				<button type="button" id="openAddAddressBtn" class="btn-add">+
+					Thêm Địa Chỉ Mới</button>
+
+				<div class="actions">
+					<button type="button" id="cancelAddressBtn" class="btn-cancel">Hủy</button>
+					<button type="button" id="confirmAddressBtn" class="btn-confirm">Xác
+						nhận</button>
+				</div>
+			</div>
+		</div>
+
+		<!-- 🌸 Modal thêm địa chỉ -->
+		<div id="addAddressModal" class="modal hidden">
+			<div class="modal-content">
+				<h3>Địa chỉ mới</h3>
+				<form id="addAddressForm">
+					<div class="row">
+						<input type="text" id="newFullName" placeholder="Họ và tên"
+							required> <input type="text" id="newPhone"
+							placeholder="Số điện thoại" required pattern="[0-9]{9,11}">
+					</div>
+					<div class="form-group">
+						<label>Địa chỉ</label> <select id="province"><option>Chọn
+								Tỉnh/TP</option></select> <select id="district"><option>Chọn
+								Quận/Huyện</option></select> <select id="ward"><option>Chọn
+								Phường/Xã</option></select>
+					</div>
+					<textarea id="newDetailAddress" rows="2"
+						placeholder="Địa chỉ cụ thể" required></textarea>
+
+					<div class="form-actions">
+						<button type="button" id="cancelAddAddressBtn" class="btn-cancel">Trở
+							lại</button>
+						<button type="submit" class="btn-save">Hoàn thành</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+
+	<th:block layout:fragment="scripts">
+		<script src="/styles/js/customer/header.js"></script>
+		<script src="/styles/js/customer/checkout.js"></script>
+	</th:block>
+</body>
+</html>

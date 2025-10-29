@@ -49,8 +49,14 @@ public class Category {
 	@PreUpdate
 	protected void onUpdate() {
 		updatedAt = LocalDateTime.now();
-	}	
+	}
 	
+	public Category() {
+	    this.isActive = true; // mặc định active
+	    this.createdAt = LocalDateTime.now();
+	    this.updatedAt = LocalDateTime.now();
+	}
+
 	// ====================== GETTERS & SETTERS ======================
 
     public Integer getId() {
@@ -100,5 +106,6 @@ public class Category {
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
     }
+
 
 }

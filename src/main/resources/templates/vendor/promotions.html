@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{vendor/layout}">
+<head>
+<title>Quản lý khuyến mãi</title>
+<th:block layout:fragment="styles">
+	<link rel="stylesheet" href="/styles/css/vendor/header.css">
+	<link rel="stylesheet" href="/styles/css/vendor/main.css">
+</th:block>
+</head>
+<body>
+	<div layout:fragment="content">
+
+		<div class="stats-cards">
+			<div class="stat-card total">
+				<h3>Tổng số</h3>
+				<div class="value" id="totalPromotionsStat">0</div>
+			</div>
+			<div class="stat-card inactive">
+				<h3>Chưa kích hoạt</h3>
+				<div class="value" id="inactivePromotionsStat">0</div>
+			</div>
+			<div class="stat-card active">
+				<h3>Đang hoạt động</h3>
+				<div class="value" id="activePromotionsStat">0</div>
+			</div>
+			<div class="stat-card pending">
+				<h3>Sắp hết hạn</h3>
+				<div class="value" id="expiringPromotionsStat">0</div>
+			</div>
+			<div class="stat-card blocked">
+				<h3>Đã hết hạn</h3>
+				<div class="value" id="expiredPromotionsStat">0</div>
+			</div>
+		</div>
+
+		<div class="search-filter-container">
+			<form id="searchFilterForm">
+				<div class="search-box">
+					<input type="text" name="keyword" placeholder="Tìm theo tên...">
+					<button type="submit">
+						<i class="fas fa-search"></i>Tìm
+					</button>
+				</div>
+				<div class="d-flex gap-2">
+					<div class="filter-item">
+						<label>Trạng thái</label> <select name="status" id="statusFilter">
+							<option value="">Tất cả</option>
+							<option value="INACTIVE">Chưa kích hoạt</option>
+							<option value="ACTIVE">Đang hoạt động</option>
+							<option value="SCHEDULED">Hẹn giờ</option>
+							<option value="EXPIRED">Đã hết hạn</option>
+						</select>
+					</div>
+					<div class="filter-item">
+						<label>Loại</label> <select name="type" id="typeFilter">
+							<option value="">Tất cả</option>
+							<option value="PERCENT">Giảm %</option>
+							<option value="FREESHIP">Freeship</option>
+							<option value="GIFT">Quà tặng</option>
+						</select>
+					</div>
+				</div>
+			</form>
+		</div>
+
+		<div class="page-header">
+			<h1>Danh sách khuyến mãi</h1>
+			<a class="btn-add" href="javascript:void(0)"
+				onclick="openModal('addPromotionModal')"> <i class="fas fa-plus"></i>
+				Thêm khuyến mãi
+			</a>
+		</div>
+
+		<div class="table-promotions table-stores">
+			<div class="table-wrapper">
+				<table>
+					<thead>
+						<tr>
+							<th>ID</th>
+							<th>Tên</th>
+							<th>Loại</th>
+							<th>Giá trị</th>
+							<th>Bắt đầu</th>
+							<th>Kết thúc</th>
+							<th>Trạng thái</th>
+							<th>Hành động</th>
+						</tr>
+					</thead>
+					<tbody id="promotionTableBody">
+						<tr>
+							<td colspan="8" class="text-center">Đang tải...</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+
+		<div class="pagination" id="promotionPagination"></div>
+
+		<!-- Modal: Add -->
+		<div id="addPromotionModal" class="modal">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h2>Thêm khuyến mãi</h2>
+					<button class="close-modal"
+						onclick="closeModal('addPromotionModal')">&times;</button>
+				</div>
+				<div class="modal-body">
+					<form id="promotionForm" novalidate>
+						<div class="form-group">
+							<label>Tên khuyến mãi <span class="required">*</span></label> <input
+								id="name" required>
+							<div class="error-message" id="name-error"></div>
+						</div>
+
+						<div class="form-row">
+							<div class="form-group">
+								<label>Loại <span class="required">*</span></label> <select
+									id="type" required>
+									<option value="">Chọn loại</option>
+									<option value="PERCENT">Giảm %</option>
+									<option value="FREESHIP">Freeship</option>
+									<option value="GIFT">Quà tặng</option>
+									<option value="AMOUNT">Giảm tiền</option>
+								</select>
+								<div class="error-message" id="type-error"></div>
+							</div>
+							<div class="form-group">
+								<label>Giá trị</label> <input type="number" id="value"
+									step="0.01" min="0">
+								<div class="error-message" id="value-error"></div>
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label>Mô tả</label>
+							<textarea id="description" rows="3" placeholder="Mô tả..."></textarea>
+						</div>
+
+						<div class="form-row">
+							<div class="form-group">
+								<label>Bắt đầu <span class="required">*</span></label> <input
+									type="datetime-local" id="startDate" required>
+								<div class="error-message" id="startDate-error"></div>
+							</div>
+							<div class="form-group">
+								<label>Kết thúc <span class="required">*</span></label> <input
+									type="datetime-local" id="endDate" required>
+								<div class="error-message" id="endDate-error"></div>
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label>Sản phẩm áp dụng</label>
+							<table id="relatedProductsTable">
+								<thead>
+									<tr>
+										<th>Sản phẩm</th>
+										<th>Thao tác</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr class="product-row default-row">
+										<td><select>
+												<option value="">Chọn sản phẩm</option>
+												<!-- load qua JS -->
+										</select></td>
+										<td><button type="button" class="btn-delete" disabled>Xóa</button></td>
+									</tr>
+								</tbody>
+							</table>
+							<button type="button" class="btn-add mt-2"
+								onclick="addRelatedProductRow()">
+								<i class="fas fa-plus"></i> Thêm sản phẩm
+							</button>
+						</div>
+
+						<div class="modal-footer">
+							<button type="submit" class="btn-submit">Thêm</button>
+							<button type="button" class="btn-cancel"
+								onclick="closeModal('addPromotionModal')">Hủy</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+
+		<!-- Modal: View -->
+		<div id="viewPromotionModal" class="modal">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h2>Chi tiết Khuyến mãi</h2>
+					<button class="close-modal"
+						onclick="closeModal('viewPromotionModal')">&times;</button>
+				</div>
+				<div class="modal-body">
+					<table class="table-detail">
+						<tr>
+							<th>Tên</th>
+							<td id="viewName"></td>
+						</tr>
+						<tr>
+							<th>Loại</th>
+							<td id="viewType"></td>
+						</tr>
+						<tr>
+							<th>Giá trị</th>
+							<td id="viewValue"></td>
+						</tr>
+						<tr>
+							<th>Mô tả</th>
+							<td id="viewDescription" style="white-space: pre-wrap;"></td>
+						</tr>
+						<tr>
+							<th>Bắt đầu</th>
+							<td id="viewStartDate"></td>
+						</tr>
+						<tr>
+							<th>Kết thúc</th>
+							<td id="viewEndDate"></td>
+						</tr>
+						<tr>
+							<th>Trạng thái</th>
+							<td id="viewStatus"></td>
+						</tr>
+					</table>
+
+					<br>
+					<h4>Sản phẩm áp dụng</h4>
+					<br>
+					<table class="table-detail">
+						<thead>
+							<tr>
+								<th>#</th>
+								<th>Mã SP</th>
+								<th>Tên SP</th>
+							</tr>
+						</thead>
+						<tbody id="viewProductsBody">
+							<tr>
+								<td colspan="3" class="text-center">Đang tải...</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+				<div class="modal-footer">
+					<button class="btn-cancel"
+						onclick="closeModal('viewPromotionModal')">Đóng</button>
+				</div>
+			</div>
+		</div>
+
+		<!-- Modal: Edit -->
+		<div id="editPromotionModal" class="modal">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h2>Chỉnh sửa Khuyến mãi</h2>
+					<button class="close-modal"
+						onclick="closeModal('editPromotionModal')">&times;</button>
+				</div>
+				<div class="modal-body">
+					<form id="editPromotionForm" novalidate>
+						<input type="hidden" id="editId">
+
+						<div class="form-group">
+							<label>Tên <span class="required">*</span></label> <input
+								id="editName" required>
+							<div class="error-message" id="editName-error"></div>
+						</div>
+
+						<div class="form-row">
+							<div class="form-group">
+								<label>Loại <span class="required">*</span></label> <select
+									id="editType" required>
+									<option value="PERCENT">Giảm %</option>
+									<option value="FREESHIP">Freeship</option>
+									<option value="GIFT">Quà tặng</option>
+									<option value="AMOUNT">Giảm tiền</option>
+								</select>
+								<div class="error-message" id="editType-error"></div>
+							</div>
+							<div class="form-group">
+								<label>Giá trị</label> <input type="number" id="editValue"
+									step="0.01" min="0">
+								<div class="error-message" id="editValue-error"></div>
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label>Mô tả</label>
+							<textarea id="editDescription" rows="3"></textarea>
+						</div>
+
+						<div class="form-row">
+							<div class="form-group">
+								<label>Bắt đầu</label> <input type="datetime-local"
+									id="editStartDate" required>
+							</div>
+							<div class="form-group">
+								<label>Kết thúc</label> <input type="datetime-local"
+									id="editEndDate" required>
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label>Sản phẩm áp dụng</label>
+							<table id="editRelatedProductsTable">
+								<thead>
+									<tr>
+										<th>Sản phẩm</th>
+										<th>Thao tác</th>
+									</tr>
+								</thead>
+								<tbody></tbody>
+							</table>
+							<button type="button" class="btn-add mt-2"
+								onclick="addEditProductRow()">
+								<i class="fas fa-plus"></i> Thêm sản phẩm
+							</button>
+						</div>
+
+						<div class="modal-footer">
+							<button type="submit" class="btn-submit">Cập nhật</button>
+							<button type="button" class="btn-cancel"
+								onclick="closeModal('editPromotionModal')">Hủy</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+
+		<!-- Modal xác nhận bật/tắt -->
+		<div id="activatePromotionModal" class="modal">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h2>Xác nhận</h2>
+					<button class="close-modal" onclick="cancelConfirmation()">&times;</button>
+				</div>
+				<div class="modal-body">
+					<p>
+						Bạn có chắc muốn <strong id="activatePromotionActionText"></strong>
+						khuyến mãi <strong id="activatePromotionName"></strong> không?
+					</p>
+					<div class="modal-footer">
+						<button type="button" class="btn-submit"
+							onclick="confirmConfirmation()">Xác nhận</button>
+						<button type="button" class="btn-cancel"
+							onclick="cancelConfirmation()">Hủy</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
+	</div>
+
+	<th:block layout:fragment="scripts">
+		<script src="https://kit.fontawesome.com/a2e0e6ad54.js"
+			crossorigin="anonymous"></script>
+		<script src="/styles/js/vendor/promotions.js"></script>
+	</th:block>
+</body>
+</html>

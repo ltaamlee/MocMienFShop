@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{vendor/layout}">
+<head>
+<title>Quản lý Sản phẩm</title>
+<th:block layout:fragment="styles">
+	<link rel="stylesheet" href="/styles/css/vendor/header.css">
+	<link rel="stylesheet" href="/styles/css/vendor/main.css">
+</th:block>
+<meta name="_csrf" th:content="${_csrf?.token}" />
+<meta name="_csrf_header" th:content="${_csrf?.headerName}" />
+</head>
+<body>
+	<div layout:fragment="content">
+
+		<div class="search-filter-container">
+			<form id="searchFilterForm">
+				<div class="search-box">
+					<input type="text" name="keyword" placeholder="Tìm theo tên...">
+					<button type="submit">
+						<i class="fas fa-search"></i> Tìm
+					</button>
+				</div>
+
+				<div class="d-grid"
+					style="grid-template-columns: repeat(3, minmax(220px, 1fr)); gap: 12px;">
+					<div class="filter-item">
+						<label>Danh mục:</label> <select name="categoryId"
+							id="categoryFilter">
+							<option value="">Tất cả</option>
+							<!-- ✅ Render từ DB -->
+							<option th:each="c : ${categoriesActive}" th:value="${c.id}"
+								th:text="${c.categoryName}"></option>
+						</select>
+					</div>
+					<div class="filter-item">
+						<label>Trạng thái:</label> <select name="status" id="statusFilter">
+							<option value="">Tất cả</option>
+							<option value="SELLING">Đang bán</option>
+							<option value="STOPPED">Ngừng bán</option>
+							<option value="OUT_OF_STOCK">Hết hàng</option>
+						</select>
+					</div>
+					<div class="filter-item">
+						<label>&nbsp;</label>
+						<button type="button" class="btn-submit" onclick="resetFilters()">Xoá
+							lọc</button>
+					</div>
+				</div>
+			</form>
+		</div>
+
+		<section class="store-section">
+			<div class="section-header">
+				<div>
+					<h2 class="section-title">Danh sách sản phẩm</h2>
+					<p class="section-subtitle">Quản lý nhanh: sửa, xoá, đổi trạng
+						thái</p>
+				</div>
+				<a href="javascript:void(0)" class="btn-add"
+					onclick="openAddModal()"> <i class="fas fa-plus"></i> Thêm sản
+					phẩm
+				</a>
+			</div>
+
+			<div class="table-wrapper table-stores">
+				<table>
+					<thead>
+						<tr>
+							<th>Ảnh</th>
+							<th>Tên sản phẩm</th>
+							<th>Danh mục</th>
+							<th>Giá</th>
+							<th>Tồn</th>
+							<th>Trạng thái</th>
+							<th class="text-right">Hành động</th>
+						</tr>
+					</thead>
+					<tbody id="productTableBody">
+						<tr>
+							<td colspan="7" class="text-center">Đang tải...</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</section>
+
+		<div class="pagination" id="productPagination"></div>
+
+		<!-- Modal -->
+		<div id="productModal" class="modal">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h2 id="modalTitle">Thêm sản phẩm</h2>
+					<button type="button" class="close-modal"
+						onclick="closeProductModal()">&times;</button>
+				</div>
+				<div class="modal-body">
+					<form id="productForm">
+						<input type="hidden" name="id" />
+						<div class="form-group">
+							<label>Tên sản phẩm <span class="required">*</span></label> <input
+								name="productName" required />
+						</div>
+
+						<div class="form-row">
+							<div class="form-group">
+								<label>Danh mục <span class="required">*</span></label> <select
+									name="categoryId" id="categorySelect" required>
+									<option value="">-- Chọn danh mục --</option>
+									<!-- ✅ Render từ DB -->
+									<option th:each="c : ${categoriesActive}" th:value="${c.id}"
+										th:text="${c.categoryName}"></option>
+								</select>
+							</div>
+							<div class="form-group">
+								<label>Kích cỡ <span class="required">*</span></label> <input
+									name="size" placeholder="VD: Small/Medium/Large" required />
+							</div>
+						</div>
+
+						<div class="form-row">
+							<div class="form-group">
+								<label>Giá (VND) <span class="required">*</span></label> <input
+									type="number" name="price" step="0.01" min="0" required />
+							</div>
+							<div class="form-group">
+								<label>Số lượng tồn <span class="required">*</span></label> <input
+									type="number" name="stock" min="0" required />
+							</div>
+						</div>
+
+						<div class="form-row">
+							<div class="form-group">
+								<label>Trạng thái bán</label> <select name="status"
+									id="statusSelect">
+									<option value="SELLING">Đang bán</option>
+									<option value="STOPPED">Ngừng bán</option>
+									<option value="OUT_OF_STOCK">Hết hàng</option>
+								</select>
+							</div>
+							<div class="form-group">
+								<label>Kích hoạt</label> <label class="switch"> <input
+									type="checkbox" name="isActive" checked> <span
+									class="slider"></span>
+								</label>
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label>Ảnh sản phẩm (chọn từ máy – nhiều ảnh)</label> <input
+								id="imageFiles" type="file" accept="image/*" multiple />
+							<div id="imagePreview" class="d-flex"
+								style="gap: 8px; margin-top: 8px; flex-wrap: wrap;"></div>
+							<small class="help-text">Ảnh đầu tiên sẽ là ảnh đại diện.</small>
+						</div>
+					</form>
+				</div>
+				<div class="modal-footer">
+					<button class="btn-cancel" onclick="closeProductModal()">Huỷ</button>
+					<button id="btnSaveProduct" class="btn-submit"
+						onclick="submitProduct()">Lưu</button>
+				</div>
+			</div>
+		</div>
+
+	</div>
+
+	<th:block layout:fragment="scripts">
+		<script src="https://kit.fontawesome.com/a2e0e6ad45.js"
+			crossorigin="anonymous"></script>
+		<script src="/styles/js/vendor/products.js"></script>
+	</th:block>
+</body>
+</html>

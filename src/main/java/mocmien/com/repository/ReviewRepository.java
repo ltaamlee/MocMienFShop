@@ -54,6 +54,8 @@ public interface ReviewRepository extends JpaRepository<Review, Integer> {
     Double getAverageRatingByProduct(@Param("product") Product product);
 
     // Kiểm tra user đã review sản phẩm chưa
-    boolean existsByUserAndProduct(User user, Product product);
+    boolean existsByProductAndUser(Product product, User user);
+    
+    List<Review> findByProductOrderByCreateAtDesc(Product product);
 }
 

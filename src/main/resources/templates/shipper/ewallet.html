@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{shipper/layout}">
+<head>
+    <title>Ví Điện Tử</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <h2 class="text-2xl font-bold mb-6 text-pink-600">💰 Ví Điện Tử (E-Wallet)</h2>
+
+    <div class="bg-gradient-to-r from-pink-500 to-red-500 text-white rounded-2xl shadow-xl p-6 mb-6">
+        <p class="text-lg font-light mb-1">Số dư hiện tại</p>
+        <p class="text-5xl font-extrabold" th:text="${#numbers.formatCurrency(shipper.eWallet)}">₫2,500,000</p>
+        
+        <div class="mt-4 flex space-x-3">
+            <button class="flex-1 py-2 bg-white text-pink-600 font-semibold rounded-lg hover:bg-gray-100 transition duration-200 text-sm">
+                <i class="fas fa-money-bill-alt mr-2"></i> Rút tiền
+            </button>
+            <button class="flex-1 py-2 bg-pink-700 text-white font-semibold rounded-lg hover:bg-pink-800 transition duration-200 text-sm">
+                <i class="fas fa-history mr-2"></i> Lịch sử giao dịch
+            </button>
+        </div>
+    </div>
+    
+    <div class="bg-white rounded-2xl shadow-lg p-6 mb-6">
+        <h3 class="text-xl font-semibold mb-4 border-b pb-2 text-gray-700">Thống kê thu nhập</h3>
+        <div class="grid grid-cols-3 gap-4 text-center">
+            <div>
+                <p class="text-sm text-gray-500">Tuần này</p>
+                <p class="text-xl font-bold text-green-600" th:text="${#numbers.formatCurrency(weeklyIncome)}">₫5,500,000</p>
+            </div>
+            <div class="border-x">
+                <p class="text-sm text-gray-500">Tháng này</p>
+                <p class="text-xl font-bold text-green-600" th:text="${#numbers.formatCurrency(monthlyIncome)}">₫25,000,000</p>
+            </div>
+            <div>
+                <p class="text-sm text-gray-500">Tổng phí giao hàng</p>
+                <p class="text-xl font-bold text-green-600" th:text="${#numbers.formatCurrency(totalDeliveryFee)}">₫100,000,000</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="bg-white rounded-2xl shadow-lg p-6">
+        <h3 class="text-xl font-semibold mb-4 border-b pb-2 text-gray-700">Giao dịch gần nhất</h3>
+        
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ngày</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Mô tả</th>
+                        <th class="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Số tiền</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Loại</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    <tr th:each="txn : ${latestTransactions}">
+                        <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500" th:text="${#temporals.format(txn.createAt, 'dd/MM HH:mm')}">28/10 14:30</td>
+                        <td class="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900" th:text="${txn.description}">Phí giao hàng #1005</td>
+                        <td th:classappend="${txn.type == 'CREDIT'} ? 'text-green-600' : 'text-red-600'" 
+                            class="px-4 py-3 whitespace-nowrap text-sm font-semibold text-right" th:text="${#numbers.formatCurrency(txn.amount)}">
+                            +₫35,000
+                        </td>
+                        <td class="px-4 py-3 whitespace-nowrap">
+                            <span th:classappend="${txn.type == 'CREDIT'} ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'"
+                                  class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full">
+                                  <span th:text="${txn.type == 'CREDIT'} ? 'Thu' : 'Chi'">Thu</span>
+                            </span>
+                        </td>
+                    </tr>
+                    </tbody>
+            </table>
+        </div>
+        <div class="mt-4 text-right">
+            <a th:href="@{/shipper/ewallet/history}" class="text-sm text-pink-600 hover:underline">Xem toàn bộ lịch sử <i class="fas fa-arrow-right ml-1"></i></a>
+        </div>
+    </div>
+</div>
+</body>
+</html>

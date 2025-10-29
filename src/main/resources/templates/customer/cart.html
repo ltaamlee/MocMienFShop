@@ -31,7 +31,7 @@
 
 				<!-- Lặp qua từng CartItem -->
 				<div th:each="c : ${items}" class="cart-item">
-					<input type="checkbox" checked>
+					<input type="checkbox" name="cartItem" th:value="${c.id}" checked>
 
 					<!-- Ảnh sản phẩm -->
 					<img

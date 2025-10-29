@@ -17,6 +17,7 @@ import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
@@ -32,74 +33,215 @@ import mocmien.com.enums.Rank;
 @AllArgsConstructor
 public class Store {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    private Integer id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "id")
+	private Integer id;
 
-    // Hạng cửa hàng
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "level", nullable = false)
-    private Level level;
+	// Hạng cửa hàng
+	@OneToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "level", nullable = false)
+	private Level level;
 
     // Chủ cửa hàng
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "vendorId", nullable = false)
     private User vendor;
-
-    // Danh sách nhân viên
-    @OneToMany(mappedBy = "store", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Staff> staff; // staff là các user có vai trò nhân viên
 
     @Column(name = "storeName", nullable = false, unique = true, columnDefinition = "nvarchar(500)")
     private String storeName;
 
-    @OneToMany(mappedBy = "store", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Staff> staffList;
+	@Column(name = "phone", columnDefinition = "varchar(20)")
+	private String phone;
+    
+    @Column(name = "address", columnDefinition = "nvarchar(500)")
+    private String address;
 
-    @Column(name = "avatar", columnDefinition = "varchar(MAX)")
-    private String avatar;
+	@Column(name = "avatar", columnDefinition = "varchar(MAX)")
+	private String avatar;
 
-    @Column(name = "cover", columnDefinition = "varchar(MAX)")
-    private String cover;
+	@Column(name = "cover", columnDefinition = "varchar(MAX)")
+	private String cover;
 
-    // Danh sách ảnh nổi bật
-    @ElementCollection
-    @Column(name = "featureImages")
-    private List<String> featureImages;
+    @Column(name = "slug", unique = true, columnDefinition = "nvarchar(500)")
+    private String slug;
 
-    @Column(name = "point", nullable = false, columnDefinition = "int default 0")
-    private Integer point = 0;
 
-    @Column(name = "eWallet", nullable = false, columnDefinition = "DECIMAL(18,2)")
-    private BigDecimal eWallet = BigDecimal.ZERO;
+	// Danh sách ảnh nổi bật
+	@ElementCollection
+	@Column(name = "featureImages")
+	private List<String> featureImages;
 
-    @Column(name = "rating", nullable = false, columnDefinition = "DECIMAL(2,1)")
-    private BigDecimal rating = BigDecimal.ZERO;
+	@Column(name = "point", nullable = false, columnDefinition = "int default 0")
+	private Integer point = 0;
 
-	@Column(name="isActive", nullable = false, columnDefinition="BIT DEFAULT 1")
-	private boolean isActive = true; 
+	@Column(name = "eWallet", nullable = false, columnDefinition = "DECIMAL(18,2)")
+	private BigDecimal eWallet = BigDecimal.ZERO;
 
-    @Column(name = "isOpen", nullable = false)
-    private boolean isOpen = false;
+	@Column(name = "rating", nullable = false, columnDefinition = "DECIMAL(2,1)")
+	private BigDecimal rating = BigDecimal.ZERO;
 
-    @Column(name = "createAt")
-    private LocalDateTime createAt;
+	@Column(name = "isActive", nullable = false, columnDefinition = "BIT DEFAULT 1")
+	private boolean isActive = true;
 
-    @Column(name = "updateAt")
-    private LocalDateTime updateAt;
+	@Column(name = "isOpen", nullable = false)
+	private boolean isOpen = true;
 
-    // ==============================
-    // Callback tự động cập nhật ngày
-    // ==============================
-    @PrePersist
-    protected void onCreate() {
-        createAt = LocalDateTime.now();
-        updateAt = LocalDateTime.now();
+	@Column(name = "createAt")
+	private LocalDateTime createAt;
+
+	@Column(name = "updateAt")
+	private LocalDateTime updateAt;
+
+	// ==============================
+	// Callback tự động cập nhật ngày
+	// ==============================
+	@PrePersist
+	protected void onCreate() {
+		createAt = LocalDateTime.now();
+		updateAt = LocalDateTime.now();
+	}
+
+	@PreUpdate
+	protected void onUpdate() {
+		updateAt = LocalDateTime.now();
+	}
+
+	public Integer getId() {
+		return id;
+	}
+
+	public void setId(Integer id) {
+		this.id = id;
+	}
+
+	public Level getLevel() {
+		return level;
+	}
+
+	public void setLevel(Level level) {
+		this.level = level;
+	}
+
+	public User getVendor() {
+		return vendor;
+	}
+
+	public void setVendor(User vendor) {
+		this.vendor = vendor;
+	}
+
+	public String getStoreName() {
+		return storeName;
+	}
+
+	public void setStoreName(String storeName) {
+		this.storeName = storeName;
+	}
+
+	public String getPhone() {
+		return phone;
+	}
+
+	public void setPhone(String phone) {
+		this.phone = phone;
+	}
+
+	public String getAddress() {
+		return address;
+	}
+
+	public void setAddress(String address) {
+		this.address = address;
+	}
+
+	public String getAvatar() {
+		return avatar;
+	}
+
+	public void setAvatar(String avatar) {
+		this.avatar = avatar;
+	}
+
+	public String getCover() {
+		return cover;
+	}
+
+	public void setCover(String cover) {
+		this.cover = cover;
+	}
+
+	public List<String> getFeatureImages() {
+		return featureImages;
+	}
+
+	public void setFeatureImages(List<String> featureImages) {
+		this.featureImages = featureImages;
+	}
+
+	public Integer getPoint() {
+		return point;
+	}
+
+	public void setPoint(Integer point) {
+		this.point = point;
+	}
+
+	public BigDecimal geteWallet() {
+		return eWallet;
+	}
+
+	public void seteWallet(BigDecimal eWallet) {
+		this.eWallet = eWallet;
+	}
+
+	public BigDecimal getRating() {
+		return rating;
+	}
+
+	public void setRating(BigDecimal rating) {
+		this.rating = rating;
+	}
+
+	public boolean isActive() {
+		return isActive;
+	}
+
+	public void setActive(boolean isActive) {
+		this.isActive = isActive;
+	}
+
+	public boolean isOpen() {
+		return isOpen;
+	}
+
+	public void setOpen(boolean isOpen) {
+		this.isOpen = isOpen;
+	}
+
+	public LocalDateTime getCreateAt() {
+		return createAt;
+	}
+
+	public void setCreateAt(LocalDateTime createAt) {
+		this.createAt = createAt;
+	}
+
+	public LocalDateTime getUpdateAt() {
+		return updateAt;
+	}
+
+	public void setUpdateAt(LocalDateTime updateAt) {
+		this.updateAt = updateAt;
+	}
+
+    public String getSlug() {
+        return slug;
     }
 
-    @PreUpdate
-    protected void onUpdate() {
-        updateAt = LocalDateTime.now();
+    public void setSlug(String slug) {
+        this.slug = slug;
     }
+
+	
 }
