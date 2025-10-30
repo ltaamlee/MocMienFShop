@@ -9,43 +9,52 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ProductRowVM {
-	private Integer maSP;
-	private String tenSP;
-	private BigDecimal gia;
-	private String hinhAnh;
-	private Integer trangThai;
+	private Integer id;
+	private String productName;
+	private BigDecimal price;
+    private BigDecimal promotionalPrice; // null if no discount
+	private String imageUrl;
+	private Integer status;
+    private Integer discountPercent; // rounded down
+    private String ribbonText; // e.g: "-20%" or promotion name
 	
 	
-	public Integer getMaSP() {
-		return maSP;
+	public Integer getId() {
+		return id;
 	}
-	public void setMaSP(Integer maSP) {
-		this.maSP = maSP;
+	public void setId(Integer id) {
+		this.id = id;
 	}
-	public String getTenSP() {
-		return tenSP;
+	public String getProductName() {
+		return productName;
 	}
-	public void setTenSP(String tenSP) {
-		this.tenSP = tenSP;
+	public void setProductName(String productName) {
+		this.productName = productName;
 	}
-	public String getHinhAnh() {
-		return hinhAnh;
+	public String getImageUrl() {
+		return imageUrl;
 	}
-	public void setHinhAnh(String hinhAnh) {
-		this.hinhAnh = hinhAnh;
+	public void setImageUrl(String imageUrl) {
+		this.imageUrl = imageUrl;
 	}
-	public BigDecimal getGia() {
-		return gia;
+	public BigDecimal getPrice() {
+		return price;
 	}
-	public void setGia(BigDecimal gia) {
-		this.gia = gia;
+	public void setPrice(BigDecimal price) {
+		this.price = price;
 	}
-	public Integer getTrangThai() {
-		return trangThai;
+    public BigDecimal getPromotionalPrice() { return promotionalPrice; }
+    public void setPromotionalPrice(BigDecimal v) { this.promotionalPrice = v; }
+	public Integer getStatus() {
+		return status;
 	}
-	public void setTrangThai(Integer trangThai) {
-		this.trangThai = trangThai;
+	public void setStatus(Integer status) {
+		this.status = status;
 	}
+    public Integer getDiscountPercent() { return discountPercent; }
+    public void setDiscountPercent(Integer discountPercent) { this.discountPercent = discountPercent; }
+    public String getRibbonText() { return ribbonText; }
+    public void setRibbonText(String ribbonText) { this.ribbonText = ribbonText; }
 	
 	
 }

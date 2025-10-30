@@ -49,23 +49,48 @@ async function updateLocation(lat, lng) {
 }
 
 async function loadAvailability() {
-    const res = await fetch('/api/shipper/me');
-    if (!res.ok) return;
-    const me = await res.json();
-    const tg = document.getElementById('availabilityToggle');
-    const tx = document.getElementById('availabilityText');
-    tg.checked = !!me.available;
-    tx.textContent = me.available ? 'Trực tuyến' : 'Ngoại tuyến';
+    try {
+        const res = await fetch('/api/shipper/me');
+        if (!res.ok) {
+            console.error('Failed to load availability:', res.status);
+            return;
+        }
+        const me = await res.json();
+        const tg = document.getElementById('availabilityToggle');
+        const tx = document.getElementById('availabilityText');
+        if (tg && tx) {
+            tg.checked = !!me.available;
+            tx.textContent = me.available ? 'Trực tuyến' : 'Ngoại tuyến';
+        }
+    } catch (e) {
+        console.error('Error loading availability:', e);
+    }
 }
 
 async function toggleAvailability() {
     const tg = document.getElementById('availabilityToggle');
-    const csrf = getCsrf();
-    const headers = { 'Content-Type': 'application/json' };
-    if (csrf) headers[csrf.header] = csrf.token;
-    const res = await fetch('/api/shipper/availability', { method: 'PATCH', headers, body: JSON.stringify({ available: tg.checked }) });
-    if (!res.ok) tg.checked = !tg.checked;
-    loadAvailability();
+    if (!tg) return;
+    try {
+        const csrf = getCsrf();
+        const headers = { 'Content-Type': 'application/json' };
+        if (csrf) headers[csrf.header] = csrf.token;
+        const res = await fetch('/api/shipper/availability', { 
+            method: 'PATCH', 
+            headers, 
+            body: JSON.stringify({ available: tg.checked }) 
+        });
+        if (!res.ok) {
+            console.error('Failed to toggle availability:', res.status);
+            tg.checked = !tg.checked;
+            alert('Không thể thay đổi trạng thái. Vui lòng thử lại.');
+            return;
+        }
+        await loadAvailability();
+    } catch (e) {
+        console.error('Error toggling availability:', e);
+        tg.checked = !tg.checked;
+        alert('Lỗi kết nối. Vui lòng thử lại.');
+    }
 }
 
 async function loadOrders() {
@@ -112,12 +137,21 @@ function renderOrderList(containerId, orders, canAccept) {
 }
 
 async function acceptOrder(id) {
-    const csrf = getCsrf();
-    const headers = {};
-    if (csrf) headers[csrf.header] = csrf.token;
-    const res = await fetch(`/api/shipper/orders/${id}/accept`, { method: 'PATCH', headers });
-    if (!res.ok) { alert('Nhận đơn thất bại'); return; }
-    loadOrders();
+    try {
+        const csrf = getCsrf();
+        const headers = {};
+        if (csrf) headers[csrf.header] = csrf.token;
+        const res = await fetch(`/api/shipper/orders/${id}/accept`, { method: 'PATCH', headers });
+        if (!res.ok) {
+            const msg = await res.text().catch(() => 'Nhận đơn thất bại');
+            alert(msg || 'Nhận đơn thất bại');
+            return;
+        }
+        await loadOrders();
+    } catch (e) {
+        console.error('Error accepting order:', e);
+        alert('Lỗi kết nối. Vui lòng thử lại.');
+    }
 }
 
 document.addEventListener('DOMContentLoaded', () => {

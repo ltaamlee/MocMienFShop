@@ -1,6 +1,6 @@
 
 /* Top Curl */
-.promo-ribbon::before {
+.ribbon::before {
   content: "";
   display: block;
   border-radius: 10px 10px 0px 0px;
@@ -13,7 +13,7 @@
 }
 
 /* Right Curl */
-.promo-ribbon::after {
+.ribbon::after {
   content: "";
   display: block;
   border-radius: 0px 10px 10px 0px;
@@ -26,7 +26,7 @@
   z-index: -1;
 }
 
-.promo-ribbon span {
+.ribbon span {
   width: 200px;
   height: 40px;
   position: absolute;
@@ -52,7 +52,7 @@
 }
 
 /* Top Glare */
-.promo-ribbon span::before {
+.ribbon span::before {
   content: "";
   display: block;
   height: 72px;
@@ -66,7 +66,7 @@
 }
 
 /* Right Clear */
-.promo-ribbon span::after {
+.ribbon span::after {
   content: "";
   display: block;
   height: 72px;
@@ -80,50 +80,98 @@
 }
 
 /* Variants */
-.promo-ribbon.sale span {
+/* SALE - ĐỎ - Cho khuyến mãi TOÀN SÀN (admin tạo) */
+.ribbon.sale span {
+  background: linear-gradient(to right, rgba(255, 107, 107, 1) 0%, rgba(255, 23, 68, 1) 51%, rgba(211, 47, 47, 1) 100%);
+}
+
+.ribbon.sale::before {
+  background: linear-gradient(to right, rgba(255, 107, 107, 1) 1%, rgba(255, 23, 68, 1) 45%);
+}
+
+.ribbon.sale::after {
+  background: linear-gradient(to bottom, rgba(211, 47, 47, 1) 55%, rgba(255, 107, 107, 1) 99%);
+}
+
+/* DISCOUNT - CAM - Cho khuyến mãi SHOP RIÊNG */
+.ribbon.discount span {
   background: linear-gradient(to right, rgba(255, 165, 0, 1) 0%, rgba(255, 140, 0, 1) 51%, rgba(255, 111, 0, 1) 100%);
 }
 
-.promo-ribbon.sale::before {
+.ribbon.discount::before {
   background: linear-gradient(to right, rgba(255, 165, 0, 1) 1%, rgba(255, 111, 0, 1) 45%);
 }
 
-.promo-ribbon.sale::after {
+.ribbon.discount::after {
   background: linear-gradient(to bottom, rgba(255, 111, 0, 1) 55%, rgba(255, 165, 0, 1) 99%);
 }
 
-.promo-ribbon.new span {
+/* NEW - XANH LÁ - Cho sản phẩm mới */
+.ribbon.new span {
   background: linear-gradient(to right, rgba(76, 175, 80, 1) 0%, rgba(56, 142, 60, 1) 51%, rgba(46, 125, 50, 1) 100%);
 }
 
-.promo-ribbon.new::before {
+.ribbon.new::before {
   background: linear-gradient(to right, rgba(76, 175, 80, 1) 1%, rgba(46, 125, 50, 1) 45%);
 }
 
-.promo-ribbon.new::after {
+.ribbon.new::after {
   background: linear-gradient(to bottom, rgba(46, 125, 50, 1) 55%, rgba(76, 175, 80, 1) 99%);
 }
 
-.promo-ribbon.premium span {
+/* GLOBAL - TÍM - Dự phòng */
+.ribbon.global span {
   background: linear-gradient(to right, rgba(156, 39, 176, 1) 0%, rgba(123, 31, 162, 1) 51%, rgba(106, 27, 154, 1) 100%);
 }
 
-.promo-ribbon.premium::before {
+.ribbon.global::before {
   background: linear-gradient(to right, rgba(156, 39, 176, 1) 1%, rgba(106, 27, 154, 1) 45%);
 }
 
-.promo-ribbon.premium::after {
+.ribbon.global::after {
   background: linear-gradient(to bottom, rgba(106, 27, 154, 1) 55%, rgba(156, 39, 176, 1) 99%);
 }
 
-.promo-ribbon.discount span {
-  background: linear-gradient(to right, rgba(33, 150, 243, 1) 0%, rgba(25, 118, 210, 1) 51%, rgba(21, 101, 192, 1) 100%);
+/* Đảm bảo container có position relative để ribbon absolute work */
+.product-card {
+  position: relative;
+  overflow: hidden;
 }
 
-.promo-ribbon.discount::before {
-  background: linear-gradient(to right, rgba(33, 150, 243, 1) 1%, rgba(21, 101, 192, 1) 45%);
+.product-image {
+  position: relative;
+  overflow: hidden;
 }
 
-.promo-ribbon.discount::after {
-  background: linear-gradient(to bottom, rgba(21, 101, 192, 1) 55%, rgba(33, 150, 243, 1) 99%);
+.image-wrapper {
+  position: relative;
+  overflow: hidden;
+}
+
+/* ========== OVERLAY HẾT HÀNG ========== */
+.out-of-stock-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 999;
+    pointer-events: none;
+}
+
+.out-of-stock-overlay span {
+    color: white;
+    font-size: 1.5em;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+    padding: 10px 20px;
+    background: rgba(239, 68, 68, 0.9);
+    border-radius: 8px;
+    border: 2px solid white;
 }

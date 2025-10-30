@@ -122,76 +122,6 @@
 
 		<div class="pagination" id="promotionPagination"></div>
 
-		<!-- CHIẾT KHẤU APP CHO SHOP -->
-		<div class="d-flex justify-content-between align-items-center mb-3" style="margin-top:24px;">
-			<h3>Chiết khấu App</h3>
-			<button class="btn btn-primary" onclick="openAddCommissionModal()">
-				<i class="fas fa-plus-circle"></i> Thêm chiết khấu app
-			</button>
-		</div>
-		<div class="table-promotions">
-			<table>
-				<thead>
-					<tr>
-						<th>STT</th>
-						<th>Cửa hàng</th>
-						<th>Tỷ lệ (%)</th>
-						<th>Kích hoạt</th>
-						<th>Tạo lúc</th>
-						<th>Cập nhật</th>
-						<th>Ghi chú</th>
-					</tr>
-				</thead>
-				<tbody id="commissionTableBody">
-					<tr>
-						<td colspan="7" style="text-align:center;">KHÔNG CÓ DỮ LIỆU</td>
-					</tr>
-				</tbody>
-			</table>
-		</div>
-
-		<div class="pagination" id="commissionPagination"></div>
-
-		<!-- MODAL: Thêm Chiết Khấu App -->
-		<div id="addCommissionModal" class="modal">
-			<div class="modal-content">
-				<div class="modal-header">
-					<h2>Thêm Chiết Khấu App</h2>
-					<button type="button" class="close-modal" onclick="closeModal('addCommissionModal')">&times;</button>
-				</div>
-				<div class="modal-body">
-					<form id="commissionForm" novalidate>
-						<div class="form-group">
-							<label for="commissionStore">Cửa hàng (tùy chọn):</label>
-							<select id="commissionStore" name="storeId">
-								<option value="">— Áp dụng mặc định (tất cả shop) —</option>
-								<option th:each="s : ${allStores}" th:value="${s.id}" th:text="${s.storeName}"></option>
-							</select>
-						</div>
-
-						<div class="form-group">
-							<label for="commissionRate">Tỷ lệ chiết khấu (%):</label>
-							<input type="number" id="commissionRate" name="ratePercent" min="0" max="100" step="0.01" required>
-							<div class="error-message" id="commissionRate-error"></div>
-						</div>
-
-						<div class="form-group">
-							<label><input type="checkbox" id="commissionActive" checked> Kích hoạt ngay</label>
-						</div>
-
-						<div class="form-group">
-							<label for="commissionNote">Ghi chú:</label>
-							<input type="text" id="commissionNote" name="note" placeholder="Ví dụ: áp dụng cho đợt T11">
-						</div>
-
-						<div class="form-group text-right">
-							<button type="submit" class="btn btn-primary">Lưu Chiết khấu</button>
-						</div>
-					</form>
-				</div>
-			</div>
-		</div>
-
 		<!-- THÊM KHUYẾN MÃI CHO ADMIN -->
 		<div id="addPromotionModal" class="modal">
 			<div class="modal-content">
@@ -268,6 +198,85 @@
 				</div>
 			</div>
 		</div>
+		
+		<!-- CHỈNH SỬA KHUYẾN MÃI TOÀN SÀN -->
+		<div id="editPromotionModal" class="modal">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h2>Chỉnh Sửa Khuyến Mãi Toàn Sàn</h2>
+					<button type="button" class="close-modal"
+						onclick="closeModal('editPromotionModal')">&times;</button>
+				</div>
+				<div class="modal-body">
+					<form id="editPromotionForm" novalidate>
+						<input type="hidden" id="editPromotionId">
+						
+						<!-- Tên khuyến mãi -->
+						<div class="form-group">
+							<label for="editName">Tên khuyến mãi:</label> 
+							<input type="text" id="editName" name="name" required>
+						</div>
+
+						<!-- Loại khuyến mãi -->
+						<div class="form-group">
+							<label for="editPromoType">Loại khuyến mãi:</label> 
+							<select id="editPromoType" name="type" required>
+								<option value="">Chọn loại khuyến mãi</option>
+								<option th:each="type : ${promotionTypes}"
+									th:value="${type.name()}" th:text="${type.displayName}"></option>
+							</select>
+						</div>
+
+						<!-- Giá trị -->
+						<div class="form-group">
+							<label for="editValue">Giá trị:</label> 
+							<input type="number" id="editValue" name="value" min="0" step="0.01" required>
+						</div>
+
+						<!-- Banner hiện tại -->
+						<div class="form-group" id="currentBannerSection" style="display: none;">
+							<label>Banner hiện tại:</label>
+							<div id="currentBannerPreview" style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px;">
+								<!-- Hiển thị ảnh banner hiện tại -->
+							</div>
+						</div>
+
+						<!-- Upload banner mới -->
+						<div class="form-group">
+							<label for="editBanner">Thêm/Thay đổi Banner:</label> 
+							<input type="file" id="editBanner" name="banner" accept="image/*" multiple>
+							<small class="text-muted">Có thể chọn nhiều ảnh. Banner mới sẽ thay thế banner cũ.</small>
+						</div>
+
+						<!-- Ribbon -->
+						<div class="form-group">
+							<label for="editRibbon">Ribbon:</label> 
+							<input type="text" id="editRibbon" name="ribbon" placeholder="Ví dụ: HOT, GIẢM 50%">
+						</div>
+
+						<!-- Thời gian bắt đầu -->
+						<div class="form-group">
+							<label for="editStartDate">Thời gian bắt đầu:</label> 
+							<input type="datetime-local" id="editStartDate" name="startDate" required>
+						</div>
+
+						<!-- Thời gian kết thúc -->
+						<div class="form-group">
+							<label for="editEndDate">Thời gian kết thúc:</label> 
+							<input type="datetime-local" id="editEndDate" name="endDate" required>
+						</div>
+
+						<!-- Nút lưu -->
+						<div class="form-group text-right">
+							<button type="button" class="btn btn-secondary" onclick="closeModal('editPromotionModal')">Hủy</button>
+							<button type="submit" class="btn btn-primary">Cập Nhật</button>
+						</div>
+
+					</form>
+				</div>
+			</div>
+		</div>
+		
 		<th:block layout:fragment="scripts">
 			<script th:src="@{/styles/js/admin/promotion.js}"></script>
 		</th:block>

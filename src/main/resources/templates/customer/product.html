@@ -10,6 +10,7 @@
 	<link rel="stylesheet" href="/styles/css/customer/base.css">
 	<link rel="stylesheet" href="/styles/css/customer/product.css">
 	<link rel="stylesheet" href="/styles/css/customer/banner.css">
+	<link rel="stylesheet" href="/styles/css/component/ribbon.css">
 	<link rel="stylesheet"
 		href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
 </th:block>
@@ -19,7 +20,11 @@
 		<!-- Banner Slider -->
 		<section class="banner-slider">
 			<div class="slides">
-				<div class="slide active">
+				<!-- Ưu tiên banner khuyến mãi toàn sàn nếu có -->
+				<div class="slide" th:each="b,iter : ${globalPromoBanners}" th:classappend="${iter.index == 0} ? ' active'">
+					<img th:src="${b}" alt="Promo Banner">
+				</div>
+				<div class="slide active" th:if="${globalPromoBanners == null or #lists.isEmpty(globalPromoBanners)}">
 					<img src="/styles/image/customer/banner1.jpg" alt="Banner 1">
 				</div>
 				<div class="slide">
@@ -91,43 +96,49 @@
 					<h3>Sản phẩm đề cử</h3>
 
 					<div class="product-grid">
-                        <div class="product-card" th:each="p : ${products}"
-							th:classappend="${p.trangThai == -1} ? ' out-of-stock' :
-                       (${p.trangThai == 0} ? ' stopped-sale' : '')">
+						<div class="product-card" th:each="p : ${products}"
+							th:classappend="${p.status == -1} ? ' out-of-stock' :
+                       (${p.status == 0} ? ' stopped-sale' : '')">
 
 							<div class="product-image">
-                                <!-- Ribbon khuyến mãi toàn sàn -->
-                                <div class="ribbon" th:if="${globalPromoName != null}" th:text="${globalPromoName}"></div>
+                                <!-- Ribbon KM toàn sàn (đỏ) -->
+                                <div class="ribbon sale" th:if="${globalPromoName != null and p.promotionalPrice != null and p.promotionalPrice < p.price}">
+                                    <span th:text="${globalPromoName}"></span>
+                                </div>
 								<!-- Link chỉ click được khi đang bán -->
-								<a th:href="@{'/product/' + ${p.maSP}}"
-									th:if="${p.trangThai == 1}"> <img th:src="@{${p.hinhAnh}}"
-									th:alt="${p.tenSP}">
-								</a> <img th:if="${p.trangThai != 1}" th:src="@{${p.hinhAnh}}"
-									th:alt="${p.tenSP}">
+								<a th:href="@{'/product/' + ${p.id}}"
+									th:if="${p.status == 1}"> <img th:src="@{${p.imageUrl}}"
+									th:alt="${p.productName}">
+								</a> <img th:if="${p.status != 1}" th:src="@{${p.imageUrl}}"
+									th:alt="${p.productName}">
 
 								<!-- Overlay trạng thái -->
-								<div class="overlay" th:if="${p.trangThai == -1}">
-									<span>Hết hàng</span>
+								<div class="out-of-stock-overlay" th:if="${p.status == -1}">
+									<span>HẾT HÀNG</span>
 								</div>
-								<div class="overlay stopped" th:if="${p.trangThai == 0}">
-									<span>Ngừng bán</span>
+								<div class="out-of-stock-overlay" th:if="${p.status == 0}">
+									<span>NGỪNG BÁN</span>
 								</div>
 							</div>
 
 							<div class="product-info">
 								<h4>
-									<a th:href="@{'/product/' + ${p.maSP}}" th:text="${p.tenSP}"
-										th:classappend="${p.trangThai != 1} ? ' disabled-link' : ''">
+									<a th:href="@{'/product/' + ${p.id}}" th:text="${p.productName}"
+										th:classappend="${p.status != 1} ? ' disabled-link' : ''">
 									</a>
 								</h4>
 
-								<!-- Giá: chỉ lấy giá thường -->
-								<p class="price"
-									th:text="${#numbers.formatDecimal(p.gia, 0, 'COMMA', 0, 'POINT')} + ' ₫'"></p>
+                            <!-- Giá: hiển thị giá sau khuyến mãi nếu có -->
+                            <p class="price sale" th:if="${p.promotionalPrice != null and p.promotionalPrice < p.price}">
+                                <span class="old-price" th:text="${#numbers.formatDecimal(p.price, 0, 'COMMA', 0, 'POINT')} + ' ₫'"></span>
+                                <span class="new-price" th:text="${#numbers.formatDecimal(p.promotionalPrice, 0, 'COMMA', 0, 'POINT')} + ' ₫'"></span>
+                            </p>
+                            <p class="price" th:if="${p.promotionalPrice == null or p.promotionalPrice >= p.price}"
+                                th:text="${#numbers.formatDecimal(p.price, 0, 'COMMA', 0, 'POINT')} + ' ₫'"></p>
 
 								<!-- Dòng trạng thái -->
 								<p class="status-text"
-									th:text="${p.trangThai == 1 ? 'Đang bán' : (p.trangThai == 0 ? 'Ngừng bán' : 'Hết hàng')}">
+									th:text="${p.status == 1 ? 'Đang bán' : (p.status == 0 ? 'Ngừng bán' : 'Hết hàng')}">
 								</p>
 							</div>
 						</div>

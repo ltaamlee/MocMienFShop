@@ -73,7 +73,12 @@ public class CheckoutController {
             temp.setProduct(product);
             temp.setQuantity(quantity);
             cartItems = List.of(temp);
-            total = product.getPrice().multiply(BigDecimal.valueOf(quantity));
+            
+            // Tính tổng với giá khuyến mãi nếu có
+            BigDecimal unitPrice = (product.getPromotionalPrice() != null && product.getPromotionalPrice().compareTo(product.getPrice()) < 0)
+                    ? product.getPromotionalPrice()
+                    : product.getPrice();
+            total = unitPrice.multiply(BigDecimal.valueOf(quantity));
         } else if (selectedIds != null && !selectedIds.isBlank()) {
             // Mua các item đã tick trong giỏ (id là id của CartItem)
             List<Integer> ids = Arrays.stream(selectedIds.split(","))
@@ -86,14 +91,29 @@ public class CheckoutController {
                     .filter(i -> ids.contains(i.getId()))
                     .toList();
 
+            // Tính tổng với giá khuyến mãi nếu có
             total = cartItems.stream()
-                    .map(i -> i.getProduct().getPrice().multiply(BigDecimal.valueOf(i.getQuantity())))
+                    .map(i -> {
+                        Product p = i.getProduct();
+                        BigDecimal unitPrice = (p.getPromotionalPrice() != null && p.getPromotionalPrice().compareTo(p.getPrice()) < 0)
+                                ? p.getPromotionalPrice()
+                                : p.getPrice();
+                        return unitPrice.multiply(BigDecimal.valueOf(i.getQuantity()));
+                    })
                     .reduce(BigDecimal.ZERO, BigDecimal::add);
         } else {
             // fallback: toàn bộ giỏ
             cartItems = cartService.getCartByUser(user);
+            
+            // Tính tổng với giá khuyến mãi nếu có
             total = cartItems.stream()
-                    .map(i -> i.getProduct().getPrice().multiply(BigDecimal.valueOf(i.getQuantity())))
+                    .map(i -> {
+                        Product p = i.getProduct();
+                        BigDecimal unitPrice = (p.getPromotionalPrice() != null && p.getPromotionalPrice().compareTo(p.getPrice()) < 0)
+                                ? p.getPromotionalPrice()
+                                : p.getPrice();
+                        return unitPrice.multiply(BigDecimal.valueOf(i.getQuantity()));
+                    })
                     .reduce(BigDecimal.ZERO, BigDecimal::add);
         }
 

@@ -56,15 +56,35 @@
 				</thead>
 				<tbody th:if="${cartItems != null and !#lists.isEmpty(cartItems)}">
 					<tr th:each="item : ${cartItems}">
-						<td class="product-info"><img
-							th:src="@{${item.product.images[0].imageUrl}}" alt="Ảnh sản phẩm">
-							<div class="p-name" th:text="${item.product.productName}"></div>
+						<td class="product-info">
+							<img th:src="@{${item.product.images[0].imageUrl}}" alt="Ảnh sản phẩm">
+							<div>
+								<div class="p-name" th:text="${item.product.productName}"></div>
+								<div style="font-size: 0.8em; color: #666; margin-top: 4px;">
+									<i class="fa-solid fa-box" style="color: #3b82f6;"></i> Tồn: <strong th:text="${item.product.stock != null ? item.product.stock : 0}">0</strong>
+									| <i class="fa-solid fa-shopping-bag" style="color: #059669;"></i> Đã bán: <strong th:text="${item.product.sold != null ? item.product.sold : 0}">0</strong>
+								</div>
+							</div>
 						</td>
-						<td
-							th:text="${#numbers.formatDecimal(item.product.price, 0, 'COMMA', 0, 'POINT')} + ' ₫'"></td>
+						<td>
+							<!-- Hiển thị giá khuyến mãi nếu có -->
+							<span th:if="${item.product.promotionalPrice != null and item.product.promotionalPrice < item.product.price}">
+								<del style="color: #999; font-size: 0.85em;" th:text="${#numbers.formatDecimal(item.product.price, 0, 'COMMA', 0, 'POINT')} + ' ₫'"></del>
+								<br/>
+								<strong style="color: #e53935;" th:text="${#numbers.formatDecimal(item.product.promotionalPrice, 0, 'COMMA', 0, 'POINT')} + ' ₫'"></strong>
+							</span>
+							<span th:unless="${item.product.promotionalPrice != null and item.product.promotionalPrice < item.product.price}"
+								th:text="${#numbers.formatDecimal(item.product.price, 0, 'COMMA', 0, 'POINT')} + ' ₫'"></span>
+						</td>
 						<td th:text="${item.quantity}"></td>
-						<td
-							th:text="${#numbers.formatDecimal(item.product.price * item.quantity, 0, 'COMMA', 0, 'POINT')} + ' ₫'"></td>
+						<td>
+							<!-- Tính tổng theo giá khuyến mãi nếu có -->
+							<strong th:if="${item.product.promotionalPrice != null and item.product.promotionalPrice < item.product.price}"
+								style="color: #e53935;"
+								th:text="${#numbers.formatDecimal(item.product.promotionalPrice * item.quantity, 0, 'COMMA', 0, 'POINT')} + ' ₫'"></strong>
+							<strong th:unless="${item.product.promotionalPrice != null and item.product.promotionalPrice < item.product.price}"
+								th:text="${#numbers.formatDecimal(item.product.price * item.quantity, 0, 'COMMA', 0, 'POINT')} + ' ₫'"></strong>
+						</td>
 					</tr>
 				</tbody>
 				<tbody th:if="${#lists.isEmpty(cartItems)}">

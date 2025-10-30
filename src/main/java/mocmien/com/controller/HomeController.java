@@ -54,6 +54,21 @@ public class HomeController {
         var globals = adminPromotionRepository.findActiveGlobalPromotions();
         if (globals != null && !globals.isEmpty()) {
             model.addAttribute("globalPromoName", globals.get(0).getName());
+            
+            // Tổng hợp tất cả banner URLs từ các promotion, split theo dấu phẩy
+            java.util.List<String> allBanners = new java.util.ArrayList<>();
+            for (var promo : globals) {
+                if (promo.getBanner() != null && !promo.getBanner().isBlank()) {
+                    String[] urls = promo.getBanner().split(",");
+                    for (String url : urls) {
+                        String trimmed = url.trim();
+                        if (!trimmed.isEmpty()) {
+                            allBanners.add(trimmed);
+                        }
+                    }
+                }
+            }
+            model.addAttribute("globalPromoBanners", allBanners);
         }
 
 	    return "customer/home";
@@ -80,9 +95,30 @@ public class HomeController {
 	    model.addAttribute("keyword", keyword);
 	    model.addAttribute("sort", sort);
 
-	    // ✅ Lấy danh sách sản phẩm theo filter + sort
-	    List<ProductRowVM> products = productService.getAllProductRows(); // hoặc service filter theo categoryIds/sort
-	    model.addAttribute("products", products);
+    // ✅ Lấy danh sách sản phẩm theo filter + sort
+    List<ProductRowVM> products = productService.getAllProductRows(); // hoặc service filter theo categoryIds/sort
+    model.addAttribute("products", products);
+
+    // Banner khuyến mãi toàn sàn
+    var globals2 = adminPromotionRepository.findActiveGlobalPromotions();
+    if (globals2 != null && !globals2.isEmpty()) {
+        model.addAttribute("globalPromoName", globals2.get(0).getName());
+        
+        // Tổng hợp tất cả banner URLs từ các promotion, split theo dấu phẩy
+        java.util.List<String> allBanners2 = new java.util.ArrayList<>();
+        for (var promo : globals2) {
+            if (promo.getBanner() != null && !promo.getBanner().isBlank()) {
+                String[] urls = promo.getBanner().split(",");
+                for (String url : urls) {
+                    String trimmed = url.trim();
+                    if (!trimmed.isEmpty()) {
+                        allBanners2.add(trimmed);
+                    }
+                }
+            }
+        }
+        model.addAttribute("globalPromoBanners", allBanners2);
+    }
 
 	    return "customer/product";
 	}

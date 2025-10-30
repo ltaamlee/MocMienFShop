@@ -206,17 +206,24 @@ public class ProductServiceImpl implements ProductService {
                 continue;
             }
             ProductRowVM vm = new ProductRowVM();
-            vm.setMaSP(p.getId());
-            vm.setTenSP(p.getProductName());
-            vm.setGia(p.getPrice());
+            vm.setId(p.getId());
+            vm.setProductName(p.getProductName());
+            vm.setPrice(p.getPrice());
+            
+            // ✅ Chỉ set promotionalPrice, KHÔNG set ribbonText
+            // Lý do: KM toàn sàn (admin) cũng set promotionalPrice nhưng dùng globalPromoName để hiển thị
+            // Template sẽ tự quyết định hiển thị ribbon nào dựa vào globalPromoName
+            if (p.getPromotionalPrice() != null && p.getPromotionalPrice().compareTo(p.getPrice()) < 0) {
+                vm.setPromotionalPrice(p.getPromotionalPrice());
+            }
 
             // ✅ Xác định trạng thái sản phẩm
             if (!p.getIsActive()) {
-                vm.setTrangThai(0); // Ngừng bán
+                vm.setStatus(0); // Ngừng bán
             } else if (!p.getIsAvailable()) {
-                vm.setTrangThai(-1); // Hết hàng
+                vm.setStatus(-1); // Hết hàng
             } else {
-                vm.setTrangThai(1); // Đang bán
+                vm.setStatus(1); // Đang bán
             }
 
             // 🔹 Lấy ảnh mặc định
@@ -226,7 +233,7 @@ public class ProductServiceImpl implements ProductService {
                 .findFirst()
                 .orElse("/styles/image/default.jpg");
 
-            vm.setHinhAnh(defaultImage);
+            vm.setImageUrl(defaultImage);
             list.add(vm);
         }
 
@@ -271,8 +278,8 @@ public class ProductServiceImpl implements ProductService {
 				.isActive(p.getIsActive())
 				.storeId(p.getStore().getId())
 				.storeName(p.getStore().getStoreName())
-				.mainImage(mainImageUrl) // ✅ thêm trường ảnh chính
-				.imageUrls(galleryImages) // ✅ ảnh phụ
+				.mainImage(mainImageUrl)
+				.imageUrls(galleryImages)
 				.build();
 	}
 

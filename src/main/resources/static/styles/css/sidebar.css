@@ -204,3 +204,94 @@
     /* Ẩn submenu trên mobile để không che nội dung */
     .sidebar-submenu { display: none !important; }
 }
+
+/* ========== Toggle Switch Styles ========== */
+.switch {
+	position: relative;
+	display: inline-block;
+	width: 48px;
+	height: 26px;
+	margin: 0 10px;
+}
+
+.switch input {
+	opacity: 0;
+	width: 0;
+	height: 0;
+}
+
+.slider {
+	position: absolute;
+	cursor: pointer;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background-color: #ccc;
+	transition: 0.3s;
+}
+
+.slider:before {
+	position: absolute;
+	content: "";
+	height: 20px;
+	width: 20px;
+	left: 3px;
+	bottom: 3px;
+	background-color: white;
+	transition: 0.3s;
+}
+
+input:checked + .slider {
+	background-color: #4caf50;
+}
+
+input:checked + .slider:before {
+	transform: translateX(22px);
+}
+
+.slider.round {
+	border-radius: 26px;
+}
+
+.slider.round:before {
+	border-radius: 50%;
+}
+
+/* ========== Mobile Card Styles ========== */
+.mobile-card {
+	background: white;
+	border-radius: 8px;
+	padding: 12px;
+	box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.mobile-card .row {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.mobile-card h3 {
+	margin: 0 0 12px 0;
+	font-size: 1rem;
+	color: #333;
+}
+
+.mobile-card .btn {
+	background: #1a73e8;
+	color: white;
+	border: none;
+	padding: 8px 12px;
+	border-radius: 4px;
+	cursor: pointer;
+	font-size: 0.85rem;
+}
+
+.mobile-card .btn.secondary {
+	background: #f44336;
+}
+
+.mobile-card .btn:hover {
+	opacity: 0.9;
+}

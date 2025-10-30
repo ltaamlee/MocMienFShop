@@ -7,21 +7,31 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>4Petals Flower Shop</title>
 <th:block layout:fragment="styles">
-	<link rel="stylesheet" href="/styles/css/customer/base.css">
-	<link rel="stylesheet" href="/styles/css/customer/home.css">
-	<link rel="stylesheet" href="/styles/css/customer/banner.css">
-	<link rel="stylesheet"
-		href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
+    <link rel="stylesheet" href="/styles/css/customer/base.css">
+    <link rel="stylesheet" href="/styles/css/customer/home.css">
+    <link rel="stylesheet" href="/styles/css/customer/banner.css">
+    <link rel="stylesheet" href="/styles/css/component/ribbon.css">
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
 </th:block>
 </head>
 <body>
 	<div layout:fragment="content" class="home-page">
 
 		<section class="banner-slider">
-			<div class="slides">
-				<div class="slide active">
-					<img src="/styles/image/customer/banner1.jpg" alt="Banner 1">
-				</div>
+            <div class="slides">
+                <!-- Ưu tiên banner khuyến mãi toàn sàn nếu có -->
+                <th:block th:if="${globalPromoBanners != null and !#lists.isEmpty(globalPromoBanners)}">
+                    <div class="slide" th:each="b,iter : ${globalPromoBanners}" th:classappend="${iter.index == 0} ? 'active' : ''">
+                        <img th:src="${b}" alt="Promo Banner">
+                    </div>
+                </th:block>
+                <!-- Banner mặc định nếu không có promo -->
+                <th:block th:if="${globalPromoBanners == null or #lists.isEmpty(globalPromoBanners)}">
+                    <div class="slide active">
+                        <img src="/styles/image/customer/banner1.jpg" alt="Banner 1">
+                    </div>
+                </th:block>
 				<div class="slide">
 					<img src="/styles/image/customer/banner2.png" alt="Banner 2">
 				</div>
@@ -52,24 +62,38 @@
 				<h3>Gợi ý hôm nay</h3>
 				<div class="product-list">
 					<div class="product-card" th:each="p : ${products}">
-						<!-- Ribbon khuyến mãi toàn sàn -->
-						<div class="ribbon" th:if="${globalPromoName != null}" th:text="${globalPromoName}"></div>
+                    <!-- Ribbon KM toàn sàn (đỏ) - ưu tiên hiển thị nếu có KM toàn sàn -->
+                    <div class="ribbon sale" th:if="${globalPromoName != null and p.promotionalPrice != null and p.promotionalPrice < p.price}">
+                        <span th:text="${globalPromoName}"></span>
+                    </div>
+                    
+                    <!-- Overlay hết hàng -->
+                    <div class="out-of-stock-overlay" th:if="${p.status == -1}">
+                        <span>HẾT HÀNG</span>
+                    </div>
+                    
 						<!-- Ảnh sản phẩm -->
-						<a th:href="@{'/product/' + ${p.maSP}}"> <img
-							th:src="${p.hinhAnh}" alt="Ảnh sản phẩm" />
+						<a th:href="@{'/product/' + ${p.id}}"> <img
+							th:src="${p.imageUrl}" alt="Ảnh sản phẩm" />
 						</a>
 
 						<!-- Tên sản phẩm -->
 						<h4>
-							<a th:href="@{'/product/' + ${p.maSP}}" th:text="${p.tenSP}"></a>
+							<a th:href="@{'/product/' + ${p.id}}" th:text="${p.productName}"></a>
 						</h4>
 
-						<!-- Giá -->
-						<p class="price"
-							th:text="${#numbers.formatDecimal(p.gia, 0, 'COMMA', 0, 'POINT')} + ' ₫'"></p>
+						<!-- Giá: hiển thị giá khuyến mãi nếu có -->
+						<div th:if="${p.promotionalPrice != null and p.promotionalPrice < p.price}">
+							<p class="price" style="text-decoration: line-through; color: #999; font-size: 0.9em;"
+								th:text="${#numbers.formatDecimal(p.price, 0, 'COMMA', 0, 'POINT')} + ' ₫'"></p>
+							<p class="price" style="color: #e53935; font-weight: bold;"
+								th:text="${#numbers.formatDecimal(p.promotionalPrice, 0, 'COMMA', 0, 'POINT')} + ' ₫'"></p>
+						</div>
+						<p class="price" th:unless="${p.promotionalPrice != null and p.promotionalPrice < p.price}"
+							th:text="${#numbers.formatDecimal(p.price, 0, 'COMMA', 0, 'POINT')} + ' ₫'"></p>
 
 						<!-- Badge trạng thái -->
-						<div class="badge" th:switch="${p.trangThai}">
+						<div class="badge" th:switch="${p.status}">
 							<span th:case="1" class="badge-selling">Đang bán</span> <span
 								th:case="0" class="badge-stopped">Ngừng bán</span> <span
 								th:case="-1" class="badge-out">Hết hàng</span>

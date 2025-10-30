@@ -11,6 +11,7 @@
 	<link rel="stylesheet" href="/styles/css/customer/base.css">
 	<link rel="stylesheet" href="/styles/css/customer/product-detail.css">
 	<link rel="stylesheet" href="/styles/css/customer/product.css">
+	<link rel="stylesheet" href="/styles/css/component/ribbon.css">
 </th:block>
 </head>
 
@@ -19,7 +20,11 @@
 
 		<!-- ========== Chi tiết sản phẩm ========== -->
 		<section class="product-detail">
-			<div class="image-wrapper">
+            <div class="image-wrapper">
+                <!-- Ribbon: Hiển thị KM toàn sàn (đỏ) nếu có, hoặc không hiển thị gì nếu không có KM -->
+                <div class="ribbon sale" th:if="${globalPromoName != null}">
+                    <span th:text="${globalPromoName}"></span>
+                </div>
 				<!-- Ảnh chính -->
 				<img id="mainImage" th:src="${product.mainImage}"
 					th:alt="${product.productName}" class="main-photo">
@@ -42,8 +47,15 @@
 			<div class="right">
 				<h1 th:text="${product.productName}"></h1>
 
-				<!-- Hiển thị giá -->
-				<p class="price"
+				<!-- Hiển thị giá khuyến mãi nếu có -->
+				<div th:if="${product.promotionalPrice != null and product.promotionalPrice < product.price}">
+					<p class="price" style="text-decoration: line-through; color: #999; font-size: 0.9em;"
+						th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT')} + ' ₫'"></p>
+					<p class="price" style="color: #e53935; font-weight: bold;"
+						th:text="${#numbers.formatDecimal(product.promotionalPrice, 0, 'COMMA', 0, 'POINT')} + ' ₫'"></p>
+				</div>
+				<!-- Hiển thị giá gốc nếu không có khuyến mãi -->
+				<p class="price" th:unless="${product.promotionalPrice != null and product.promotionalPrice < product.price}"
 					th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT')} + ' ₫'"></p>
 
 				<!-- ⭐ Tổng đánh giá trung bình -->
@@ -51,6 +63,18 @@
 					<i class="fa-solid fa-star" style="color: #f7b500;"></i> <span
 						th:text="${avgRating != null ? #numbers.formatDecimal(avgRating, 1, 'COMMA', 1, 'POINT') : '5.0'}"></span>
 					/ 5
+				</div>
+				
+				<!-- 📊 Thống kê sản phẩm -->
+				<div style="display: flex; gap: 20px; margin: 15px 0; font-size: 0.95em;">
+					<div style="display: flex; align-items: center; gap: 8px;">
+						<i class="fa-solid fa-box" style="color: #3b82f6;"></i>
+						<span>Tồn kho: <strong th:text="${product.stock != null ? product.stock : 0}">0</strong></span>
+					</div>
+					<div style="display: flex; align-items: center; gap: 8px;">
+						<i class="fa-solid fa-shopping-bag" style="color: #059669;"></i>
+						<span>Đã bán: <strong th:text="${product.sold != null ? product.sold : 0}">0</strong></span>
+					</div>
 				</div>
 
 				<!-- Mô tả sản phẩm -->

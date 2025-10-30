@@ -25,6 +25,7 @@ public class OrderServiceImpl implements OrderService {
 	@Autowired
 	private CartItemRepository cartItemRepo;
 
+
 	@Override
 	public Orders createOrderFromCart(UserProfile customer, String receiver, String phone, String address, String note,
 			List<Integer> cartItemIds) {
@@ -35,7 +36,7 @@ public class OrderServiceImpl implements OrderService {
 		order.setIsPaid(false);
 		order.setNote(note);
 
-		BigDecimal total = BigDecimal.ZERO;
+        BigDecimal total = BigDecimal.ZERO;
 
 		// Đảm bảo set Store cho Order trước khi lưu để tránh NULL store_id
 		if (cartItemIds != null && !cartItemIds.isEmpty()) {
@@ -50,7 +51,7 @@ public class OrderServiceImpl implements OrderService {
 
 		Orders savedOrder = orderRepo.save(order);
 
-		for (Integer cartItemId : cartItemIds) {
+        for (Integer cartItemId : (cartItemIds != null ? cartItemIds : java.util.List.<Integer>of())) {
 			CartItem cartItem = cartItemRepo.findById(cartItemId)
 					.orElseThrow(() -> new RuntimeException("Không tìm thấy sản phẩm trong giỏ: " + cartItemId));
 
@@ -62,22 +63,23 @@ public class OrderServiceImpl implements OrderService {
 			detail.setOrder(savedOrder);
 			detail.setProduct(product);
 			detail.setQuantity(cartItem.getQuantity());
-			detail.setPrice(product.getPrice());
-			detail.setPromotionalPrice(product.getPromotionalPrice());
+            detail.setPrice(product.getPrice());
+            detail.setPromotionalPrice(product.getPromotionalPrice());
 			orderDetailRepo.save(detail);
 
 			// Trừ kho
 			product.setStock(product.getStock() - cartItem.getQuantity());
 			productRepo.save(product);
 
-			BigDecimal lineTotal = product.getPrice().multiply(BigDecimal.valueOf(cartItem.getQuantity()));
+            BigDecimal unit = (product.getPromotionalPrice() != null && product.getPromotionalPrice().compareTo(product.getPrice()) < 0)
+                    ? product.getPromotionalPrice() : product.getPrice();
+            BigDecimal lineTotal = unit.multiply(BigDecimal.valueOf(cartItem.getQuantity()));
 			total = total.add(lineTotal);
 
 			cartItemRepo.delete(cartItem);
 		}
 
-		savedOrder.setAmountFromCustomer(total);
-		savedOrder.setAmountToStore(total);
+        savedOrder.setAmountFromCustomer(total);
 		orderRepo.save(savedOrder);
 
 		return savedOrder;
@@ -95,10 +97,11 @@ public class OrderServiceImpl implements OrderService {
 		order.setIsPaid(false);
 		order.setNote(note);
 
-		BigDecimal total = product.getPrice().multiply(BigDecimal.valueOf(quantity));
-		order.setAmountFromCustomer(total);
-		order.setAmountToStore(total);
-
+        BigDecimal unit = (product.getPromotionalPrice() != null && product.getPromotionalPrice().compareTo(product.getPrice()) < 0)
+                ? product.getPromotionalPrice() : product.getPrice();
+        BigDecimal total = unit.multiply(BigDecimal.valueOf(quantity));
+        order.setAmountFromCustomer(total);
+       
 		Orders savedOrder = orderRepo.save(order);
 
 		// Lưu chi tiết đơn
