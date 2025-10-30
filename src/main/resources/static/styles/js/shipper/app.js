@@ -41,7 +41,8 @@ async function loadAvailability() {
     const tg = document.getElementById('availabilityToggle');
     const tx = document.getElementById('availabilityText');
     tg.checked = !!me.available;
-    tx.textContent = me.available ? 'Trực tuyến' : 'Ngoại tuyến';
+    tx.textContent = me.available ? '🟢 Trực tuyến' : '⚫ Ngoại tuyến';
+    tx.style.color = me.available ? '#10b981' : '#6b7280';
 }
 
 async function toggleAvailability() {
@@ -68,42 +69,102 @@ async function loadOrders() {
 function renderOrderList(containerId, orders, canAccept) {
     const c = document.getElementById(containerId);
     c.innerHTML = '';
-    if (!orders || orders.length === 0) { c.textContent = 'Không có dữ liệu'; return; }
+    
+    if (!orders || orders.length === 0) {
+        c.innerHTML = `
+            <div class="empty-state">
+                <i class="fa fa-inbox"></i>
+                <p>Không có đơn hàng nào</p>
+            </div>
+        `;
+        return;
+    }
+    
     orders.forEach(o => {
         const div = document.createElement('div');
-        div.className = 'mobile-card';
-        div.style.margin = '6px 0';
+        div.className = canAccept ? 'order-card available' : 'order-card shipping';
+        
+        const statusClass = {
+            'CONFIRMED': 'confirmed',
+            'SHIPPING': 'shipping',
+            'DELIVERED': 'delivered'
+        }[(o.status || '').toUpperCase()] || '';
+        
+        const statusDisplay = {
+            'CONFIRMED': 'Chờ lấy hàng',
+            'SHIPPING': 'Đang giao',
+            'DELIVERED': 'Đã giao'
+        }[(o.status || '').toUpperCase()] || o.status;
+        
         const actions = [];
         if (canAccept) {
-            actions.push(`<button class="btn" data-accept="${o.id}">Nhận đơn</button>`);
+            actions.push(`<button class="btn-accept" data-accept="${o.id}">
+                <i class="fa fa-check-circle"></i> Nhận đơn ngay
+            </button>`);
         } else {
             const st = (o.status || '').toUpperCase();
             if (st === 'CONFIRMED') {
-                actions.push(`<button class="btn" data-status="SHIPPING" data-id="${o.id}">Bắt đầu giao</button>`);
+                actions.push(`<button class="btn-start" data-status="SHIPPING" data-id="${o.id}">
+                    <i class="fa fa-shipping-fast"></i> Bắt đầu giao
+                </button>`);
             }
             if (st === 'SHIPPING') {
-                actions.push(`<button class="btn" data-status="DELIVERED" data-id="${o.id}">Đã giao</button>`);
-                actions.push(`<button class="btn secondary" data-status="RETURNED_REFUNDED" data-id="${o.id}">Hoàn hàng</button>`);
+                actions.push(`<button class="btn-complete" data-status="DELIVERED" data-id="${o.id}">
+                    <i class="fa fa-check-double"></i> Giao thành công
+                </button>`);
+                actions.push(`<button class="btn-return" data-status="RETURNED_REFUNDED" data-id="${o.id}">
+                    <i class="fa fa-undo"></i> Hoàn hàng
+                </button>`);
             }
         }
+        
         div.innerHTML = `
-            <div><strong>Đơn:</strong> ${o.id}</div>
-            <div><strong>Shop:</strong> ${o.storeName || ''}</div>
-            <div><strong>Khách:</strong> ${o.customerName || ''}</div>
-            <div><strong>Trạng thái:</strong> ${o.status}</div>
-            <div class="row" style="gap:8px;margin-top:6px;">${actions.join(' ')}</div>
+            <div class="order-info">
+                <div class="order-info-row">
+                    <span class="label">Mã đơn:</span>
+                    <span class="value">${o.id}</span>
+                </div>
+                <div class="order-info-row">
+                    <span class="label">Cửa hàng:</span>
+                    <span class="value">${o.storeName || 'N/A'}</span>
+                </div>
+                <div class="order-info-row">
+                    <span class="label">Khách hàng:</span>
+                    <span class="value">${o.customerName || 'N/A'}</span>
+                </div>
+                <div class="order-info-row">
+                    <span class="label">Trạng thái:</span>
+                    <span class="status-badge ${statusClass}">${statusDisplay}</span>
+                </div>
+            </div>
+            <div class="action-buttons">${actions.join('')}</div>
         `;
         c.appendChild(div);
     });
 }
 
 async function acceptOrder(id) {
+    if (!confirm('Bạn có chắc muốn nhận đơn hàng này?')) return;
+    
     const csrf = getCsrf();
     const headers = {};
     if (csrf) headers[csrf.header] = csrf.token;
-    const res = await fetch(`/api/shipper/orders/${id}/accept`, { method: 'PATCH', headers });
-    if (!res.ok) { alert('Nhận đơn thất bại'); return; }
-    loadOrders();
+    
+    try {
+        const res = await fetch(`/api/shipper/orders/${id}/accept`, { method: 'PATCH', headers });
+        if (!res.ok) {
+            if (res.status === 409) {
+                alert('Đơn hàng đã được shipper khác nhận!');
+            } else {
+                alert('Nhận đơn thất bại. Vui lòng thử lại!');
+            }
+            return;
+        }
+        alert('✓ Đã nhận đơn thành công!');
+        loadOrders();
+    } catch (err) {
+        alert('Lỗi kết nối. Vui lòng kiểm tra mạng!');
+    }
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -120,12 +181,46 @@ document.addEventListener('DOMContentLoaded', () => {
         if (btn) {
             const id = btn.getAttribute('data-id');
             const status = btn.getAttribute('data-status');
+            
+            let confirmMsg = '';
+            if (status === 'SHIPPING') {
+                confirmMsg = 'Xác nhận bắt đầu giao đơn hàng này?';
+            } else if (status === 'DELIVERED') {
+                confirmMsg = 'Xác nhận đã giao hàng thành công?';
+            } else if (status === 'RETURNED_REFUNDED') {
+                confirmMsg = 'Xác nhận hoàn hàng về shop?';
+            }
+            
+            if (!confirm(confirmMsg)) return;
+            
             const csrf = getCsrf();
             const headers = { 'Content-Type':'application/json' };
             if (csrf) headers[csrf.header] = csrf.token;
-            const res = await fetch(`/api/shipper/orders/${id}/status`, { method: 'PATCH', headers, body: JSON.stringify({ status }) });
-            if (!res.ok) { alert('Cập nhật trạng thái thất bại'); return; }
-            loadOrders();
+            
+            try {
+                const res = await fetch(`/api/shipper/orders/${id}/status`, { method: 'PATCH', headers, body: JSON.stringify({ status }) });
+                if (!res.ok) {
+                    if (res.status === 409) {
+                        alert('Không thể chuyển trạng thái này!');
+                    } else {
+                        alert('Cập nhật trạng thái thất bại. Vui lòng thử lại!');
+                    }
+                    return;
+                }
+                
+                let successMsg = '';
+                if (status === 'SHIPPING') {
+                    successMsg = '✓ Đã bắt đầu giao hàng!';
+                } else if (status === 'DELIVERED') {
+                    successMsg = '✓ Đã xác nhận giao hàng thành công!';
+                } else if (status === 'RETURNED_REFUNDED') {
+                    successMsg = '✓ Đã xác nhận hoàn hàng!';
+                }
+                alert(successMsg);
+                loadOrders();
+            } catch (err) {
+                alert('Lỗi kết nối. Vui lòng kiểm tra mạng!');
+            }
         }
     });
 });

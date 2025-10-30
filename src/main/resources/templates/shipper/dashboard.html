@@ -3,78 +3,91 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{shipper/layout}">
 <head>
-    <title>Dashboard Shipper</title>
+  <title>Dashboard - Shipper</title>
+  <th:block layout:fragment="styles">
+    <link rel="stylesheet" href="/styles/css/shipper/dashboard.css">
+  </th:block>
 </head>
+
 <body>
-<div layout:fragment="content">
-    <h1 class="text-3xl font-bold mb-6 text-gray-800">👋 Chào mừng, <span th:text="${#authentication.principal.username}">Shipper</span>!</h1>
+  <div layout:fragment="content">
+    <h1 class="dashboard-welcome">
+      👋 Chào mừng, 
+      <span th:text="${user != null and user.userProfile != null} ? user.userProfile.fullName : 'Shipper'">
+        Shipper
+      </span>!
+    </h1>
 
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <div class="bg-white rounded-2xl shadow-lg p-5 border-l-4 border-pink-500 hover:shadow-xl transition duration-300">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-sm text-gray-500 font-semibold uppercase">Đơn nhận hôm nay</p>
-                    <p class="text-4xl font-extrabold text-pink-600 mt-1" th:text="${todayOrders}">12</p>
-                </div>
-                <i class="fas fa-motorcycle text-4xl text-pink-200"></i>
-            </div>
-            <p class="text-xs text-gray-400 mt-2">Đơn mới & Đang giao</p>
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-header">
+          <div>
+            <div class="stat-title">Đơn nhận hôm nay</div>
+            <div class="stat-value" th:text="${todayOrders} ?: 0">12</div>
+            <div class="stat-label">Đơn mới & Đang giao</div>
+          </div>
+          <i class="fas fa-motorcycle stat-icon"></i>
         </div>
+      </div>
 
-        <div class="bg-white rounded-2xl shadow-lg p-5 border-l-4 border-green-500 hover:shadow-xl transition duration-300">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-sm text-gray-500 font-semibold uppercase">Đã giao thành công</p>
-                    <p class="text-4xl font-extrabold text-green-600 mt-1" th:text="${deliveredOrders}">8</p>
-                </div>
-                <i class="fas fa-check-circle text-4xl text-green-200"></i>
-            </div>
-            <p class="text-xs text-gray-400 mt-2">Tổng đơn hoàn thành</p>
+      <div class="stat-card success">
+        <div class="stat-header">
+          <div>
+            <div class="stat-title">Đã giao thành công</div>
+            <div class="stat-value" th:text="${deliveredOrders} ?: 0">8</div>
+            <div class="stat-label">Tổng đơn hoàn thành</div>
+          </div>
+          <i class="fas fa-check-circle stat-icon"></i>
         </div>
-        
-        <div class="bg-white rounded-2xl shadow-lg p-5 border-l-4 border-yellow-500 hover:shadow-xl transition duration-300">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-sm text-gray-500 font-semibold uppercase">Thu nhập hôm nay</p>
-                    <p class="text-4xl font-extrabold text-yellow-600 mt-1" th:text="${income}">₫1,250,000</p>
-                </div>
-                <i class="fas fa-wallet text-4xl text-yellow-200"></i>
+      </div>
+
+      <div class="stat-card warning">
+        <div class="stat-header">
+          <div>
+            <div class="stat-title">Thu nhập hôm nay</div>
+            <div class="stat-value" th:text="${income} ?: '₫0'">₫1,250,000</div>
+            <div class="stat-label">
+              <a th:href="@{/shipper/ewallet}" style="color: #667eea; text-decoration: none;">
+                Xem chi tiết Ví →
+              </a>
             </div>
-            <a th:href="@{/shipper/ewallet}" class="text-xs text-pink-500 font-medium mt-2 block hover:underline">Xem chi tiết Ví</a>
+          </div>
+          <i class="fas fa-wallet stat-icon"></i>
         </div>
+      </div>
     </div>
-    
-    <div class="bg-white rounded-2xl shadow-lg p-6 mb-6">
-        <div class="flex justify-between items-center mb-4 border-b pb-3">
-            <h2 class="text-xl font-semibold text-gray-700">Đơn hàng sắp tới</h2>
-            <a th:href="@{/shipper/order}" class="text-sm text-pink-600 hover:underline">Xem tất cả <i class="fas fa-arrow-right ml-1"></i></a>
-        </div>
-        
-        <div th:if="${#lists.isEmpty(upcomingOrders)}" class="text-center py-6 text-gray-500">
-             <i class="fas fa-box-open text-3xl mb-2"></i>
-             <p>Chưa có đơn hàng mới nào được phân công.</p>
-        </div>
-        
-        <div th:each="order : ${upcomingOrders}" class="border-b last:border-b-0 py-3">
-            <div class="flex justify-between items-center">
-                <div>
-                    <p class="font-medium text-gray-800">#<span th:text="${order.id}">1001</span> - <span th:text="${order.customerName}">Nguyễn Văn A</span></p>
-                    <p class="text-xs text-gray-500 flex items-center mt-1">
-                        <i class="fas fa-map-marker-alt mr-1 text-pink-500"></i>
-                        <span th:text="${order.address}">Địa chỉ nhận hàng ngắn gọn...</span>
-                    </p>
-                </div>
-                <div class="text-right">
-                    <span th:classappend="${order.status == 'PICKUP'} ? 'bg-blue-100 text-blue-600' : 'bg-orange-100 text-orange-600'" 
-                          class="text-xs font-semibold px-2 py-1 rounded-full uppercase">
-                          <span th:text="${order.status}">PICKUP</span>
-                    </span>
-                    <a th:href="@{/shipper/order/{id}(id=${order.id})}" class="text-pink-500 text-sm ml-2 hover:text-pink-700 block mt-1">Chi tiết</a>
-                </div>
+
+    <div class="orders-section">
+      <div class="section-header">
+        <h2 class="section-title">Đơn hàng sắp tới</h2>
+        <a th:href="@{/shipper/order}" class="section-link">
+          Xem tất cả <i class="fas fa-arrow-right"></i>
+        </a>
+      </div>
+
+      <div th:if="${upcomingOrders == null or #lists.isEmpty(upcomingOrders)}" class="empty-state">
+        <i class="fas fa-box-open"></i>
+        <p>Chưa có đơn hàng mới nào được phân công.</p>
+      </div>
+
+      <div th:each="order : ${upcomingOrders}" class="order-item">
+        <div class="order-header">
+          <div>
+            <div class="order-id">#<span th:text="${order.id}">1001</span></div>
+            <div class="order-customer" th:text="${order.customerName}">Nguyễn Văn A</div>
+            <div class="order-address">
+              <i class="fas fa-map-marker-alt"></i>
+              <span th:text="${order.address}">Địa chỉ nhận hàng...</span>
             </div>
+          </div>
+          <div style="text-align: right;">
+            <span th:class="'order-status ' + (${order.status == 'PICKUP'} ? 'pickup' : 'shipping')"
+                  th:text="${order.status}">PICKUP</span>
+            <a th:href="@{/shipper/order}" class="order-link">Chi tiết →</a>
+          </div>
         </div>
-        </div>
-    
-</div>
+      </div>
+    </div>
+  </div>
 </body>
 </html>

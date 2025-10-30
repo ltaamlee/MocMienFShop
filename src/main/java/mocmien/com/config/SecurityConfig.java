@@ -49,7 +49,9 @@ public class SecurityConfig {
 																										// endpoints
 				).permitAll()
 				// Chỉ admin mới truy cập /admin/**
-				.requestMatchers("/admin/**").hasRole("ADMIN").requestMatchers("/vendor/**").hasRole("VENDOR")
+				.requestMatchers("/admin/**").hasRole("ADMIN")
+				.requestMatchers("/vendor/**").hasRole("VENDOR")
+				.requestMatchers("/shipper/**").hasRole("SHIPPER")
 				.anyRequest().authenticated())
 				// OAuth2 login
 				.oauth2Login(oauth2 -> oauth2.loginPage("/login").successHandler(oAuth2LoginSuccessHandler) // dùng
