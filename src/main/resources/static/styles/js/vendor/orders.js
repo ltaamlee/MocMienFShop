@@ -1,4 +1,3 @@
-// public/styles/js/vendor/orders.js
 let currentPage = 0;
 const pageSize = 10;
 
