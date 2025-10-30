@@ -52,9 +52,9 @@ public class ProductController {
 
         List<Review> reviews = reviewService.getReviewsByProductId(id);
         model.addAttribute("reviews", reviews);
-        // (Tuỳ chọn: nếu bạn có review hoặc sản phẩm liên quan)
-        // model.addAttribute("reviews", reviewService.getByProductId(id));
-        // model.addAttribute("relatedProducts", productService.getTopSelling(4));
+        // Related products: same category, highest rating, 5 items
+        var related = productService.getRelatedTopRatedByCategory(id, 5);
+        model.addAttribute("relatedProducts", related);
 
         return "customer/product-detail";
     }

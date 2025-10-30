@@ -70,4 +70,9 @@ public interface ProductService {
      */
     Page<mocmien.com.dto.response.product.ProductRowVM> searchProductAdvancedWithPagination(
         List<Integer> categoryIds, String keyword, String sort, Pageable pageable);
+
+    /**
+     * Related products: same category, highest rating, exclude current, limit N
+     */
+    List<mocmien.com.dto.response.product.ProductRowVM> getRelatedTopRatedByCategory(Integer productId, int limit);
 }
