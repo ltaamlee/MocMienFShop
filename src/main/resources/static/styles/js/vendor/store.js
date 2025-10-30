@@ -1,4 +1,3 @@
-// store.js — tách riêng hoàn toàn khỏi HTML
 console.log("✅ store.js loaded!");
 let hasStore = false;
 

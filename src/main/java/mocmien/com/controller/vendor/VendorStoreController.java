@@ -102,8 +102,37 @@ public class VendorStoreController {
         store.setActive(false); // chờ duyệt
         store.setOpen(req.getIsOpen() != null && req.getIsOpen());
 
+        // Tạo slug duy nhất cho store
+        String slugBase = slugify(req.getStoreName());
+        String uniqueSlug = uniqueStoreSlug(slugBase);
+        store.setSlug(uniqueSlug);
+
         Store saved = storeService.save(store);
         return ResponseEntity.ok(buildStoreResponse(saved));
+    }
+
+    // =============== Helpers cho Slug ===============
+    /** Gen ra slug-url từ tên tiếng Việt, lowerCase, ko dấu, thay space bằng '-' */
+    private String slugify(String input) {
+        if (input == null) return "";
+        String normalized = java.text.Normalizer.normalize(input, java.text.Normalizer.Form.NFD);
+        String slug = normalized.replaceAll("\\p{InCombiningDiacriticalMarks}+", "").toLowerCase()
+                .replaceAll("đ", "d").replaceAll("Đ", "D")
+                .replaceAll("[^a-z0-9\\s-]", "") // bỏ các ký tự không mong muốn
+                .replaceAll("\\s+", "-")
+                .replaceAll("-{2,}", "-")
+                .replaceAll("^-|-$", "");
+        return slug;
+    }
+
+    /** Đảm bảo slug duy nhất cho store (nếu trùng thì thêm số -- như shop, shop-2...) */
+    private String uniqueStoreSlug(String base) {
+        String slug = base;
+        int i = 1;
+        while (storeService.findBySlug(slug).isPresent()) {
+            slug = base + "-" + (++i);
+        }
+        return slug;
     }
 
     // ================== Helpers ==================

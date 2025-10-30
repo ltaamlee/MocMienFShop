@@ -59,4 +59,6 @@ public interface StoreService {
 
 	List<Store> getAll();
 
+	Optional<Store> findBySlug(String slug);
+
 }
