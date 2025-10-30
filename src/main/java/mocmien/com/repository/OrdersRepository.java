@@ -20,6 +20,132 @@ import mocmien.com.enums.OrderStatus;
 
 @Repository
 public interface OrdersRepository extends JpaRepository<Orders, String>, JpaSpecificationExecutor<Orders> {
+
+	/////// Dùng cho thống kê
+	// ====== Revenue for a single Store (Vendor) ======
+	@Query("""
+			   SELECT COALESCE(SUM(o.amountFromCustomer), 0)
+			   FROM Orders o
+			   WHERE o.store.id = :storeId
+			     AND o.status = :status
+			     AND o.createdAt >= :start AND o.createdAt < :end
+			""")
+	BigDecimal sumRevenueForStoreAndRange(@Param("storeId") Integer storeId, @Param("status") OrderStatus status,
+			@Param("start") LocalDateTime start, @Param("end") LocalDateTime end);
+
+	@Query("""
+			   SELECT COUNT(o)
+			   FROM Orders o
+			   WHERE o.store.id = :storeId
+			     AND o.status = :status
+			     AND o.createdAt >= :start AND o.createdAt < :end
+			""")
+	long countDeliveredOrdersForStoreAndRange(@Param("storeId") Integer storeId, @Param("status") OrderStatus status,
+			@Param("start") LocalDateTime start, @Param("end") LocalDateTime end);
+
+	@Query("""
+			   SELECT COALESCE(SUM(o.amountToSys), 0)
+			   FROM Orders o
+			   WHERE o.store.id = :storeId
+			     AND o.status = :status
+			     AND o.createdAt >= :start AND o.createdAt < :end
+			""")
+	BigDecimal sumPlatformFeeForStoreAndRange(@Param("storeId") Integer storeId, @Param("status") OrderStatus status,
+			@Param("start") LocalDateTime start, @Param("end") LocalDateTime end);
+
+	@Query("""
+			   SELECT COALESCE(SUM(o.amountToStore), 0)
+			   FROM Orders o
+			   WHERE o.store.id = :storeId
+			     AND o.status = :status
+			     AND o.createdAt >= :start AND o.createdAt < :end
+			""")
+	BigDecimal sumNetToStoreForStoreAndRange(@Param("storeId") Integer storeId, @Param("status") OrderStatus status,
+			@Param("start") LocalDateTime start, @Param("end") LocalDateTime end);
+
+	// ====== Chart points (Daily) ======
+	@Query("""
+			   SELECT YEAR(o.createdAt) AS orderYear,
+			          MONTH(o.createdAt) AS orderMonth,
+			          DAY(o.createdAt)   AS orderDay,
+			          SUM(o.amountFromCustomer) AS total
+			   FROM Orders o
+			   WHERE o.store.id = :storeId
+			     AND o.status = :status
+			     AND o.createdAt >= :startDate AND o.createdAt < :endDate
+			   GROUP BY YEAR(o.createdAt), MONTH(o.createdAt), DAY(o.createdAt)
+			   ORDER BY orderYear, orderMonth, orderDay
+			""")
+	List<Object[]> findDailyRevenueByStore(@Param("storeId") Integer storeId, @Param("status") OrderStatus status,
+			@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate);
+
+	// ====== Chart points (Monthly) ======
+	@Query("""
+			   SELECT YEAR(o.createdAt) AS orderYear,
+			          MONTH(o.createdAt) AS orderMonth,
+			          SUM(o.amountFromCustomer) AS total
+			   FROM Orders o
+			   WHERE o.store.id = :storeId
+			     AND o.status = :status
+			     AND o.createdAt >= :startDate AND o.createdAt < :endDate
+			   GROUP BY YEAR(o.createdAt), MONTH(o.createdAt)
+			   ORDER BY orderYear, orderMonth
+			""")
+	List<Object[]> findMonthlyRevenueByStore(@Param("storeId") Integer storeId, @Param("status") OrderStatus status,
+			@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate);
+
+	// ====== Recent orders of the Store ======
+	@Query("""
+			   SELECT o FROM Orders o
+			   WHERE o.store.id = :storeId
+			   ORDER BY o.createdAt DESC
+			""")
+	List<Orders> findRecentOrdersByStore(@Param("storeId") Integer storeId, Pageable pageable);
+
+	@Query("""
+			   SELECT COALESCE(SUM(o.amountFromCustomer),0),
+			          COALESCE(SUM(o.amountToSys),0),
+			          COALESCE(SUM(o.amountToStore),0),
+			          COUNT(o)
+			   FROM Orders o
+			   WHERE o.store.id = :storeId
+			     AND o.status = :status
+			     AND o.createdAt >= :startDate AND o.createdAt < :endDate
+			""")
+	Object[] sumForStoreBetween(@Param("storeId") Integer storeId, @Param("status") OrderStatus status,
+			@Param("startDate") java.time.LocalDateTime startDate, @Param("endDate") java.time.LocalDateTime endDate);
+
+	@Query("""
+			   SELECT YEAR(o.createdAt) as y, MONTH(o.createdAt) as m, DAY(o.createdAt) as d,
+			          SUM(o.amountFromCustomer) as total
+			   FROM Orders o
+			   WHERE o.store.id = :storeId
+			     AND o.status = :status
+			     AND o.createdAt >= :startDate AND o.createdAt < :endDate
+			   GROUP BY YEAR(o.createdAt), MONTH(o.createdAt), DAY(o.createdAt)
+			   ORDER BY y,m,d
+			""")
+	List<Object[]> findDailyRevenueOfStore(@Param("storeId") Integer storeId, @Param("status") OrderStatus status,
+			@Param("startDate") java.time.LocalDateTime startDate, @Param("endDate") java.time.LocalDateTime endDate);
+
+	@Query("""
+			   SELECT YEAR(o.createdAt) as y, MONTH(o.createdAt) as m,
+			          SUM(o.amountFromCustomer) as total
+			   FROM Orders o
+			   WHERE o.store.id = :storeId
+			     AND o.status = :status
+			     AND o.createdAt >= :startDate AND o.createdAt < :endDate
+			   GROUP BY YEAR(o.createdAt), MONTH(o.createdAt)
+			   ORDER BY y,m
+			""")
+	List<Object[]> findMonthlyRevenueOfStore(@Param("storeId") Integer storeId, @Param("status") OrderStatus status,
+			@Param("startDate") java.time.LocalDateTime startDate, @Param("endDate") java.time.LocalDateTime endDate);
+
+	// Bảng đơn đã giao (table)
+	Page<Orders> findByStore_IdAndStatusAndCreatedAtBetweenOrderByCreatedAtDesc(Integer storeId, OrderStatus status,
+			java.time.LocalDateTime start, java.time.LocalDateTime end, Pageable pageable);
+
+	//////////////
 	Page<Orders> findByStore_Id(Integer storeId, Pageable pageable);
 
 	Page<Orders> findByStore_IdAndStatusIn(Integer storeId, List<OrderStatus> statuses, Pageable pageable);
