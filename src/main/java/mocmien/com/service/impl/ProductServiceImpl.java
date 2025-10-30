@@ -1,21 +1,28 @@
 package mocmien.com.service.impl;
 
 import java.math.BigDecimal;
+
 import java.util.ArrayList;
 import java.util.Comparator;
+
+import java.util.Comparator;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.ArrayList;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import mocmien.com.dto.response.product.ProductRowVM;
 
 import mocmien.com.dto.response.product.ProductDetailResponse;
 import mocmien.com.dto.response.product.ProductListItemResponse;
-import mocmien.com.dto.product.ProductRowVM;
 import mocmien.com.entity.Category;
 import mocmien.com.entity.Product;
 import mocmien.com.entity.ProductImage;
@@ -25,13 +32,17 @@ import mocmien.com.repository.CategoryRepository;
 import mocmien.com.repository.ProductRepository;
 import mocmien.com.service.ProductService;
 
+import mocmien.com.service.ReviewService;
 
 @Service
-@Transactional 
+@Transactional
 public class ProductServiceImpl implements ProductService {
 
 	private final ProductRepository productRepo;
 	private final CategoryRepository categoryRepo;
+
+	@Autowired
+	private ReviewService reviewService;
 
 	public ProductServiceImpl(ProductRepository productRepo, CategoryRepository categoryRepo) {
 		this.productRepo = productRepo;
@@ -90,7 +101,7 @@ public class ProductServiceImpl implements ProductService {
 			dto.setIsActive(p.getIsActive());
 			dto.setDefaultImage((p.getImages() == null) ? null
 					: p.getImages().stream().sorted(imageOrder()).map(ProductImage::getImageUrl).findFirst()
-						.orElse(null));
+							.orElse(null));
 			return dto;
 		}).filter(d -> status == null || d.getStatus() == status).collect(Collectors.toList());
 
@@ -133,7 +144,7 @@ public class ProductServiceImpl implements ProductService {
 
 	@Override
 	public Optional<Product> getBySlug(String slug, Store store) {
-	    return productRepo.findBySlugAndStore(slug, store);
+		return productRepo.findBySlugAndStore(slug, store);
 	}
 
 	@Override
@@ -188,100 +199,108 @@ public class ProductServiceImpl implements ProductService {
 		return productRepo.findByStore(store, pageable);
 	}
 
-    @Override
-    public BigDecimal averageRatingByStore(Store store) {
-        return productRepo.averageRatingByStore(store);
-    }
-    
+	@Override
+	public BigDecimal averageRatingByStore(Store store) {
+		return productRepo.averageRatingByStore(store);
+	}
 
-    // ===================== HIỂN THỊ DANH SÁCH SẢN PHẨM (VM) =====================
-    @Override
-    public List<ProductRowVM> getAllProductRows() {
-        List<Product> products = productRepo.findAll();
-        List<ProductRowVM> list = new ArrayList<>();
+	// ===================== HIỂN THỊ DANH SÁCH SẢN PHẨM (VM) =====================
+	@Override
+	public List<ProductRowVM> getAllProductRows() {
+		List<Product> products = productRepo.findAll();
+		List<ProductRowVM> list = new ArrayList<>();
 
-        for (Product p : products) {
-            // Bỏ sản phẩm nếu cửa hàng bị khóa (không hoạt động)
-            if (p.getStore() != null && !p.getStore().isActive()) {
-                continue;
-            }
-            ProductRowVM vm = new ProductRowVM();
-            vm.setId(p.getId());
-            vm.setProductName(p.getProductName());
-            vm.setPrice(p.getPrice());
-            
-            // ✅ Chỉ set promotionalPrice, KHÔNG set ribbonText
-            // Lý do: KM toàn sàn (admin) cũng set promotionalPrice nhưng dùng globalPromoName để hiển thị
-            // Template sẽ tự quyết định hiển thị ribbon nào dựa vào globalPromoName
-            if (p.getPromotionalPrice() != null && p.getPromotionalPrice().compareTo(p.getPrice()) < 0) {
-                vm.setPromotionalPrice(p.getPromotionalPrice());
-            }
+		for (Product p : products) {
+			// Bỏ qua sản phẩm nếu cửa hàng bị khóa
+			if (p.getStore() != null && !p.getStore().isActive()) {
+				continue;
+			}
+			
+			ProductRowVM vm = new ProductRowVM();
+			vm.setMaSP(p.getId());
+			vm.setTenSP(p.getProductName());
+			vm.setGiaGoc(p.getPrice());
+			
+			// ✅ Set giá khuyến mãi nếu có
+			if (p.getPromotionalPrice() != null && p.getPromotionalPrice().compareTo(p.getPrice()) < 0) {
+				vm.setGiaKhuyenMai(p.getPromotionalPrice());
+			}
 
-            // ✅ Xác định trạng thái sản phẩm
-            if (!p.getIsActive()) {
-                vm.setStatus(0); // Ngừng bán
-            } else if (!p.getIsAvailable()) {
-                vm.setStatus(-1); // Hết hàng
-            } else {
-                vm.setStatus(1); // Đang bán
-            }
+			// ✅ Xác định trạng thái sản phẩm
+			if (!p.getIsActive()) {
+				vm.setTrangThai(0); // Ngừng bán
+			} else if (!p.getIsAvailable()) {
+				vm.setTrangThai(-1); // Hết hàng
+			} else {
+				vm.setTrangThai(1); // Đang bán
+			}
 
-            // 🔹 Lấy ảnh mặc định
-            String defaultImage = p.getImages().stream()
-                .filter(img -> Boolean.TRUE.equals(img.getIsDefault()))
-                .map(ProductImage::getImageUrl)
-                .findFirst()
-                .orElse("/styles/image/default.jpg");
+			// 🔹 Lấy ảnh mặc định
+			String defaultImage = p.getImages().stream().filter(img -> Boolean.TRUE.equals(img.getIsDefault()))
+					.map(ProductImage::getImageUrl).findFirst().orElse("/styles/image/default.jpg");
 
-            vm.setImageUrl(defaultImage);
-            list.add(vm);
-        }
+			vm.setHinhAnh(defaultImage);
+			list.add(vm);
+		}
 
-        return list;
-    }
+		return list;
+	}
 
 	@Override
-	public ProductDetailResponse getProductDetailById(Integer id) {
-		Product p = productRepo.findById(id)
-				.orElseThrow(() -> new RuntimeException("Không tìm thấy sản phẩm với id " + id));
+    public ProductDetailResponse getProductDetailById(Integer id) {
+        Product p = productRepo.findById(id)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy sản phẩm với id " + id));
+        Store shop = p.getStore();
+        // ✅ Lấy ảnh chính (is_default = 1)
+        String mainImageUrl = null;
+        List<String> galleryImages = new ArrayList<>();
 
-		// ✅ Lấy ảnh chính (is_default = 1)
-		String mainImageUrl = null;
-		List<String> galleryImages = new ArrayList<>();
+        if (p.getImages() != null && !p.getImages().isEmpty()) {
+            for (ProductImage img : p.getImages()) {
+                if (Boolean.TRUE.equals(img.getIsDefault())) {
+                    mainImageUrl = img.getImageUrl();
+                } else {
+                    galleryImages.add(img.getImageUrl());
+                }
+            }
+        }
 
-		if (p.getImages() != null && !p.getImages().isEmpty()) {
-			for (ProductImage img : p.getImages()) {
-				if (Boolean.TRUE.equals(img.getIsDefault())) {
-					mainImageUrl = img.getImageUrl();
-				} else {
-					galleryImages.add(img.getImageUrl());
-				}
-			}
-		}
-
-		// Nếu không có ảnh chính, chọn ảnh đầu tiên làm mặc định
-		if (mainImageUrl == null && !p.getImages().isEmpty()) {
-			mainImageUrl = p.getImages().get(0).getImageUrl();
-		}
-
-		return ProductDetailResponse.builder()
-				.id(p.getId())
-				.productName(p.getProductName())
-				.categoryId(p.getCategory().getId())
-				.categoryName(p.getCategory().getCategoryName())
-				.price(p.getPrice())
-				.promotionalPrice(p.getPromotionalPrice())
-				.size(p.getSize())
-				.stock(p.getStock())
-				.sold(p.getSold())
-				.status(statusOf(p))
-				.isActive(p.getIsActive())
-				.storeId(p.getStore().getId())
-				.storeName(p.getStore().getStoreName())
-				.mainImage(mainImageUrl)
-				.imageUrls(galleryImages)
-				.build();
-	}
+        // Nếu không có ảnh chính, chọn ảnh đầu tiên làm mặc định
+        if (mainImageUrl == null && !p.getImages().isEmpty()) {
+            mainImageUrl = p.getImages().get(0).getImageUrl();
+        }
+        // → Thông tin shop
+        String storeAvatar = (shop.getVendor() != null && shop.getVendor().getAvatar() != null)
+            ? shop.getVendor().getAvatar() : "/styles/image/default-store.jpg";
+        Long storeProductCount = productRepo.countByStore(shop);
+        Double storeRating = reviewService.getAverageRatingOfShop(shop.getId());
+        // → Thông tin đánh giá sản phẩm
+        Double productRating = reviewService.getAverageRatingOfProduct(p);
+        // Số lượt rating (đếm review thực sự)
+        Long productRatingCount = (long) reviewService.getReviewsByProduct(p).size();
+        return ProductDetailResponse.builder()
+                .id(p.getId())
+                .productName(p.getProductName())
+                .categoryId(p.getCategory().getId())
+                .categoryName(p.getCategory().getCategoryName())
+                .price(p.getPrice())
+                .promotionalPrice(p.getPromotionalPrice())
+                .size(p.getSize())
+                .stock(p.getStock())
+                .sold(p.getSold())
+                .status(statusOf(p))
+                .isActive(p.getIsActive())
+                .imageUrls(galleryImages)
+                .mainImage(mainImageUrl)
+                .storeId(shop.getId())
+                .storeName(shop.getStoreName())
+                .storeAvatar(storeAvatar)
+                .storeProductCount(storeProductCount)
+                .storeRating(java.math.BigDecimal.valueOf(storeRating))
+                .productRating(java.math.BigDecimal.valueOf(productRating))
+                .productRatingCount(productRatingCount)
+                .build();
+    }
 
 	@Override
 	public Page<Product> findByPriceRange(BigDecimal minPrice, BigDecimal maxPrice, Pageable pageable) {
@@ -326,39 +345,99 @@ public class ProductServiceImpl implements ProductService {
 			Pageable pageable) {
 		final String kw = (keyword == null) ? "" : keyword;
 
-	    Page<Product> page;
+		Page<Product> page;
 
-	    if (categoryId != null) {
-	        Category cat = categoryRepo.findById(categoryId).orElse(null);
-	        page = productRepo.findByStoreAndCategory(store, cat, pageable);
-	    } else {
-	        page = productRepo.findByStore(store, pageable);
-	        // Lọc keyword trực tiếp trong stream
-	        page = new PageImpl<>(
-	            page.getContent().stream()
-	                .filter(p -> p.getProductName().toLowerCase().contains(kw.toLowerCase()))
-	                .collect(Collectors.toList()),
-	            pageable,
-	            page.getTotalElements()
-	        );
-	    }
+		if (categoryId != null) {
+			Category cat = categoryRepo.findById(categoryId).orElse(null);
+			page = productRepo.findByStoreAndCategory(store, cat, pageable);
+		} else {
+			page = productRepo.findByStore(store, pageable);
+			// Lọc keyword trực tiếp trong stream
+			page = new PageImpl<>(
+					page.getContent().stream().filter(p -> p.getProductName().toLowerCase().contains(kw.toLowerCase()))
+							.collect(Collectors.toList()),
+					pageable, page.getTotalElements());
+		}
 
-	    var content = page.getContent().stream().map(p -> {
-	        ProductListItemResponse dto = new ProductListItemResponse();
-	        dto.setId(p.getId());
-	        dto.setProductName(p.getProductName());
-	        dto.setCategoryName(p.getCategory() != null ? p.getCategory().getCategoryName() : null);
-	        dto.setPrice(p.getPrice());
-	        dto.setPromotionalPrice(p.getPromotionalPrice());
-	        dto.setStock(p.getStock());
-	        dto.setStatus(statusOf(p));
-	        dto.setIsActive(p.getIsActive());
-	        dto.setDefaultImage((p.getImages() == null) ? null
-	                : p.getImages().stream().sorted(imageOrder()).map(ProductImage::getImageUrl).findFirst().orElse(null));
-	        return dto;
-	    }).filter(d -> status == null || d.getStatus() == status).collect(Collectors.toList());
+		var content = page.getContent().stream().map(p -> {
+			ProductListItemResponse dto = new ProductListItemResponse();
+			dto.setId(p.getId());
+			dto.setProductName(p.getProductName());
+			dto.setCategoryName(p.getCategory() != null ? p.getCategory().getCategoryName() : null);
+			dto.setPrice(p.getPrice());
+			dto.setPromotionalPrice(p.getPromotionalPrice());
+			dto.setStock(p.getStock());
+			dto.setStatus(statusOf(p));
+			dto.setIsActive(p.getIsActive());
+			dto.setDefaultImage((p.getImages() == null) ? null
+					: p.getImages().stream().sorted(imageOrder()).map(ProductImage::getImageUrl).findFirst()
+							.orElse(null));
+			return dto;
+		}).filter(d -> status == null || d.getStatus() == status).collect(Collectors.toList());
 
-	    return new PageImpl<>(content, pageable, page.getTotalElements());
+		return new PageImpl<>(content, pageable, page.getTotalElements());
 	}
+
+	@Override
+    public List<ProductRowVM> searchProductAdvanced(List<Integer> categoryIds, String keyword, String sort) {
+        List<Product> products;
+        // Lọc danh mục
+        if (categoryIds != null && !categoryIds.isEmpty()) {
+            products = productRepo.findByCategoryIds(categoryIds, Pageable.unpaged()).getContent();
+        } else {
+            products = productRepo.findAll();
+        }
+        // Lọc từ khóa
+        if (keyword != null && !keyword.isBlank()) {
+            products = products.stream().filter(p -> p.getProductName() != null && p.getProductName().toLowerCase().contains(keyword.toLowerCase())).collect(Collectors.toList());
+        }
+        // Sort
+        if (sort != null) {
+            switch(sort) {
+                case "asc":
+                    products.sort(Comparator.comparing(Product::getPrice));
+                    break;
+                case "desc":
+                    products.sort(Comparator.comparing(Product::getPrice).reversed());
+                    break;
+                case "newest":
+                    products.sort(Comparator.comparing(Product::getCreatedAt, Comparator.nullsLast(Comparator.reverseOrder())));
+                    break;
+                case "rating":
+products.sort(Comparator.comparing(Product::getRating, Comparator.nullsLast(Comparator.reverseOrder())));
+                    break;
+                case "promotion":
+                    products.sort(Comparator.comparing((Product p) -> p.getPromotionalPrice().compareTo(p.getPrice()) < 0 ? 0 : 1));
+                    break;
+                default:
+                    // mặc định, sort newest?
+                    products.sort(Comparator.comparing(Product::getCreatedAt, Comparator.nullsLast(Comparator.reverseOrder())));
+            }
+        }
+        return products.stream().map(p -> {
+            ProductRowVM vm = new ProductRowVM();
+            vm.setMaSP(p.getId());
+            vm.setTenSP(p.getProductName());
+            vm.setGiaGoc(p.getPrice());
+            
+            // ✅ Set giá khuyến mãi nếu có
+            if (p.getPromotionalPrice() != null && p.getPromotionalPrice().compareTo(p.getPrice()) < 0) {
+                vm.setGiaKhuyenMai(p.getPromotionalPrice());
+            }
+            
+            String defaultImage = 
+                (p.getImages() != null) ? p.getImages().stream().filter(img -> Boolean.TRUE.equals(img.getIsDefault())).map(img -> img.getImageUrl()).findFirst().orElse("/styles/image/default.jpg") : "/styles/image/default.jpg";
+            vm.setHinhAnh(defaultImage);
+            // Trạng thái (1: Đang bán, 0: Ngừng bán, -1: Hết hàng)
+            if (!p.getIsActive()) {
+                vm.setTrangThai(0);
+            } else if (!p.getIsAvailable()) {
+                vm.setTrangThai(-1);
+            } else {
+                vm.setTrangThai(1);
+            }
+            return vm;
+        }).collect(Collectors.toList());
+    }
 
 }

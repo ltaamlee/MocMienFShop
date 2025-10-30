@@ -56,7 +56,7 @@ public class CartServiceImpl implements CartService {
         }
     }
 
-    // 🟢 2. Đếm tổng số sản phẩm trong giỏ
+    // 🟢 2. Đếm số loại sản phẩm trong giỏ (không phải tổng số lượng)
     @Override
     public int getCartCount(User user) {
         Optional<Cart> cartOpt = cartRepository.findByUser(user);
@@ -64,7 +64,7 @@ public class CartServiceImpl implements CartService {
 
         Cart cart = cartOpt.get();
         List<CartItem> items = cartItemRepository.findByCart(cart);
-        return items.stream().mapToInt(CartItem::getQuantity).sum();
+        return items.size(); // Đếm số loại sản phẩm, không phải tổng quantity
     }
 
     // 🟢 3. Lấy toàn bộ sản phẩm trong giỏ của user

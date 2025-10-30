@@ -122,6 +122,9 @@
 
 			<!-- 🧾 ====== TỔNG KẾT & NÚT ĐẶT HÀNG ====== -->
 			<div class="payment-summary">
+				<div th:if="${shippingError != null}" class="summary-line" style="color:#d33;">
+					<span th:text="${shippingError}"></span>
+				</div>
 				<div class="summary-line">
 					<span>Tổng tiền hàng</span> <span
 						th:text="${#numbers.formatDecimal(total, 0, 'COMMA', 0, 'POINT')} + ' ₫'"></span>

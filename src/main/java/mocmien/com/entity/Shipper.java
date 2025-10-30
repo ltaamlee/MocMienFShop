@@ -158,7 +158,7 @@ public class Shipper {
 
     public void setIsOnline(Boolean isOnline) {
         this.isOnline = isOnline;
-    }
+	}
 
 	public Integer getTotalDelivery() {
 		return totalDelivery;

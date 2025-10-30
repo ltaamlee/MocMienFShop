@@ -3,6 +3,10 @@ package mocmien.com.dto.response.product;
 import java.math.BigDecimal;
 import java.util.List;
 
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import mocmien.com.enums.ProductStatus;
 
 public class ProductDetailResponse {
@@ -27,6 +31,11 @@ public class ProductDetailResponse {
     private String storeName;
     
     private String mainImage; // ✅ Ảnh chính
+    private String storeAvatar;
+    private Long storeProductCount;
+    private java.math.BigDecimal storeRating;
+    private java.math.BigDecimal productRating;
+    private Long productRatingCount;
 
     private BigDecimal giaKhuyenMai;
     private Integer discountPercent;
@@ -35,6 +44,16 @@ public class ProductDetailResponse {
 
     public String getMainImage() { return mainImage; }
     public void setMainImage(String mainImage) { this.mainImage = mainImage; }
+    public String getStoreAvatar() { return storeAvatar; }
+    public void setStoreAvatar(String storeAvatar) { this.storeAvatar = storeAvatar; }
+    public Long getStoreProductCount() { return storeProductCount; }
+    public void setStoreProductCount(Long storeProductCount) { this.storeProductCount = storeProductCount; }
+    public java.math.BigDecimal getStoreRating() { return storeRating; }
+    public void setStoreRating(java.math.BigDecimal storeRating) { this.storeRating = storeRating; }
+    public java.math.BigDecimal getProductRating() { return productRating; }
+    public void setProductRating(java.math.BigDecimal productRating) { this.productRating = productRating; }
+    public Long getProductRatingCount() { return productRatingCount; }
+    public void setProductRatingCount(Long productRatingCount) { this.productRatingCount = productRatingCount; }
 
     
     
@@ -256,10 +275,6 @@ public class ProductDetailResponse {
             return this;
         }
 
-        public ProductDetailResponse build() {
-            return dto;
-        }
-        
         public Builder mainImage(String mainImage) {
             dto.setMainImage(mainImage);
             return this;
@@ -285,6 +300,31 @@ public class ProductDetailResponse {
             return this;
         }
 
+        public Builder storeAvatar(String storeAvatar) {
+            dto.setStoreAvatar(storeAvatar);
+            return this;
+        }
+        public Builder storeProductCount(Long count) {
+            dto.setStoreProductCount(count);
+            return this;
+        }
+        public Builder storeRating(java.math.BigDecimal v) {
+            dto.setStoreRating(v);
+            return this;
+        }
+        public Builder productRating(java.math.BigDecimal v) {
+            dto.setProductRating(v);
+            return this;
+        }
+        public Builder productRatingCount(Long v) {
+            dto.setProductRatingCount(v);
+            return this;
+        }
+
+        public ProductDetailResponse build() {
+            return dto;
+        }
+        
     }
 
     public static Builder builder() {

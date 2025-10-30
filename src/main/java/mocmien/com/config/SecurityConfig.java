@@ -19,63 +19,52 @@ import mocmien.com.security.jwt.JwtTokenProvider;
 public class SecurityConfig {
 
 	private final CustomUserDetailsService customUserDetailsService;
-    private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
-    private final JwtTokenProvider tokenProvider;
-    private final OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler; // <-- thêm
+	private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+	private final JwtTokenProvider tokenProvider;
+	private final OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler; // <-- thêm
 
-    public SecurityConfig(CustomUserDetailsService customUserDetailsService,
-                          JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint,
-                          JwtTokenProvider tokenProvider,
-                          OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler) { // <-- thêm
-        this.customUserDetailsService = customUserDetailsService;
-        this.jwtAuthenticationEntryPoint = jwtAuthenticationEntryPoint;
-        this.tokenProvider = tokenProvider;
-        this.oAuth2LoginSuccessHandler = oAuth2LoginSuccessHandler; // <-- gán
-    }
+	public SecurityConfig(CustomUserDetailsService customUserDetailsService,
+			JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint, JwtTokenProvider tokenProvider,
+			OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler) { // <-- thêm
+		this.customUserDetailsService = customUserDetailsService;
+		this.jwtAuthenticationEntryPoint = jwtAuthenticationEntryPoint;
+		this.tokenProvider = tokenProvider;
+		this.oAuth2LoginSuccessHandler = oAuth2LoginSuccessHandler; // <-- gán
+	}
 
-    @Bean
-    public JwtAuthenticationFilter jwtAuthenticationFilter() {
-        return new JwtAuthenticationFilter(tokenProvider, customUserDetailsService);
-    }
+	@Bean
+	public JwtAuthenticationFilter jwtAuthenticationFilter() {
+		return new JwtAuthenticationFilter(tokenProvider, customUserDetailsService);
+	}
 
-    @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http
-            .csrf(csrf -> csrf.disable())
-            .authorizeHttpRequests(auth -> auth
-                // Các endpoint public
-                .requestMatchers(
-                    "/", "/web/**", "/api/**", "/api/chat-ai",
-                    "/api/auth/register", "/api/auth/login/",
-                    "/index", "/home", "/register", "/login", "/logout",
-                    "/product/**", "/about", "/contact", "/error",
-                    "/styles/**", "/css/**", "/js/**", "/images/**",
-                    "/image/**", "/webjars/**", "/forgot-password/**",
-                    "/verify-otp/**","/reset-password/**", "/api/payment/momo/callback",
-                    "/oauth2/**", "/shipper/**"// OAuth2 endpoints
-                ).permitAll()
-                // Chỉ admin mới truy cập /admin/**
-                .requestMatchers("/admin/**").hasRole("ADMIN")
-                .requestMatchers("/vendor/**").hasRole("VENDOR")
-                .anyRequest().authenticated()
-            )
-            // OAuth2 login
-            .oauth2Login(oauth2 -> oauth2
-            	    .loginPage("/login")
-            	    .successHandler(oAuth2LoginSuccessHandler) // dùng handler trên
-            	    .failureUrl("/login?error=true")
-            	)
-            // Exception handling
-            .exceptionHandling(ex -> ex
-                .accessDeniedHandler((req, res, ex2) -> res.sendRedirect("/403"))
-            )
-            // Stateless session cho JWT
-            .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            .logout(logout -> logout.disable());
+	@Bean
+	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+		http.csrf(csrf -> csrf.disable()).authorizeHttpRequests(auth -> auth
+				// Các endpoint public
+				.requestMatchers("/", "/web/**", "/api/**", "/api/chat-ai", "/api/auth/register", "/api/auth/login/",
+						"/index", "/home", "/register", "/login", "/logout", "/product/**", "/about", "/contact",
+						"/error", "/api/favorite-products/**", "/favorites", "/styles/**", "/css/**", "/js/**",
+						"/images/**", "/image/**", "/webjars/**", "/forgot-password/**", "/verify-otp/**",
+						"/reset-password/**", "/api/payment/momo/callback", "/oauth2/**", "/shipper/**"// OAuth2
+																										// endpoints
+				).permitAll()
+				// Chỉ admin mới truy cập /admin/**
+				.requestMatchers("/admin/**").hasRole("ADMIN").requestMatchers("/vendor/**").hasRole("VENDOR")
+				.anyRequest().authenticated())
+				// OAuth2 login
+				.oauth2Login(oauth2 -> oauth2.loginPage("/login").successHandler(oAuth2LoginSuccessHandler) // dùng
+																											// handler
+																											// trên
+						.failureUrl("/login?error=true"))
+				// Exception handling
+				.exceptionHandling(ex -> ex.accessDeniedHandler((req, res, ex2) -> res.sendRedirect("/403")))
+				// Stateless session cho JWT
+				.sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+				.logout(logout -> logout.disable());
 
-        // Thêm JWT filter trước UsernamePasswordAuthenticationFilter
-        http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+		// Thêm JWT filter trước UsernamePasswordAuthenticationFilter
+		http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
 
-        return http.build();
-    }
+		return http.build();
+	}
 }

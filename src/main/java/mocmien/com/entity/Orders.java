@@ -12,8 +12,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -89,6 +87,9 @@ public class Orders {
 
     @Column(name = "amountToSys", nullable = false, columnDefinition = "DECIMAL(18,2)")
     private BigDecimal amountToSys = BigDecimal.ZERO; // tiền hệ thống thu được
+
+    @Column(name = "shipping_fee", nullable = false, columnDefinition = "DECIMAL(18,2)")
+    private BigDecimal shippingFee = BigDecimal.ZERO; // phí vận chuyển của đơn
 
     // Ghi chú đơn hàng
     @Column(name = "note", columnDefinition = "NVARCHAR(MAX)")
@@ -241,6 +242,14 @@ public class Orders {
 	public void setAmountToSys(BigDecimal amountToSys) {
 		this.amountToSys = amountToSys;
 	}
+
+    public BigDecimal getShippingFee() {
+        return shippingFee;
+    }
+
+    public void setShippingFee(BigDecimal shippingFee) {
+        this.shippingFee = shippingFee;
+    }
 
 	public String getNote() {
 		return note;

@@ -1,6 +1,5 @@
 package mocmien.com.controller;
 
-
 import java.util.List;
 
 import org.springframework.security.core.Authentication;
@@ -18,20 +17,20 @@ import mocmien.com.entity.Category;
 import mocmien.com.entity.User;
 import mocmien.com.repository.CategoryRepository;
 
-
 @Controller
 public class HomeController {
-	
+
 	private final UserService userService;
 	private final ProductService productService;
-    private final CategoryRepository categoryRepository;
-    private final AdminPromotionRepository adminPromotionRepository;
+	private final CategoryRepository categoryRepository;
+	private final AdminPromotionRepository adminPromotionRepository;
 
-    public HomeController(UserService userService, ProductService productService, CategoryRepository categoryRepository, AdminPromotionRepository adminPromotionRepository) {
+	public HomeController(UserService userService, ProductService productService, CategoryRepository categoryRepository,
+			AdminPromotionRepository adminPromotionRepository) {
 		this.userService = userService;
 		this.productService = productService;
 		this.categoryRepository = categoryRepository;
-        this.adminPromotionRepository = adminPromotionRepository;
+		this.adminPromotionRepository = adminPromotionRepository;
 	}
 
 	@GetMapping("/")
@@ -43,86 +42,82 @@ public class HomeController {
 
 	@GetMapping("/home")
 	public String guestHome(Model model, Authentication authentication) {
-	    addUserToModel(model, authentication);
-	    model.addAttribute("title", "MocMien Flower Shop");
+		addUserToModel(model, authentication);
+		model.addAttribute("title", "MocMien Flower Shop");
 
-        // ✅ Lấy danh sách sản phẩm hiển thị ra trang home
-	    List<ProductRowVM> products = productService.getAllProductRows();
-	    model.addAttribute("products", products);
+		// ✅ Lấy danh sách sản phẩm hiển thị ra trang home
+		List<mocmien.com.dto.response.product.ProductRowVM> products = productService.getAllProductRows();
+		model.addAttribute("products", products);
 
-        // Global Promotion Ribbon (nếu có khuyến mãi toàn sàn đang ACTIVE)
-        var globals = adminPromotionRepository.findActiveGlobalPromotions();
-        if (globals != null && !globals.isEmpty()) {
-            model.addAttribute("globalPromoName", globals.get(0).getName());
-            
-            // Tổng hợp tất cả banner URLs từ các promotion, split theo dấu phẩy
-            java.util.List<String> allBanners = new java.util.ArrayList<>();
-            for (var promo : globals) {
-                if (promo.getBanner() != null && !promo.getBanner().isBlank()) {
-                    String[] urls = promo.getBanner().split(",");
-                    for (String url : urls) {
-                        String trimmed = url.trim();
-                        if (!trimmed.isEmpty()) {
-                            allBanners.add(trimmed);
-                        }
-                    }
-                }
-            }
-            model.addAttribute("globalPromoBanners", allBanners);
-        }
+		// Global Promotion Ribbon (nếu có khuyến mãi toàn sàn đang ACTIVE)
+		var globals = adminPromotionRepository.findActiveGlobalPromotions();
+		if (globals != null && !globals.isEmpty()) {
+			model.addAttribute("globalPromoName", globals.get(0).getName());
 
-	    return "customer/home";
+			// Tổng hợp tất cả banner URLs từ các promotion, split theo dấu phẩy
+			java.util.List<String> allBanners = new java.util.ArrayList<>();
+			for (var promo : globals) {
+				if (promo.getBanner() != null && !promo.getBanner().isBlank()) {
+					String[] urls = promo.getBanner().split(",");
+					for (String url : urls) {
+						String trimmed = url.trim();
+						if (!trimmed.isEmpty()) {
+							allBanners.add(trimmed);
+						}
+					}
+				}
+			}
+			model.addAttribute("globalPromoBanners", allBanners);
+		}
+
+		return "customer/home";
 	}
 
-	
 	@GetMapping("/product")
-	public String showProducts(
-	        @RequestParam(value = "q", required = false) String keyword,
-	        @RequestParam(value = "sort", required = false) String sort,
-	        @RequestParam(value = "categoryIds", required = false) List<Integer> categoryIds,
-	        Model model,
-	        Authentication authentication) {
-	    addUserToModel(model, authentication);
+	public String showProducts(@RequestParam(value = "q", required = false) String keyword,
+			@RequestParam(value = "sort", required = false) String sort,
+			@RequestParam(value = "categoryIds", required = false) List<Integer> categoryIds, Model model,
+			Authentication authentication) {
+		addUserToModel(model, authentication);
 
-	    List<Category> categories = categoryRepository.findByIsActiveTrueOrderByCategoryNameAsc();
-	    model.addAttribute("categories", categories);
+		List<Category> categories = categoryRepository.findByIsActiveTrueOrderByCategoryNameAsc();
+		model.addAttribute("categories", categories);
 
-	    // ✅ Xử lý filter (nếu chưa chọn category nào thì set rỗng)
-	    model.addAttribute("selectedCategories",
-	            categoryIds != null ? categoryIds : List.of());
+		// ✅ Xử lý filter (nếu chưa chọn category nào thì set rỗng)
+		model.addAttribute("selectedCategories", categoryIds != null ? categoryIds : List.of());
 
-	    // ✅ Giữ lại keyword và sort
-	    model.addAttribute("keyword", keyword);
-	    model.addAttribute("sort", sort);
+		// ✅ Giữ lại keyword và sort
+		model.addAttribute("keyword", keyword);
+		model.addAttribute("sort", sort);
 
-    // ✅ Lấy danh sách sản phẩm theo filter + sort
-    List<ProductRowVM> products = productService.getAllProductRows(); // hoặc service filter theo categoryIds/sort
-    model.addAttribute("products", products);
+		// ✅ Lấy danh sách sản phẩm theo filter + sort
+		List<mocmien.com.dto.response.product.ProductRowVM> products = productService.getAllProductRows(); // hoặc service filter theo categoryIds/sort
+		model.addAttribute("products", products);
 
-    // Banner khuyến mãi toàn sàn
-    var globals2 = adminPromotionRepository.findActiveGlobalPromotions();
-    if (globals2 != null && !globals2.isEmpty()) {
-        model.addAttribute("globalPromoName", globals2.get(0).getName());
-        
-        // Tổng hợp tất cả banner URLs từ các promotion, split theo dấu phẩy
-        java.util.List<String> allBanners2 = new java.util.ArrayList<>();
-        for (var promo : globals2) {
-            if (promo.getBanner() != null && !promo.getBanner().isBlank()) {
-                String[] urls = promo.getBanner().split(",");
-                for (String url : urls) {
-                    String trimmed = url.trim();
-                    if (!trimmed.isEmpty()) {
-                        allBanners2.add(trimmed);
-                    }
-                }
-            }
-        }
-        model.addAttribute("globalPromoBanners", allBanners2);
-    }
+		// Banner khuyến mãi toàn sàn
+		var globals2 = adminPromotionRepository.findActiveGlobalPromotions();
+		if (globals2 != null && !globals2.isEmpty()) {
+			model.addAttribute("globalPromoName", globals2.get(0).getName());
 
-	    return "customer/product";
+			// Tổng hợp tất cả banner URLs từ các promotion, split theo dấu phẩy
+			java.util.List<String> allBanners2 = new java.util.ArrayList<>();
+			for (var promo : globals2) {
+				if (promo.getBanner() != null && !promo.getBanner().isBlank()) {
+					String[] urls = promo.getBanner().split(",");
+					for (String url : urls) {
+						String trimmed = url.trim();
+						if (!trimmed.isEmpty()) {
+							allBanners2.add(trimmed);
+						}
+					}
+				}
+			}
+			model.addAttribute("globalPromoBanners", allBanners2);
+
+		}
+		return "customer/product";
+
 	}
-
 
 	@GetMapping("/contact")
 	public String contact(Model model, Authentication authentication) {
@@ -164,5 +159,5 @@ public class HomeController {
 			model.addAttribute("user", null);
 		}
 	}
-	
+
 }
