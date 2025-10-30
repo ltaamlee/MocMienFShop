@@ -92,7 +92,20 @@ public class VendorStoreController {
         store.setVendor(vendor);
         store.setLevel(level);
         store.setStoreName(req.getStoreName());
-        store.setAddress(req.getAddress());
+        // Build address string from structured fields if provided
+        String address = req.getAddress();
+        if ((address == null || address.isBlank())) {
+            StringBuilder sb = new StringBuilder();
+            if (req.getLine() != null && !req.getLine().isBlank()) sb.append(req.getLine());
+            if (req.getWard() != null && !req.getWard().isBlank()) sb.append(sb.length() > 0 ? ", " : "").append(req.getWard());
+            if (req.getDistrict() != null && !req.getDistrict().isBlank()) sb.append(sb.length() > 0 ? ", " : "").append(req.getDistrict());
+            if (req.getProvince() != null && !req.getProvince().isBlank()) sb.append(sb.length() > 0 ? ", " : "").append(req.getProvince());
+            address = sb.toString();
+        }
+        store.setAddress(address);
+        // Coordinates
+        if (req.getLatitude() != null) store.setLatitude(req.getLatitude());
+        if (req.getLongitude() != null) store.setLongitude(req.getLongitude());
         store.setAvatar(req.getAvatar());
         store.setCover(req.getCover());
         if (req.getFeatureImages() != null) {
