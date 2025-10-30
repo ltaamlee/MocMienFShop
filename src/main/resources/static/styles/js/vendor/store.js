@@ -1,4 +1,3 @@
-// store.js — tách riêng hoàn toàn khỏi HTML
 console.log("✅ store.js loaded!");
 let hasStore = false;
 
@@ -211,21 +210,6 @@ function renderStore(store) {
             <p>${store.address ?? ""}</p>
           </div>
         </div>
-      </td>
-
-      <td>
-        <div class="owner-info">
-          <div class="owner-avatar"><i class="fa fa-user"></i></div>
-          <div class="owner-details">
-            <h5>${store.ownerName ?? "-"}</h5>
-            <p>Chủ shop</p>
-          </div>
-        </div>
-      </td>
-
-      <td class="contact-info">
-        <p><i class="fa fa-phone"></i> <span>${store.ownerPhone ?? "-"}</span></p>
-        <p><i class="fa fa-envelope"></i> <span>${store.ownerEmail ?? "-"}</span></p>
       </td>
 
       <td>

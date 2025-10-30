@@ -77,4 +77,6 @@ public interface StoreRepository extends JpaRepository<Store, Integer>, JpaSpeci
 
 	List<Store> findByPointGreaterThanEqual(Integer point);
 
+	Optional<Store> findBySlug(String slug);
+
 }

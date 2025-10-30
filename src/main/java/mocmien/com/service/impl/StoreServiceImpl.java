@@ -1,25 +1,18 @@
 package mocmien.com.service.impl;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import mocmien.com.dto.response.store.AdminStoreResponse;
 import mocmien.com.dto.response.store.StoreStats;
-import mocmien.com.dto.response.users.UserStats;
 import mocmien.com.entity.Store;
 import mocmien.com.entity.User;
-import mocmien.com.enums.UserStatus;
 import mocmien.com.repository.StoreRepository;
 import mocmien.com.service.StoreService;
 
@@ -149,6 +142,11 @@ public class StoreServiceImpl implements StoreService {
 	public int updateAfterOrder(Integer storeId, BigDecimal revenue, BigDecimal rating, Integer points) {
 		return storeRepository.updateAfterOrder(storeId, revenue, rating, points);
 	}
+
+    @Override
+    public Optional<Store> findBySlug(String slug) {
+        return storeRepository.findBySlug(slug);
+    }
 
 	
 	@Override

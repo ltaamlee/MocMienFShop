@@ -149,7 +149,7 @@ function renderPromotionTable(items) {
 			}
 			pendingToggle = checkbox;
 			const willActivate = !checkbox.checked;
-			document.getElementById('activatePromotionActionText').innerText = willActivate ? 'kích hoạt' : 'vô hiệu hóa';
+			document.getElementById('activatePromotionActionText').innerText = willActivate ? 'vô hiệu hóa' : 'kích hoạt';
 			document.getElementById('activatePromotionName').innerText = checkbox.dataset.name || '';
 			openModal('activatePromotionModal');
 		});
