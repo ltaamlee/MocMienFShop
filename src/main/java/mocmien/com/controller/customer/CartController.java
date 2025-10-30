@@ -32,10 +32,23 @@ public class CartController {
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy người dùng"));
 
         List<CartItem> items = cartService.getCartByUser(user);
-        double total = cartService.getTotal(user);
+        double total = cartService.getTotal(user); // tổng sau khuyến mãi
+
+        // Tính tạm tính (giá gốc) và số tiền khuyến mãi
+        double subtotalOriginal = items.stream()
+                .mapToDouble(i -> i.getProduct().getPrice().doubleValue() * i.getQuantity())
+                .sum();
+        double discountAmount = Math.max(0, subtotalOriginal - total);
+        double discountPercent = subtotalOriginal > 0 ? (discountAmount / subtotalOriginal) * 100.0 : 0.0;
+
+        double finalTotal = Math.max(0, subtotalOriginal - discountAmount);
 
         model.addAttribute("items", items);
         model.addAttribute("total", total);
+        model.addAttribute("subtotalOriginal", subtotalOriginal);
+        model.addAttribute("discountAmount", discountAmount);
+        model.addAttribute("discountPercent", discountPercent);
+        model.addAttribute("finalTotal", finalTotal);
         return "customer/cart";
     }
 
