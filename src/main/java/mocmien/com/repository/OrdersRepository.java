@@ -35,6 +35,13 @@ public interface OrdersRepository extends JpaRepository<Orders, String>, JpaSpec
 	@EntityGraph(attributePaths = { "customer", "store" })
 	Optional<Orders> findByIdAndStore_Id(String id, Integer storeId);
 
+	// Shipper queries
+	List<Orders> findByDelivery_IdAndStatusAndShipperIsNull(Integer deliveryId, OrderStatus status);
+
+	List<Orders> findByShipper_IdAndStatusIn(Integer shipperId, List<OrderStatus> statuses);
+
+	Optional<Orders> findByIdAndShipper_Id(String id, Integer shipperId);
+
 	@Query("SELECT SUM(o.amountFromCustomer) FROM Orders o WHERE o.status = 'DELIVERED'")
 	Optional<BigDecimal> getAdminTotalRevenue(OrderStatus delivered);
 

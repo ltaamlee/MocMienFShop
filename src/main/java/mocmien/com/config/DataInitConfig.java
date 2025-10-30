@@ -57,6 +57,9 @@ public class DataInitConfig {
 
                 createOrUpdateUser(userService, roleRepository, userProfileRepository, passwordEncoder,
                         "vendor3@mocmien.com", "vendor3", "123456", "Lê Văn C", "0981000003", RoleName.VENDOR);
+                
+                createOrUpdateUser(userService, roleRepository, userProfileRepository, passwordEncoder,
+                        "shipper@mocmien.com", "shipper", "ship123", "Ngô Văn Shipper", "0909000009", RoleName.SHIPPER);
 
             } catch (Exception e) {
                 System.err.println("✗ Lỗi khi tạo hoặc cập nhật user: " + e.getMessage());

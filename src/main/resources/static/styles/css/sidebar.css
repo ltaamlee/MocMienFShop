@@ -119,3 +119,20 @@
 }
 
 
+/* Submenu nhỏ và chỉ hiển thị khi hover để không che form */
+.sidebar-submenu {
+    display: none;
+    list-style: none;
+    padding-left: 3.2rem;
+    margin: 0.25rem 0 0.5rem 0;
+}
+
+.sidebar-submenu li a {
+    font-size: 0.82rem;
+    padding: 0.35rem 0.5rem;
+    font-weight: 500;
+}
+
+.sidebar-menu li:hover > .sidebar-submenu {
+    display: block;
+}

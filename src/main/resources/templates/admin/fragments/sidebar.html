@@ -31,11 +31,16 @@
 							class="fas fa-box"></i></span> <span class="text">Sản phẩm</span>
 				</a></li>
 
-				<li><a th:href="@{/admin/promotion}"> <span class="icon"><i
-							class="fas fa-percent"></i></span> <span class="text">Khuyến mãi
-							<br> <br> Chiết khấu
-					</span>
-				</a></li>
+				<li>
+					<a th:href="@{/admin/promotion}"> 
+						<span class="icon"><i class="fas fa-percent"></i></span> 
+						<span class="text">Khuyến mãi</span>
+					</a>
+					<ul class="sidebar-submenu">
+						<li><a th:href="@{/admin/promotion}">Khuyến mãi toàn sàn</a></li>
+						<li><a th:href="@{/admin/promotion/stores}">Khuyến mãi cửa hàng</a></li>
+					</ul>
+				</li>
 
 				<li><a th:href="@{/admin/delivery}"> <span class="icon"><i
 							class="fas fa-truck"></i></span> <span class="text">Vận chuyển</span>

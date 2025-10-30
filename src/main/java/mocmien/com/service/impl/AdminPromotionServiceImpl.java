@@ -3,6 +3,7 @@ package mocmien.com.service.impl;
 import mocmien.com.dto.request.promotion.AdminPromitonCreateRequest;
 import mocmien.com.dto.response.admin.AdminPromotionStats;
 import mocmien.com.dto.response.promotion.AdminPromotionResponse;
+import mocmien.com.dto.response.promotion.AdminStorePromotionResponse;
 import mocmien.com.entity.Promotion;
 import mocmien.com.enums.PromotionStatus;
 import mocmien.com.enums.PromotionType;
@@ -38,7 +39,7 @@ public class AdminPromotionServiceImpl implements AdminPromotionService {
 		LocalDateTime soon = now.plusDays(3);
 
 		long total = adminPromotionRepo.count();
-		long active = adminPromotionRepo.countActive(now);
+		long active = adminPromotionRepo.countByStatus(PromotionStatus.ACTIVE);
 		long upcoming = adminPromotionRepo.countUpcoming(now);
 		long expired = adminPromotionRepo.countExpired(now);
 		long expiring = adminPromotionRepo.countExpiring(now, soon);
@@ -77,13 +78,77 @@ public class AdminPromotionServiceImpl implements AdminPromotionService {
 	public Page<AdminPromotionResponse> getPromotions(Pageable pageable, String keyword, String type, String status,
 			String fromDate, String toDate) {
 
-		Specification<Promotion> spec = createFilterSpecification(keyword, type, status, fromDate, toDate);
+        Specification<Promotion> spec = createFilterSpecification(keyword, type, status, fromDate, toDate)
+                .and((root, query, builder) -> builder.isNull(root.get("store")));
 
 		Page<Promotion> promotionEntities = adminPromotionRepo.findAll(spec, pageable);
 
 		// 3. Chuyển đổi Page<Entity> sang Page<Response DTO>
 		return promotionEntities.map(this::mapToAdminPromotionResponse);
 	}
+
+    @Override
+    public Page<AdminStorePromotionResponse> getStorePromotions(Pageable pageable, String keyword, String type,
+            String status, String fromDate, String toDate, Integer storeId) {
+
+        Specification<Promotion> spec = createFilterSpecification(keyword, type, status, fromDate, toDate)
+                .and((root, query, builder) -> builder.isNotNull(root.get("store")));
+
+        if (storeId != null) {
+            spec = spec.and((root, query, builder) -> builder.equal(root.get("store").get("id"), storeId));
+        }
+
+        Page<Promotion> promotionEntities = adminPromotionRepo.findAll(spec, pageable);
+
+        return promotionEntities.map(this::mapToAdminStorePromotionResponse);
+    }
+
+    @Override
+    public void banPromotion(Integer id) {
+        Promotion p = adminPromotionRepo.findById(id).orElseThrow(() -> new IllegalArgumentException("Khuyến mãi không tồn tại"));
+        p.setStatus(PromotionStatus.BANNED);
+        p.setIsActive(false);
+        adminPromotionRepo.save(p);
+    }
+
+    @Override
+    public void unbanPromotion(Integer id) {
+        Promotion p = adminPromotionRepo.findById(id).orElseThrow(() -> new IllegalArgumentException("Khuyến mãi không tồn tại"));
+        if (p.getStatus() == PromotionStatus.BANNED) {
+            // Khi bỏ cấm, đưa về INACTIVE để vendor có thể bật lại
+            p.setStatus(PromotionStatus.INACTIVE);
+            adminPromotionRepo.save(p);
+        }
+    }
+
+    @Override
+    public void activate(Integer id) {
+        Promotion p = adminPromotionRepo.findById(id).orElseThrow(() -> new IllegalArgumentException("Khuyến mãi không tồn tại"));
+        if (p.getStatus() == PromotionStatus.BANNED) {
+            throw new IllegalStateException("Khuyến mãi đã bị cấm, không thể kích hoạt");
+        }
+        // Chỉ cho ACTIVE nếu đang trong khung thời gian hợp lệ
+        LocalDateTime now = LocalDateTime.now();
+        if (p.getStartDate() != null && p.getEndDate() != null && !now.isBefore(p.getStartDate()) && !now.isAfter(p.getEndDate())) {
+            p.setStatus(PromotionStatus.ACTIVE);
+            p.setIsActive(true);
+        } else if (p.getStartDate() != null && now.isBefore(p.getStartDate())) {
+            p.setStatus(PromotionStatus.SCHEDULED);
+            p.setIsActive(true);
+        } else {
+            p.setStatus(PromotionStatus.EXPIRED);
+            p.setIsActive(false);
+        }
+        adminPromotionRepo.save(p);
+    }
+
+    @Override
+    public void deactivate(Integer id) {
+        Promotion p = adminPromotionRepo.findById(id).orElseThrow(() -> new IllegalArgumentException("Khuyến mãi không tồn tại"));
+        p.setStatus(PromotionStatus.INACTIVE);
+        p.setIsActive(false);
+        adminPromotionRepo.save(p);
+    }
 
 	// --- Logic tạo Specification ---
 	private Specification<Promotion> createFilterSpecification(String keyword, String type,  String status, String fromDate,
@@ -201,5 +266,21 @@ public class AdminPromotionServiceImpl implements AdminPromotionService {
 	        return PromotionStatus.ACTIVE;
 	    }
 	}
+
+    private AdminStorePromotionResponse mapToAdminStorePromotionResponse(Promotion promotion) {
+        AdminStorePromotionResponse resp = new AdminStorePromotionResponse();
+        resp.setId(promotion.getId());
+        resp.setName(promotion.getName());
+        resp.setType(promotion.getType());
+        resp.setValue(promotion.getValue());
+        resp.setStartDate(promotion.getStartDate());
+        resp.setEndDate(promotion.getEndDate());
+        resp.setStatus(promotion.getStatus() == null ? determineStatus(promotion) : promotion.getStatus());
+        if (promotion.getStore() != null) {
+            resp.setStoreId(promotion.getStore().getId());
+            resp.setStoreName(promotion.getStore().getStoreName());
+        }
+        return resp;
+    }
 
 }

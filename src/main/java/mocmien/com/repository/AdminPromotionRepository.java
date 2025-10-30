@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import mocmien.com.entity.Promotion;
+import mocmien.com.enums.PromotionStatus;
 
 @Repository
 public interface AdminPromotionRepository extends JpaRepository<Promotion, Integer>, JpaSpecificationExecutor<Promotion> {
@@ -25,5 +26,7 @@ public interface AdminPromotionRepository extends JpaRepository<Promotion, Integ
     long countExpiring(LocalDateTime now, LocalDateTime soon);
 
 	boolean existsByName(String name);
+
+	long countByStatus(PromotionStatus active);
 	
 }

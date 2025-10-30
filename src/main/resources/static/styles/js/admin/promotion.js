@@ -159,7 +159,9 @@ function renderPromotionTable(promotions) {
 		const displayValue = `${promoValue}${displayUnit}`;
 
 
-		tr.innerHTML = `
+        const isBanned = serverStatus === 'BANNED';
+        const isActive = serverStatus === 'ACTIVE';
+        tr.innerHTML = `
             <td>${stt}</td>
             <td>${escapeHTML(promo.name)}</td>
             <td>${promoType} (${displayValue})</td>
@@ -167,13 +169,10 @@ function renderPromotionTable(promotions) {
             <td>${formatDateTime(promo.startDate)}</td>
             <td>${formatDateTime(promo.endDate)}</td>
             <td>
-			<label class="switch">
-							<input type="checkbox"
-							       class="promo-toggle"
-							       data-id="${promo.id}"
-							       data-name="${promo.name}">
-								<span class="slider round"></span>
-							</label>
+            <label class="switch" title="Kích hoạt/Nhấc kích hoạt">
+                <input type="checkbox" class="promo-toggle" data-id="${promo.id}" ${isActive ? 'checked' : ''} ${isBanned ? 'disabled' : ''}>
+                <span class="slider round"></span>
+            </label>
                 <button class="btn-delete" data-id="${promo.id}" data-name="${escapeHTML(promo.name)}" title="Xóa">
                     <i class="fas fa-trash"></i>
                 </button>
@@ -348,17 +347,48 @@ document.addEventListener("DOMContentLoaded", function() {
 	// Lắng nghe form modal
 	promotionForm?.addEventListener("submit", savePromotion);
 
-	// Event Delegation cho các nút Xóa
-	tableBody?.addEventListener('click', function(e) {
-		const deleteBtn = e.target.closest('.btn-delete-promotion');
+    // Toggle activate/deactivate
+    tableBody?.addEventListener('change', async function(e) {
+        const toggle = e.target.closest('.promo-toggle');
+        if (toggle) {
+            const id = toggle.dataset.id;
+            try {
+                const endpoint = toggle.checked ? `/api/admin/promotion/${id}/activate` : `/api/admin/promotion/${id}/deactivate`;
+                const res = await fetch(endpoint, { method: 'PATCH' });
+                if (!res.ok) {
+                    const msg = await handleFetchError(res);
+                    throw new Error(msg);
+                }
+                loadPromotions(currentPage);
+                fetchPromotionStats();
+            } catch (err) {
+                alert(err.message || 'Lỗi cập nhật trạng thái');
+                loadPromotions(currentPage);
+            }
+        }
+    });
 
-		if (deleteBtn) {
-			e.preventDefault();
-			const id = deleteBtn.dataset.id;
-			const name = deleteBtn.dataset.name;
-			confirmDeletePromotion(id, name);
-		}
-	});
+    // Ban / Unban / Delete
+    tableBody?.addEventListener('click', async function(e) {
+        const banBtn = e.target.closest('.btn-ban');
+        const unbanBtn = e.target.closest('.btn-unban');
+        const deleteBtn = e.target.closest('.btn-delete');
+        if (banBtn) {
+            const id = banBtn.dataset.id;
+            const res = await fetch(`/api/admin/promotion/${id}/ban`, { method: 'PATCH' });
+            if (!res.ok) alert(await handleFetchError(res));
+            loadPromotions(currentPage); fetchPromotionStats();
+        } else if (unbanBtn) {
+            const id = unbanBtn.dataset.id;
+            const res = await fetch(`/api/admin/promotion/${id}/unban`, { method: 'PATCH' });
+            if (!res.ok) alert(await handleFetchError(res));
+            loadPromotions(currentPage); fetchPromotionStats();
+        } else if (deleteBtn) {
+            const id = deleteBtn.dataset.id;
+            const name = deleteBtn.dataset.name;
+            confirmDeletePromotion(id, name);
+        }
+    });
 
 	// Đóng modal khi click ra ngoài (nếu dùng modal custom)
 	window.addEventListener('click', function(event) {

@@ -28,10 +28,9 @@ public class AdminProductServiceImpl implements AdminProductService {
     // HÀM TIỆN ÍCH: Ánh xạ Entity sang DTO (Sử dụng Setter)
     // ----------------------------------------------------
     private ProductListItemResponse toListItemResponse(Product product) {
-        // Giả định ProductListItemResponse có constructor rỗng và setter
         ProductListItemResponse response = new ProductListItemResponse();
-        
-        // Gán giá trị bằng Setter
+ 
+        // Gán các giá trị cơ bản
         response.setId(product.getId());
         response.setProductName(product.getProductName());
         response.setPrice(product.getPrice());
@@ -39,9 +38,26 @@ public class AdminProductServiceImpl implements AdminProductService {
         response.setStock(product.getStock());
         response.setIsActive(product.getIsActive());
 
-        // Lấy thông tin từ các Entity liên quan (Store và Category)
+        // Gán tên Store và Category
         response.setStoreName(product.getStore() != null ? product.getStore().getStoreName() : "N/A");
+        response.setStoreId(product.getStore().getId());
         response.setCategoryName(product.getCategory() != null ? product.getCategory().getCategoryName() : "N/A");
+        
+        // -----------------------------------------------------------------
+        // 🎯 LOGIC MỚI: TÌM VÀ GÁN DEFAULT IMAGE URL
+        // -----------------------------------------------------------------
+        if (product.getImages() != null) {
+            // Tìm ảnh có isDefault = true và lấy URL của nó
+            String defaultImageUrl = product.getImages().stream()
+                .filter(img -> img.getIsDefault() != null && img.getIsDefault())
+                .findFirst()
+                .map(img -> img.getImageUrl())
+                .orElse(null); // Trả về null nếu không tìm thấy ảnh mặc định
+                
+            // Gán URL ảnh mặc định
+            response.setDefaultImage(defaultImageUrl);
+        }
+        // -----------------------------------------------------------------
         
         return response;
     }

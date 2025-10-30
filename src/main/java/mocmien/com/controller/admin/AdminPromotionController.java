@@ -12,6 +12,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -21,6 +23,7 @@ import jakarta.validation.Valid;
 import mocmien.com.dto.request.promotion.AdminPromitonCreateRequest;
 import mocmien.com.dto.response.admin.AdminPromotionStats;
 import mocmien.com.dto.response.promotion.AdminPromotionResponse;
+import mocmien.com.dto.response.promotion.AdminStorePromotionResponse;
 import mocmien.com.entity.Promotion;
 import mocmien.com.service.AdminPromotionService;
 
@@ -86,6 +89,79 @@ public class AdminPromotionController {
             Map<String, String> error = new HashMap<>();
             error.put("error", "Lỗi máy chủ khi tạo khuyến mãi: " + e.getMessage());
             return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    // DANH SÁCH KHUYẾN MÃI CỦA CỬA HÀNG (ADMIN THEO DÕI)
+    @GetMapping("/stores")
+    public ResponseEntity<Page<AdminStorePromotionResponse>> getStorePromotions(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false) String keyword,
+            @RequestParam(required = false) String type,
+            @RequestParam(required = false) String status,
+            @RequestParam(defaultValue = "createdAt,desc") String sort,
+            @RequestParam(required = false) String fromDate,
+            @RequestParam(required = false) String toDate,
+            @RequestParam(required = false) Integer storeId) {
+
+        String[] sortParams = sort.split(",");
+        Sort sorting = Sort.by(Sort.Direction.fromString(sortParams[1]), sortParams[0]);
+        Pageable pageable = PageRequest.of(page, size, sorting);
+        Page<AdminStorePromotionResponse> promotions = adminPromotionService.getStorePromotions(
+                pageable, keyword, type, status, fromDate, toDate, storeId);
+        return ResponseEntity.ok(promotions);
+    }
+
+    // CẤM KHUYẾN MÃI CỦA CỬA HÀNG
+    @PatchMapping("/{id}/ban")
+    public ResponseEntity<?> banPromotion(@PathVariable Integer id) {
+        try {
+            adminPromotionService.banPromotion(id);
+            return ResponseEntity.noContent().build();
+        } catch (IllegalArgumentException e) {
+            Map<String, String> error = new HashMap<>();
+            error.put("error", e.getMessage());
+            return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    // BỎ CẤM KHUYẾN MÃI
+    @PatchMapping("/{id}/unban")
+    public ResponseEntity<?> unbanPromotion(@PathVariable Integer id) {
+        try {
+            adminPromotionService.unbanPromotion(id);
+            return ResponseEntity.noContent().build();
+        } catch (IllegalArgumentException e) {
+            Map<String, String> error = new HashMap<>();
+            error.put("error", e.getMessage());
+            return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    // KÍCH HOẠT
+    @PatchMapping("/{id}/activate")
+    public ResponseEntity<?> activate(@PathVariable Integer id) {
+        try {
+            adminPromotionService.activate(id);
+            return ResponseEntity.noContent().build();
+        } catch (IllegalArgumentException | IllegalStateException e) {
+            Map<String, String> error = new HashMap<>();
+            error.put("error", e.getMessage());
+            return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    // NGỪNG KÍCH HOẠT
+    @PatchMapping("/{id}/deactivate")
+    public ResponseEntity<?> deactivate(@PathVariable Integer id) {
+        try {
+            adminPromotionService.deactivate(id);
+            return ResponseEntity.noContent().build();
+        } catch (IllegalArgumentException e) {
+            Map<String, String> error = new HashMap<>();
+            error.put("error", e.getMessage());
+            return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
         }
     }
 }

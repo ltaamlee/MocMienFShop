@@ -234,6 +234,10 @@ public class VendorPromotionServiceImpl implements VendorPromotionService {
 		Promotion p = promoRepo.findByIdAndStore(id, store)
 				.orElseThrow(() -> new NoSuchElementException("Promotion không tồn tại"));
 
+        if (p.getStatus() == PromotionStatus.BANNED && status == PromotionStatus.ACTIVE) {
+            throw new IllegalStateException("Khuyến mãi đã bị cấm bởi Admin, không thể kích hoạt");
+        }
+
 		if (p.isExpiredNow()) {
 			p.setStatus(PromotionStatus.EXPIRED);
 		} else {

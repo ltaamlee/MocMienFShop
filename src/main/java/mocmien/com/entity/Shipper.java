@@ -66,6 +66,16 @@ public class Shipper {
     @OneToMany(mappedBy = "shipper", fetch = FetchType.LAZY)
     private List<Orders> orders; // Danh sách đơn hàng mà shipper đang phụ trách
 
+    // Vị trí hiện tại (tùy chọn)
+    @Column(name = "currentLat")
+    private Double currentLat;
+
+    @Column(name = "currentLng")
+    private Double currentLng;
+
+    @Column(name = "currentAddress", columnDefinition = "NVARCHAR(500)")
+    private String currentAddress;
+
 
     @Column(name = "createAt", nullable = false)
     private LocalDateTime createAt;
@@ -83,4 +93,135 @@ public class Shipper {
     protected void onUpdate() {
         updateAt = LocalDateTime.now();
     }
+
+	public Integer getId() {
+		return id;
+	}
+
+	public void setId(Integer id) {
+		this.id = id;
+	}
+
+	public User getUser() {
+		return user;
+	}
+
+	public void setUser(User user) {
+		this.user = user;
+	}
+
+	public Delivery getDelivery() {
+		return delivery;
+	}
+
+	public void setDelivery(Delivery delivery) {
+		this.delivery = delivery;
+	}
+
+	public String getVehicleNumber() {
+		return vehicleNumber;
+	}
+
+	public void setVehicleNumber(String vehicleNumber) {
+		this.vehicleNumber = vehicleNumber;
+	}
+
+	public String getVehicleType() {
+		return vehicleType;
+	}
+
+	public void setVehicleType(String vehicleType) {
+		this.vehicleType = vehicleType;
+	}
+
+	public String getLicense() {
+		return license;
+	}
+
+	public void setLicense(String license) {
+		this.license = license;
+	}
+
+	public BigDecimal getRating() {
+		return rating;
+	}
+
+	public void setRating(BigDecimal rating) {
+		this.rating = rating;
+	}
+
+	public Integer getTotalDelivery() {
+		return totalDelivery;
+	}
+
+	public void setTotalDelivery(Integer totalDelivery) {
+		this.totalDelivery = totalDelivery;
+	}
+
+	public BigDecimal geteWallet() {
+		return eWallet;
+	}
+
+	public void seteWallet(BigDecimal eWallet) {
+		this.eWallet = eWallet;
+	}
+
+	public Boolean getIsActive() {
+		return isActive;
+	}
+
+	public void setIsActive(Boolean isActive) {
+		this.isActive = isActive;
+	}
+
+	public List<Orders> getOrders() {
+		return orders;
+	}
+
+	public void setOrders(List<Orders> orders) {
+		this.orders = orders;
+	}
+
+	public Double getCurrentLat() {
+		return currentLat;
+	}
+
+	public void setCurrentLat(Double currentLat) {
+		this.currentLat = currentLat;
+	}
+
+	public Double getCurrentLng() {
+		return currentLng;
+	}
+
+	public void setCurrentLng(Double currentLng) {
+		this.currentLng = currentLng;
+	}
+
+	public String getCurrentAddress() {
+		return currentAddress;
+	}
+
+	public void setCurrentAddress(String currentAddress) {
+		this.currentAddress = currentAddress;
+	}
+
+	public LocalDateTime getCreateAt() {
+		return createAt;
+	}
+
+	public void setCreateAt(LocalDateTime createAt) {
+		this.createAt = createAt;
+	}
+
+	public LocalDateTime getUpdateAt() {
+		return updateAt;
+	}
+
+	public void setUpdateAt(LocalDateTime updateAt) {
+		this.updateAt = updateAt;
+	}
+    
+    
+    
 }

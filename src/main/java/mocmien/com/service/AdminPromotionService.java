@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable;
 import jakarta.validation.Valid;
 import mocmien.com.dto.request.promotion.AdminPromitonCreateRequest;
 import mocmien.com.dto.response.admin.AdminPromotionStats;
+import mocmien.com.dto.response.promotion.AdminStorePromotionResponse;
 import mocmien.com.dto.response.promotion.AdminPromotionResponse;
 import mocmien.com.entity.Promotion;
 
@@ -17,5 +18,16 @@ public interface AdminPromotionService {
 
 	Page<AdminPromotionResponse> getPromotions(Pageable pageable, String keyword, String type, String status, String fromDate,
 			String toDate);
+
+    Page<AdminStorePromotionResponse> getStorePromotions(Pageable pageable, String keyword, String type, String status,
+            String fromDate, String toDate, Integer storeId);
+
+    void banPromotion(Integer id);
+
+    void unbanPromotion(Integer id);
+
+    void activate(Integer id);
+
+    void deactivate(Integer id);
 
 }

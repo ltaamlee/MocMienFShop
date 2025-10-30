@@ -120,6 +120,20 @@ public class AdminController {
 		return "admin/promotion";
 	}
 
+	// Theo dõi khuyến mãi cửa hàng (admin)
+	@GetMapping("/promotion/stores")
+	public String promotionStores(@AuthenticationPrincipal CustomUserDetails userDetails, Model model) {
+
+		if (userDetails != null) {
+			Optional<User> userOpt = userService.findByUsername(userDetails.getUsername());
+			userOpt.ifPresent(user -> model.addAttribute("user", user));
+		}
+
+		model.addAttribute("promotionTypes", PromotionType.values());
+		model.addAttribute("promotionStatuses", PromotionStatus.values());
+		return "admin/promotion_stores";
+	}
+
 	// Quản lý đơn vị vận chuyển
 	@GetMapping("/delivery")
 	public String delivery(@AuthenticationPrincipal CustomUserDetails userDetails, Model model) {

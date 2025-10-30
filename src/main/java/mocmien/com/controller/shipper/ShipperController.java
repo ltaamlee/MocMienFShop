@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -32,7 +33,8 @@ public class ShipperController {
 
 
 	// Trang chủ
-	@GetMapping("/dashboard")
+    @GetMapping("/dashboard")
+    @PreAuthorize("hasRole('SHIPPER')")
 	public String dashboard(@AuthenticationPrincipal CustomUserDetails userDetails, Model model) {
 
 		if (userDetails != null) {
@@ -40,11 +42,12 @@ public class ShipperController {
 			userOpt.ifPresent(user -> model.addAttribute("user", user));
 		}
 
-		return "shipper/dashboard";
+        return "shipper/app";
 	}
 
 	// Đơn hàng
-	@GetMapping("/order")
+    @GetMapping("/order")
+    @PreAuthorize("hasRole('SHIPPER')")
 	public String order(@AuthenticationPrincipal CustomUserDetails userDetails, Model model) {
 
 		if (userDetails != null) {
@@ -52,11 +55,12 @@ public class ShipperController {
 			userOpt.ifPresent(user -> model.addAttribute("user", user));
 		}
 
-		return "shipper/order";
+        return "shipper/app";
 	}
 
 	// Đơn hàng
-	@GetMapping("/profile")
+    @GetMapping("/profile")
+    @PreAuthorize("hasRole('SHIPPER')")
 	public String profile(@AuthenticationPrincipal CustomUserDetails userDetails, Model model) {
 
 		if (userDetails != null) {
@@ -64,6 +68,6 @@ public class ShipperController {
 			userOpt.ifPresent(user -> model.addAttribute("user", user));
 		}
 
-		return "shipper/profile";
+        return "shipper/profile";
 	}
 }
