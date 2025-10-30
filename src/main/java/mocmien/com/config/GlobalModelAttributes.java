@@ -25,11 +25,11 @@ public class GlobalModelAttributes {
 	public void addLoggedInUser(Model model, Authentication authentication) {
 		if (authentication != null && authentication.isAuthenticated()) {
 			String username = authentication.getName();
-			User user = userService.findByUsername(username).orElse(null);
-			model.addAttribute("user", user);
-			model.addAttribute("avatarUrl", user != null ? user.getAvatar() : null);
+			User loggedInUser = userService.findByUsername(username).orElse(null);
+			model.addAttribute("loggedInUser", loggedInUser);  // ✅ Đổi tên để không conflict
+			model.addAttribute("avatarUrl", loggedInUser != null ? loggedInUser.getAvatar() : null);
 		} else {
-			model.addAttribute("user", null);
+			model.addAttribute("loggedInUser", null);
 			model.addAttribute("avatarUrl", null);
 		}
 

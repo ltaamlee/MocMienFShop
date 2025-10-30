@@ -76,12 +76,7 @@ public class VendorController {
 	// Cài đặt
 	@GetMapping("/profile")
 	public String profile(@AuthenticationPrincipal CustomUserDetails userDetails, Model model) {
-
-		if (userDetails != null) {
-			Optional<User> userOpt = userService.findByUsername(userDetails.getUsername());
-			userOpt.ifPresent(user -> model.addAttribute("user", user));
-		}
-
+		addUserToModel(userDetails, model);
 		return "vendor/profile";
 	}
 }

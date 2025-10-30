@@ -124,6 +124,31 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public Optional<User> register(User user, RoleName roleName, String fullName) {
 
+		// ✅ Validate user object trước
+		if (user == null) {
+			throw new RuntimeException("Dữ liệu người dùng không hợp lệ!");
+		}
+		
+		if (user.getEmail() == null || user.getEmail().trim().isEmpty()) {
+			throw new RuntimeException("Email không được để trống!");
+		}
+		
+		if (user.getUsername() == null || user.getUsername().trim().isEmpty()) {
+			throw new RuntimeException("Username không được để trống!");
+		}
+		
+		if (user.getPassword() == null || user.getPassword().trim().isEmpty()) {
+			throw new RuntimeException("Mật khẩu không được để trống!");
+		}
+		
+		if (user.getPhone() == null || user.getPhone().trim().isEmpty()) {
+			throw new RuntimeException("Số điện thoại không được để trống!");
+		}
+		
+		if (fullName == null || fullName.trim().isEmpty()) {
+			throw new RuntimeException("Họ tên không được để trống!");
+		}
+
 		// Kiểm tra tồn tại
 		if (userRepository.existsByEmail(user.getEmail())) {
 			throw new RuntimeException("Email đã tồn tại!");

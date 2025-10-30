@@ -1,6 +1,7 @@
 package mocmien.com.controller.vendor;
 
 import java.math.BigDecimal;
+import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -62,6 +63,14 @@ public class VendorStoreController {
      * - ví/điểm/rating = 0
      * - isActive=false (chờ duyệt), isOpen theo form nhưng chưa hiển thị nếu chưa active
      */
+    
+    //Hàm hỗ trợ tạo slug
+    private String generateSlug(String input) {
+		String normalized = Normalizer.normalize(input, Normalizer.Form.NFD);
+		String slug = normalized.replaceAll("\\p{InCombiningDiacriticalMarks}+", "").toLowerCase()
+				.replaceAll("[^a-z0-9\\s]", "").replaceAll("\\s+", "-").trim();
+		return slug;
+	}
     @PostMapping("/register")
     public ResponseEntity<?> registerStore(@RequestBody StoreRegisterRequest req,
                                            Authentication authentication) {
@@ -102,6 +111,8 @@ public class VendorStoreController {
         store.setActive(false); // chờ duyệt
         store.setOpen(req.getIsOpen() != null && req.getIsOpen());
 
+        store.setSlug(generateSlug(req.getStoreName()));
+        
         Store saved = storeService.save(store);
         return ResponseEntity.ok(buildStoreResponse(saved));
     }
@@ -193,6 +204,7 @@ public class VendorStoreController {
         return r;
     }
     
+
     
     @PatchMapping("/open")
     public ResponseEntity<?> setOpen(@RequestBody ToggleOpenRequest req, Authentication authentication) {
