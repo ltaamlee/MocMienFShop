@@ -97,7 +97,8 @@ public class ProductServiceImpl implements ProductService {
 			dto.setCategoryName(p.getCategory() != null ? p.getCategory().getCategoryName() : null);
 			dto.setPrice(p.getPrice());
 			dto.setPromotionalPrice(p.getPromotionalPrice());
-			dto.setStock(p.getStock());
+            dto.setStock(p.getStock());
+            dto.setSold(p.getSold());
 			dto.setStatus(statusOf(p));
 			dto.setIsActive(p.getIsActive());
 			dto.setDefaultImage((p.getImages() == null) ? null
@@ -122,7 +123,8 @@ public class ProductServiceImpl implements ProductService {
 		dto.setPrice(p.getPrice());
 		dto.setPromotionalPrice(p.getPromotionalPrice());
 		dto.setSize(p.getSize());
-		dto.setStock(p.getStock());
+            dto.setStock(p.getStock());
+            dto.setSold(p.getSold());
 		dto.setSold(p.getSold());
 		dto.setStatus(statusOf(p));
 		dto.setIsActive(p.getIsActive());
