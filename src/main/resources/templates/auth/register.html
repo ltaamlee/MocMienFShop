@@ -17,59 +17,66 @@
 		<div class="register-card">
 			<h2>Mộc Miên</h2>
 
-			<form th:action="@{/register}" th:object="${user}" method="post">
-				<!-- Hiển thị lỗi -->
-				<div class="form-group full-width">
+		<form th:action="@{/register}" th:object="${registerRequest}" method="post">
+			<!-- Hiển thị lỗi -->
+			<div class="form-group full-width">
 
-					<div th:if="${error}" class="alert alert-error">
-						<span th:text="${error}"></span>
-					</div>
-
-
-					<!-- Hiển thị thành công -->
-					<div th:if="${success}" class="alert alert-success">
-						<span th:text="${success}"></span>
-					</div>
+				<div th:if="${error}" class="alert alert-danger">
+					<span th:text="${error}"></span>
 				</div>
 
-				<!-- Username -->
-				<div class="form-group full-width">
-
-					<div class="form-group">
-						<label for="username">Tên đăng nhập</label> <input type="text"
-							id="username" th:field="*{username}" required>
-					</div>
+				<!-- Hiển thị thành công -->
+				<div th:if="${success}" class="alert alert-success">
+					<span th:text="${success}"></span>
 				</div>
+			</div>
 
-				<!-- Full name -->
-				<div class="form-group full-width">
-
-					<div class="form-group">
-						<label for="fullName">Họ và tên</label> <input type="text"
-							id="fullName" name="fullName" required>
-					</div>
+			<!-- Username -->
+			<div class="form-group full-width">
+				<div class="form-group">
+					<label for="username">Tên đăng nhập</label>
+					<input type="text" id="username" th:field="*{username}" required>
+					<div class="error-message" th:if="${#fields.hasErrors('username')}" 
+						 th:errors="*{username}"></div>
 				</div>
+			</div>
 
-				<!-- Email -->
-				<div class="form-group full-width">
-					<label for="email">Email</label> <input type="email" id="email"
-						th:field="*{email}" required>
+			<!-- Full name -->
+			<div class="form-group full-width">
+				<div class="form-group">
+					<label for="fullName">Họ và tên</label>
+					<input type="text" id="fullName" th:field="*{fullName}" required>
+					<div class="error-message" th:if="${#fields.hasErrors('fullName')}" 
+						 th:errors="*{fullName}"></div>
 				</div>
+			</div>
 
-				<!-- Password -->
-				<div class="form-group full-width">
-					<label for="password">Mật khẩu</label> <input type="password"
-						id="password" th:field="*{password}" required>
-				</div>
+			<!-- Email -->
+			<div class="form-group full-width">
+				<label for="email">Email</label>
+				<input type="email" id="email" th:field="*{email}" required>
+				<div class="error-message" th:if="${#fields.hasErrors('email')}" 
+					 th:errors="*{email}"></div>
+			</div>
 
-				<!-- Phone -->
-				<div class="form-group full-width">
-					<label for="phone">Số điện thoại</label> <input type="text"
-						id="phone" th:field="*{phone}" required>
-				</div>
+			<!-- Password -->
+			<div class="form-group full-width">
+				<label for="password">Mật khẩu</label>
+				<input type="password" id="password" th:field="*{password}" required>
+				<div class="error-message" th:if="${#fields.hasErrors('password')}" 
+					 th:errors="*{password}"></div>
+			</div>
 
-				<button type="submit" class="btn">Đăng ký</button>
-			</form>
+			<!-- Phone -->
+			<div class="form-group full-width">
+				<label for="phone">Số điện thoại</label>
+				<input type="text" id="phone" th:field="*{phone}" required>
+				<div class="error-message" th:if="${#fields.hasErrors('phone')}" 
+					 th:errors="*{phone}"></div>
+			</div>
+
+			<button type="submit" class="btn">Đăng ký</button>
+		</form>
 
 			<div class="divider">hoặc</div>
 

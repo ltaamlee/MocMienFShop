@@ -419,3 +419,22 @@ body, html {
         max-width: 100px;
     }
 }
+
+/* ========== VALIDATION ERROR MESSAGES ========== */
+.error-message {
+    color: #e74c3c;
+    font-size: 0.85em;
+    margin-top: 5px;
+    display: block;
+    font-weight: 500;
+}
+
+.form-group input.error,
+.form-group select.error {
+    border-color: #e74c3c !important;
+}
+
+.form-group input:invalid:not(:focus),
+.form-group select:invalid:not(:focus) {
+    border-color: #e74c3c;
+}

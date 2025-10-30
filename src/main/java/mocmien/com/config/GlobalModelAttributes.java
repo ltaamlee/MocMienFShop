@@ -26,7 +26,7 @@ public class GlobalModelAttributes {
 		if (authentication != null && authentication.isAuthenticated()) {
 			String username = authentication.getName();
 			User loggedInUser = userService.findByUsername(username).orElse(null);
-			model.addAttribute("loggedInUser", loggedInUser);  // ✅ Đổi tên để không conflict
+			model.addAttribute("loggedInUser", loggedInUser); 
 			model.addAttribute("avatarUrl", loggedInUser != null ? loggedInUser.getAvatar() : null);
 		} else {
 			model.addAttribute("loggedInUser", null);
