@@ -22,6 +22,8 @@ public class ProductRowVM {
 		this.trangThai = trangThai;
 		this.trangThaiText = trangThaiText;
 	}
+	
+	
 
 	public Integer getMaSP() {
 		return maSP;
@@ -70,4 +72,7 @@ public class ProductRowVM {
 	public void setTrangThaiText(String trangThaiText) {
 		this.trangThaiText = trangThaiText;
 	}
+	
+
+
 }

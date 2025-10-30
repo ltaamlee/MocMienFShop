@@ -1,0 +1,192 @@
+/* Toàn trang */
+body {
+  font-family: 'Montserrat', sans-serif;
+  background: #fafafa;
+  font-size: 0.95rem; /* Giữ cỡ chữ đồng bộ toàn site */
+  color: #333;
+}
+
+/* Layout hai cột: sidebar trái + nội dung phải */
+.account-layout {
+  display: flex;
+  align-items: flex-start;
+  gap: 30px;
+  width: 100%;
+  box-sizing: border-box;
+  margin-top: 150px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+  padding-top: calc(var(--header-height) + 20px);
+  margin-bottom: 10px;
+}
+
+/* Sidebar chiếm 20%, nội dung 80% */
+.account-sidebar {
+  flex: 0 0 20%;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  padding: 20px;
+  font-size: 0.9rem;
+}
+
+/* Nội dung chính */
+.account-content {
+  flex: 1;
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+.order-detail-page {
+    background: #fff6f7;
+    padding: 1.5rem;
+    border-radius: 16px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    font-family: 'Montserrat', sans-serif;
+}
+
+/* === Card thông tin === */
+.order-detail-card h2 {
+    font-size: 1.3rem;
+    color: #333;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+.info-box {
+    background: #fff;
+    border: 1px solid #f3cfd4;
+    border-radius: 10px;
+    padding: 1rem 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.info-box p {
+    margin: 0.4rem 0;
+    font-size: 0.95rem;
+    color: #444;
+}
+
+/* === Bảng sản phẩm === */
+.order-detail-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+}
+
+.order-detail-table th,
+.order-detail-table td {
+    padding: 10px 12px;
+    border-bottom: 1px solid #eee;
+    text-align: left;
+}
+
+.order-detail-table th {
+    background: #fff0f2;
+    color: #555;
+    font-weight: 600;
+}
+
+.order-detail-table img {
+    width: 80px;        /* 👈 chiều rộng ảnh cố định */
+    height: 80px;       /* 👈 chiều cao cố định */
+    object-fit: cover;  /* giữ tỉ lệ, cắt tràn nếu cần */
+    border-radius: 8px;
+    display: block;
+}
+/* --- Bỏ gạch chân và màu ở link sản phẩm --- */
+.product-link {
+    text-decoration: none;           /* Bỏ gạch chân */
+    color: inherit;                  /* Giữ nguyên màu chữ của cha */
+    cursor: pointer;                 /* Con trỏ bàn tay khi hover */
+}
+
+/* Khi hover hoặc click vẫn không đổi màu */
+.product-link:hover,
+.product-link:active,
+.product-link:focus,
+.product-link:visited {
+    text-decoration: none;
+    color: inherit;
+}
+
+/* === Tổng tiền === */
+.total {
+    text-align: right;
+    font-weight: 600;
+    margin-top: 1rem;
+    color: #222;
+}
+
+/* === Nút quay lại === */
+.btn-back {
+    display: inline-block;
+    margin-top: 1.2rem;
+    color: #d16b77;
+    font-weight: 500;
+    text-decoration: none;
+    transition: 0.2s;
+    font-size: 0.95rem;
+}
+
+.btn-back:hover {
+    text-decoration: underline;
+}
+
+/* === Responsive === */
+@media (max-width: 992px) {
+    .account-layout {
+        flex-direction: column;
+    }
+
+    .order-detail-page {
+        padding: 1rem;
+    }
+
+    .order-detail-table th,
+    .order-detail-table td {
+        padding: 8px;
+        font-size: 0.85rem;
+    }
+}
+
+/* === Tổng kết đơn hàng (căn phải) === */
+.order-summary-wrapper {
+  display: flex;
+  justify-content: flex-end; /* đẩy toàn bộ sang phải */
+  margin-top: 1.5rem;
+}
+
+.order-summary {
+  width: 320px; /* cố định độ rộng để đẹp */
+  border-top: 2px solid #f4d6da;
+  padding-top: 1rem;
+  font-size: 0.95rem;
+  text-align: right;
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  margin: 0.4rem 0;
+  color: #444;
+}
+
+.summary-row.total-row {
+  border-top: 1px dashed #f1b8bd;
+  padding-top: 0.6rem;
+  margin-top: 0.6rem;
+  font-weight: 600;
+  color: #222;
+  font-size: 1rem;
+}
+
+main {
+  width: 100% !important;
+  max-width: 100% !important;
+  padding: 0 !important;
+  margin: 0 auto !important;
+  display: block !important;
+  margin-top: 150px;
+}

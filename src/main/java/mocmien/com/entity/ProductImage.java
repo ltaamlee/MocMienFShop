@@ -59,7 +59,6 @@ public class ProductImage {
         updateAt = LocalDateTime.now();
     }
 
-
 	public Integer getId() {
 		return id;
 	}

@@ -9,13 +9,11 @@
 }
 
 .cart-page {
-  max-width: 1500px;            /* 🔹 mở rộng tổng chiều ngang */
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
   gap: 1rem;                    /* 🔹 thu hẹp khoảng cách giữa 2 khối */
-  margin: 2rem auto;
-  padding: 20px 40px;           /* 🔹 canh lề đều hai bên */
+
 }
 
 /* Cột trái: danh sách sản phẩm */

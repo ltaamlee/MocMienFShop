@@ -17,6 +17,8 @@ import org.springframework.stereotype.Repository;
 import mocmien.com.entity.Orders;
 import mocmien.com.entity.Shipper;
 import mocmien.com.entity.Store;
+import mocmien.com.entity.User;
+import mocmien.com.entity.UserProfile;
 import mocmien.com.enums.OrderStatus;
 
 @Repository
@@ -64,4 +66,8 @@ public interface OrdersRepository extends JpaRepository<Orders, String>, JpaSpec
 			+ "GROUP BY YEAR(o.createdAt), MONTH(o.createdAt) " + "ORDER BY orderYear ASC, orderMonth ASC")
 	List<Object[]> findMonthlyRevenue(@Param("status") OrderStatus status, @Param("startDate") LocalDateTime startDate,
 			@Param("endDate") LocalDateTime endDate);
+
+	List<Orders> findByCustomer(UserProfile customer);
+
+	List<Orders> findByCustomerAndStatus(UserProfile customer, OrderStatus status);
 }

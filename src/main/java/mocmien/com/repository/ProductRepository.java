@@ -11,6 +11,7 @@ import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import mocmien.com.entity.Category;
@@ -143,4 +144,6 @@ public interface ProductRepository extends JpaRepository<Product, Integer>, JpaS
 
     long countByCategory_Id(Integer categoryId);
 
+    @Query("SELECT p FROM Product p WHERE p.category.id IN :ids AND p.isActive = true")
+    Page<Product> findByCategoryIds(@Param("ids") List<Integer> ids, Pageable pageable);
 }

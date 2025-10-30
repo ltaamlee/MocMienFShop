@@ -12,5 +12,7 @@ import mocmien.com.entity.UserProfile;
 public interface UserProfileRepository extends JpaRepository<UserProfile, Integer>{
 
     Optional<UserProfile> findByUser(User user);
+    
+    Optional<UserProfile> findByUser_Username(String username);
 
 }

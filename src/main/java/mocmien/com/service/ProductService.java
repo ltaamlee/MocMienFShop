@@ -12,6 +12,10 @@ import mocmien.com.dto.response.product.ProductListItemResponse;
 
 import mocmien.com.dto.product.ProductRowVM;
 
+import mocmien.com.dto.product.ProductRowVM;
+
+import mocmien.com.dto.response.product.ProductDetailResponse;
+import mocmien.com.dto.response.product.ProductListItemResponse;
 import mocmien.com.entity.Category;
 import mocmien.com.entity.Product;
 import mocmien.com.entity.Store;
@@ -56,10 +60,6 @@ public interface ProductService {
     long countDiscounted();
     long countOutOfStock();
     BigDecimal averageRatingByStore(Store store);
-    
-    //=================================================
     List<ProductRowVM> getAllProductRows();
     ProductDetailResponse getProductDetailById(Integer id);
-
 }
-

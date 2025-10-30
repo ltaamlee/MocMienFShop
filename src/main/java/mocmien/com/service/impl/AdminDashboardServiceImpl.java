@@ -90,8 +90,7 @@ public class AdminDashboardServiceImpl implements AdminDashboardService {
 			}
 		}
 
-		return new AdminRecentOrder(order.getId(), customerName, order.getCreatedAt(), // Đảm bảo getter là
-																						// getCreatedAt()
+		return new AdminRecentOrder(order.getId(), customerName, order.getCreatedAt(),
 				order.getStatus(), order.getAmountFromCustomer());
 	}
 

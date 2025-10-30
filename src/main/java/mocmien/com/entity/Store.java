@@ -235,5 +235,13 @@ public class Store {
 		this.updatedAt = updateAt;
 	}
 
+    public String getSlug() {
+        return slug;
+    }
+
+    public void setSlug(String slug) {
+        this.slug = slug;
+    }
+
 	
 }

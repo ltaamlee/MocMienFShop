@@ -104,12 +104,9 @@ function renderProductPagination(data) {
 	const totalPages = Math.max(1, data.totalPages);
 	const currentPage = data.number;
 
-	// Không hiển thị nếu chỉ có 1 trang
-	if (totalPages <= 1) return;
-
 	// Nút Previous (Trước)
 	const prevLink = document.createElement("a");
-	prevLink.innerHTML = '&laquo; Trước';
+	prevLink.innerHTML = '&laquo';
 	prevLink.href = "#";
 	if (currentPage === 0) {
 		prevLink.classList.add("disabled");
@@ -129,8 +126,7 @@ function renderProductPagination(data) {
 			addProdPageLink(prodPagination, i, currentPage);
 		}
 	} else {
-		// Hiển thị logic có dấu "..."
-		addProdPageLink(prodPagination, 0, currentPage); // Luôn hiển thị trang 1
+		addProdPageLink(prodPagination, 0, currentPage); 
 		
 		if (currentPage > 3) addProdDots(prodPagination);
 
@@ -151,7 +147,7 @@ function renderProductPagination(data) {
 
 	// Nút Next (Sau)
 	const nextLink = document.createElement("a");
-	nextLink.innerHTML = 'Sau &raquo;';
+	nextLink.innerHTML = '&raquo;';
 	nextLink.href = "#";
 	if (currentPage === totalPages - 1) {
 		nextLink.classList.add("disabled");

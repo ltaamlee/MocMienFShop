@@ -3,15 +3,15 @@
 	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
 	layout:decorate="~{customer/layout}">
 <head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title th:text="${product.tenSP}"></title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title th:text="${product.productName}"></title>
 
-	<th:block layout:fragment="styles">
-		<link rel="stylesheet" href="/styles/css/customer/base.css">
-		<link rel="stylesheet" href="/styles/css/customer/product-detail.css">
-		<link rel="stylesheet" href="/styles/css/customer/product.css">
-	</th:block>
+<th:block layout:fragment="styles">
+	<link rel="stylesheet" href="/styles/css/customer/base.css">
+	<link rel="stylesheet" href="/styles/css/customer/product-detail.css">
+	<link rel="stylesheet" href="/styles/css/customer/product.css">
+</th:block>
 </head>
 
 <body>
@@ -19,24 +19,42 @@
 
 		<!-- ========== Chi tiết sản phẩm ========== -->
 		<section class="product-detail">
-			<div class="left">
-				<img th:src="@{${product.hinhAnh}}" th:alt="${product.tenSP}">
+			<div class="image-wrapper">
+				<!-- Ảnh chính -->
+				<img id="mainImage" th:src="${product.mainImage}"
+					th:alt="${product.productName}" class="main-photo">
+
+				<!-- Dải thumbnail -->
+				<div class="thumb-carousel">
+					<!-- ✅ Thêm ảnh chính vào đầu danh sách thumbnail -->
+					<img th:src="${product.mainImage}"
+						th:alt="${product.productName} + ' ảnh chính'"
+						class="thumb active" onclick="changeMainImage(this)">
+
+					<!-- ✅ Các ảnh gallery còn lại -->
+					<img th:each="img, iter : ${product.imageUrls}" th:src="${img}"
+						th:alt="${product.productName} + ' ảnh ' + ${iter.index}"
+						class="thumb" onclick="changeMainImage(this)">
+				</div>
 			</div>
 
+
 			<div class="right">
-				<h1 th:text="${product.tenSP}"></h1>
+				<h1 th:text="${product.productName}"></h1>
 
 				<!-- Hiển thị giá -->
-				<p class="price" th:text="${#numbers.formatDecimal(product.gia, 0, 'COMMA', 0, 'POINT')} + ' ₫'"></p>
+				<p class="price"
+					th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT')} + ' ₫'"></p>
 
 				<!-- ⭐ Tổng đánh giá trung bình -->
 				<div class="rating">
-					<i class="fa-solid fa-star" style="color: #f7b500;"></i>
-					<span th:text="${#numbers.formatDecimal(avgRating, 1, 'COMMA', 1, 'POINT')}"></span> / 5
+					<i class="fa-solid fa-star" style="color: #f7b500;"></i> <span
+						th:text="${avgRating != null ? #numbers.formatDecimal(avgRating, 1, 'COMMA', 1, 'POINT') : '5.0'}"></span>
+					/ 5
 				</div>
 
 				<!-- Mô tả sản phẩm -->
-				<p class="desc" th:text="${product.moTa}"></p>
+				<p class="desc" th:text="${product.categoryName}"></p>
 
 				<div class="quantity">
 					<label>Số lượng:</label>
@@ -46,32 +64,67 @@
 				</div>
 
 				<div class="buttons">
-					<button id="addCart" th:data-id="${product.maSP}">🛒 Thêm vào giỏ hàng</button>
-					<button id="buyNow" th:data-id="${product.maSP}">⚡ Mua ngay</button>
+					<button id="addCart" th:data-id="${product.id}">🛒 Thêm
+						vào giỏ hàng</button>
+					<button id="buyNow" th:data-id="${product.id}">⚡ Mua ngay</button>
 				</div>
 			</div>
 		</section>
+
 
 		<!-- ========== Đánh giá ========== -->
 		<section class="reviews">
 			<h2>Đánh giá sản phẩm</h2>
 
+			<!-- Có đánh giá -->
 			<div class="review-list" th:if="${!#lists.isEmpty(reviews)}">
-				<div class="review-item" th:each="r : ${reviews}">
-					<div class="review-header">
-						<strong th:text="${r.nguoiDanhGia != null ? r.nguoiDanhGia.username : 'Ẩn danh'}"></strong>
+				<article class="review-item" th:each="r : ${reviews}">
+					<!-- avatar trái -->
+					<div class="review-avatar-wrap">
+						<img class="review-avatar"
+							th:src="${r.user != null && r.user.avatar != null ? r.user.avatar : '/styles/image/default-avatar.png'}"
+							alt="avatar">
 					</div>
 
-					<div class="review-rating">
-						<i class="fa-solid fa-star"
-							th:each="i : ${#numbers.sequence(1,5)}"
-							th:classappend="${i <= r.danhGia ? 'active' : 'inactive'}"></i>
-					</div>
+					<!-- nội dung phải -->
+					<div class="review-body">
+						<!-- tên -->
+						<div class="review-name"
+							th:text="${r.user != null ? r.user.username : 'Ẩn danh'}"></div>
 
-					<p th:text="${r.binhLuan}"></p>
-				</div>
+						<!-- sao ngay dưới tên -->
+						<div class="review-stars">
+							<i class="fa-solid fa-star"
+								th:each="i : ${#numbers.sequence(1,5)}"
+								th:classappend="${i <= r.rating ? 'active' : 'inactive'}"></i>
+						</div>
+
+						<!-- meta: thời gian + phân loại (nếu có) -->
+						<div class="review-meta">
+							<span class="review-time"
+								th:text="${#temporals.format(r.createAt, 'yyyy-MM-dd HH:mm')}"></span>
+							<span class="sep" th:if="${r.product != null}"> | </span> <span
+								class="review-variant" th:if="${r.product != null}"> Phân
+								loại hàng: <span th:text="${r.product.size}">--</span>
+							</span>
+						</div>
+
+						<!-- bình luận -->
+						<div class="review-text" th:text="${r.comment}"></div>
+
+						
+						<!--
+        <div class="review-media" th:if="${r.images != null}">
+          <a th:each="img : ${r.images}" th:href="${img}" target="_blank">
+            <img th:src="${img}" alt="media">
+          </a>
+        </div>
+        -->
+					</div>
+				</article>
 			</div>
 
+			<!-- Không có đánh giá -->
 			<div th:if="${#lists.isEmpty(reviews)}" class="no-review">
 				<p>Chưa có đánh giá nào cho sản phẩm này.</p>
 			</div>
@@ -82,11 +135,11 @@
 			<h2>Sản phẩm liên quan</h2>
 			<div class="related-grid">
 				<div th:each="r : ${relatedProducts}" class="card">
-					<a th:href="@{'/product/' + ${r.maSP}}">
-						<img th:src="@{${r.hinhAnh}}" th:alt="${r.tenSP}">
+					<a th:href="@{'/product/' + ${r.maSP}}"> <img
+						th:src="${r.hinhAnh}" th:alt="${r.tenSP}">
 						<h3 th:text="${r.tenSP}"></h3>
 						<p class="price"
-							th:text="${#numbers.formatDecimal(r.gia, 0, 'COMMA', 0, 'POINT')} + ' ₫'"></p>
+							th:text="${#numbers.formatDecimal(r.giaGoc, 0, 'COMMA', 0, 'POINT')} + ' ₫'"></p>
 					</a>
 				</div>
 			</div>

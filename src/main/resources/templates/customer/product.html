@@ -16,7 +16,6 @@
 </head>
 <body>
 	<div layout:fragment="content" class="home-page">
-		
 		<!-- Banner Slider -->
 		<section class="banner-slider">
 			<div class="slides">
@@ -31,42 +30,124 @@
 				</div>
 			</div>
 
-			<button class="prev"><i class="fa-solid fa-chevron-left"></i></button>
-			<button class="next"><i class="fa-solid fa-chevron-right"></i></button>
+			<!-- Nút điều hướng -->
+			<button class="prev">
+				<i class="fa-solid fa-chevron-left"></i>
+			</button>
+			<button class="next">
+				<i class="fa-solid fa-chevron-right"></i>
+			</button>
 
+			<!-- Chấm chuyển slide -->
 			<div class="dots">
-				<span class="dot active"></span> 
-				<span class="dot"></span> 
-				<span class="dot"></span>
+				<span class="dot active"></span> <span class="dot"></span> <span
+					class="dot"></span>
 			</div>
 		</section>
 
-		<!-- Danh sách sản phẩm -->
-		<section class="product-section">
-			<h3>Sản phẩm nổi bật</h3>
-			<div class="product-grid">
-				<!-- Lặp qua danh sách sản phẩm -->
-				<div class="product-card" th:each="p : ${products}">
-					<div class="product-image">
-						<a th:href="@{'/product/' + ${p.maSP}}">
-							<img th:src="@{${p.hinhAnh}}" alt="Ảnh sản phẩm">
-						</a>
+		<!-- ========== BỘ LỌC + DANH SÁCH SẢN PHẨM (giá thường, không khuyến mãi) ========== -->
+		<section class="filters-section">
+			<!-- Sidebar danh mục -->
+			<aside class="category">
+				<h3>Danh mục hoa</h3>
+				<form th:action="@{/product}" method="get" id="filterForm">
+					<!-- Giữ lại sort & keyword khi filter -->
+					<input type="hidden" name="sort" th:value="${sort}"> <input
+						type="hidden" name="q" th:value="${keyword}">
+					<ul>
+						<li th:each="cat : ${categories}"><label> <input
+								type="checkbox" name="categoryIds" th:value="${cat.id}"
+								th:checked="${#lists.contains(selectedCategories, cat.id)}"
+								onchange="document.getElementById('filterForm').submit()">
+								<span th:text="${cat.categoryName}"></span>
+						</label></li>
+					</ul>
+				</form>
+			</aside>
+
+			<!-- Khu vực sản phẩm -->
+			<div class="product-area">
+
+				<!-- Thanh Sort -->
+				<div class="sort-bar">
+					<a
+						th:href="@{/product(q=${keyword}, categoryIds=${selectedCategories})}"
+						th:classappend="${sort == null or sort == ''} ? 'active'">Mặc
+						định</a> <a
+						th:href="@{/product(q=${keyword}, sort='asc', categoryIds=${selectedCategories})}"
+						th:classappend="${sort == 'asc'} ? 'active'">Giá thấp đến cao</a>
+
+					<a
+						th:href="@{/product(q=${keyword}, sort='desc', categoryIds=${selectedCategories})}"
+						th:classappend="${sort == 'desc'} ? 'active'">Giá cao đến thấp</a>
+
+					<a
+						th:href="@{/product(q=${keyword}, sort='newest', categoryIds=${selectedCategories})}"
+						th:classappend="${sort == 'newest'} ? 'active'">Mới nhất</a>
+				</div>
+
+				<!-- Danh sách sản phẩm -->
+				<div class="product-section">
+					<h3>Sản phẩm đề cử</h3>
+
+					<div class="product-grid">
+						<div class="product-card" th:each="p : ${products}"
+							th:classappend="${p.trangThai == -1} ? ' out-of-stock' :
+                       (${p.trangThai == 0} ? ' stopped-sale' : '')">
+
+							<div class="product-image">
+								<!-- Link chỉ click được khi đang bán -->
+								<a th:href="@{'/product/' + ${p.maSP}}"
+									th:if="${p.trangThai == 1}"> <img th:src="@{${p.hinhAnh}}"
+									th:alt="${p.tenSP}">
+								</a> <img th:if="${p.trangThai != 1}" th:src="@{${p.hinhAnh}}"
+									th:alt="${p.tenSP}">
+
+								<!-- Overlay trạng thái -->
+								<div class="overlay" th:if="${p.trangThai == -1}">
+									<span>Hết hàng</span>
+								</div>
+								<div class="overlay stopped" th:if="${p.trangThai == 0}">
+									<span>Ngừng bán</span>
+								</div>
+							</div>
+
+							<div class="product-info">
+								<h4>
+									<a th:href="@{'/product/' + ${p.maSP}}" th:text="${p.tenSP}"
+										th:classappend="${p.trangThai != 1} ? ' disabled-link' : ''">
+									</a>
+								</h4>
+
+								<!-- Giá: chỉ lấy giá thường -->
+								<p class="price"
+									th:text="${#numbers.formatDecimal(p.gia, 0, 'COMMA', 0, 'POINT')} + ' ₫'"></p>
+
+								<!-- Dòng trạng thái -->
+								<p class="status-text"
+									th:text="${p.trangThai == 1 ? 'Đang bán' : (p.trangThai == 0 ? 'Ngừng bán' : 'Hết hàng')}">
+								</p>
+							</div>
+						</div>
 					</div>
 
-					<div class="product-info">
-						<h4>
-							<a th:href="@{'/product/' + ${p.maSP}}" th:text="${p.tenSP}"></a>
-						</h4>
-						<p class="price" th:text="${#numbers.formatDecimal(p.gia, 0, 'COMMA', 0, 'POINT')} + ' ₫'"></p>
-					</div>
 				</div>
 			</div>
 		</section>
+
 	</div>
 
 	<th:block layout:fragment="scripts">
 		<script src="/styles/js/customer/header.js"></script>
-		<script src="/styles/js/customer/avatar.js"></script>
+		<script th:src="@{/styles/js/customer/avatar.js}"></script>
+		<script th:src="@{/styles/js/chat.js}"></script>
+		<script>
+			document.querySelectorAll('input[name="categoryIds"]').forEach(cb => {
+				cb.addEventListener('change', () => {
+					document.getElementById('filterForm').submit();
+				});
+			});
+		</script>
 	</th:block>
 </body>
 </html>

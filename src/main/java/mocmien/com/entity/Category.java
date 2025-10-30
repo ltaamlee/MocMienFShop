@@ -57,7 +57,6 @@ public class Category {
 	    this.updatedAt = LocalDateTime.now();
 	}
 
-
 	public Integer getId() {
 		return id;
 	}
@@ -105,6 +104,5 @@ public class Category {
 	public void setUpdatedAt(LocalDateTime updatedAt) {
 		this.updatedAt = updatedAt;
 	}	
-
 
 }

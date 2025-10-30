@@ -19,6 +19,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -117,6 +118,22 @@ public class Orders {
     protected void onUpdate() {
         updatedAt = LocalDateTime.now();
     }
+    
+    @Transient
+    public BigDecimal getTotalAmount() {
+        if (orderDetails == null) return BigDecimal.ZERO;
+        return orderDetails.stream()
+            .map(d -> d.getPromotionalPrice() != null ? 
+                     d.getPromotionalPrice().multiply(BigDecimal.valueOf(d.getQuantity())) :
+                     d.getPrice().multiply(BigDecimal.valueOf(d.getQuantity())))
+            .reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
+
+    
+    // ==============================
+    // Getters & Setters
+    // ==============================
+
 
 	public String getId() {
 		return id;

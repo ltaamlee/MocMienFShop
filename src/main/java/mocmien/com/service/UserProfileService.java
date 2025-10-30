@@ -10,4 +10,6 @@ public interface UserProfileService {
 	Optional<UserProfile> findByUser(User user);
 
 	UserProfile save(UserProfile profile);
+	
+	Optional<UserProfile> findByUsername(String username);
 }

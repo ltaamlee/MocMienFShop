@@ -3,6 +3,7 @@ package mocmien.com.dto.response.product;
 import java.math.BigDecimal;
 import java.util.List;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -11,6 +12,7 @@ import mocmien.com.enums.ProductStatus;
 @Data
 @Builder
 @NoArgsConstructor
+
 public class ProductDetailResponse {
     private Integer id;
     private String productName;
@@ -31,6 +33,12 @@ public class ProductDetailResponse {
     
     private Integer storeId;
     private String storeName;
+    
+    private String mainImage; // ✅ Ảnh chính
+
+    public String getMainImage() { return mainImage; }
+    public void setMainImage(String mainImage) { this.mainImage = mainImage; }
+
     
     
 
@@ -146,5 +154,91 @@ public class ProductDetailResponse {
 		this.imageUrls = imageUrls;
 	}
     
-    
+	public static class Builder {
+        private final ProductDetailResponse dto = new ProductDetailResponse();
+
+        public Builder id(Integer id) {
+            dto.setId(id);
+            return this;
+        }
+
+        public Builder productName(String productName) {
+            dto.setProductName(productName);
+            return this;
+        }
+
+        public Builder categoryId(Integer categoryId) {
+            dto.setCategoryId(categoryId);
+            return this;
+        }
+
+        public Builder categoryName(String categoryName) {
+            dto.setCategoryName(categoryName);
+            return this;
+        }
+
+        public Builder price(BigDecimal price) {
+            dto.setPrice(price);
+            return this;
+        }
+
+        public Builder promotionalPrice(BigDecimal promotionalPrice) {
+            dto.setPromotionalPrice(promotionalPrice);
+            return this;
+        }
+
+        public Builder size(String size) {
+            dto.setSize(size);
+            return this;
+        }
+
+        public Builder stock(Integer stock) {
+            dto.setStock(stock);
+            return this;
+        }
+
+        public Builder sold(Integer sold) {
+            dto.setSold(sold);
+            return this;
+        }
+
+        public Builder status(ProductStatus status) {
+            dto.setStatus(status);
+            return this;
+        }
+
+        public Builder isActive(Boolean isActive) {
+            dto.setIsActive(isActive);
+            return this;
+        }
+
+        public Builder imageUrls(List<String> imageUrls) {
+            dto.setImageUrls(imageUrls);
+            return this;
+        }
+
+        public Builder storeId(Integer storeId) {
+            dto.setStoreId(storeId);
+            return this;
+        }
+
+        public Builder storeName(String storeName) {
+            dto.setStoreName(storeName);
+            return this;
+        }
+
+        public ProductDetailResponse build() {
+            return dto;
+        }
+        
+        public Builder mainImage(String mainImage) {
+            dto.setMainImage(mainImage);
+            return this;
+        }
+
+    }
+
+    public static Builder builder() {
+        return new Builder();
+    }
 }

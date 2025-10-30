@@ -1,0 +1,75 @@
+.success-container {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	height: 70vh;
+	background-color: #fff;
+}
+
+.success-box {
+	text-align: center;
+	border: 2px solid #f1b8bd;
+	border-radius: 20px;
+	padding: 40px 60px;
+	box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.success-box i {
+	color: #e27b7b;
+	font-size: 80px;
+	margin-bottom: 20px;
+}
+
+.success-box h2 {
+	color: #333;
+	margin-bottom: 10px;
+}
+
+.success-box p {
+	color: #666;
+	margin: 5px 0;
+}
+
+.btn-home {
+	display: inline-block;
+	margin-top: 20px;
+	background-color: #f2a5a5;
+	color: #fff;
+	padding: 10px 25px;
+	border-radius: 8px;
+	text-decoration: none;
+	transition: background 0.3s ease;
+}
+
+.btn-home:hover {
+	background-color: #e27b7b;
+}
+
+.error-box {
+	text-align: center;
+	padding: 80px 20px;
+}
+
+.error-box h2 {
+	color: #d9534f;
+	font-weight: 600;
+}
+
+.error-box p {
+	margin-top: 12px;
+	color: #555;
+}
+
+.btn-retry {
+	display: inline-block;
+	margin-top: 24px;
+	padding: 10px 20px;
+	background: #d9534f;
+	color: #fff;
+	border-radius: 8px;
+	text-decoration: none;
+}
+
+.btn-retry:hover {
+	background: #c9302c;
+}

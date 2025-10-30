@@ -49,26 +49,33 @@
 		<div class="product-area">
 			<!-- Danh sách sản phẩm -->
 			<div class="product-section">
-				<h3>Khuyến mãi</h3>
+				<h3>Gợi ý hôm nay</h3>
 				<div class="product-list">
-					<div class="product-card">
-						<img th:src="@{/styles/image/product/sp1.jpg}" alt="Hoa 1">
-						<h4>Victo rose</h4>
-						<p class="price">300.000 ₫</p>
-					</div>
-					<div class="product-card">
-						<img th:src="@{/styles/image/product/sp1.jpg}" alt="Hoa 2">
-						<h4>Love you more</h4>
-						<p class="price">
-							<span class="old">450.000 ₫</span> 400.000 ₫
-						</p>
-					</div>
-					<div class="product-card">
-						<img th:src="@{/images/flower3.jpg}" alt="Hoa 3">
-						<h4>Hồng nhánh</h4>
-						<p class="price">700.000 ₫</p>
+					<div class="product-card" th:each="p : ${products}">
+						<!-- Ảnh sản phẩm -->
+						<a th:href="@{'/product/' + ${p.maSP}}"> <img
+							th:src="${p.hinhAnh}" alt="Ảnh sản phẩm" />
+						</a>
+
+						<!-- Tên sản phẩm -->
+						<h4>
+							<a th:href="@{'/product/' + ${p.maSP}}" th:text="${p.tenSP}"></a>
+						</h4>
+
+						<!-- Giá -->
+						<p class="price"
+							th:text="${#numbers.formatDecimal(p.gia, 0, 'COMMA', 0, 'POINT')} + ' ₫'"></p>
+
+						<!-- Badge trạng thái -->
+						<div class="badge" th:switch="${p.trangThai}">
+							<span th:case="1" class="badge-selling">Đang bán</span> <span
+								th:case="0" class="badge-stopped">Ngừng bán</span> <span
+								th:case="-1" class="badge-out">Hết hàng</span>
+						</div>
 					</div>
 				</div>
+
+
 			</div>
 
 		</div>

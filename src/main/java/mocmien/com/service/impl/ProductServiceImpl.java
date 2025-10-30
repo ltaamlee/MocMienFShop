@@ -1,10 +1,11 @@
 package mocmien.com.service.impl;
 
 import java.math.BigDecimal;
-
 import java.util.Comparator;
 
 import java.util.ArrayList;
+import java.util.ArrayList;
+import java.util.Comparator;
 
 import java.util.List;
 import java.util.Optional;
@@ -15,6 +16,11 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+
+import mocmien.com.dto.response.product.ProductDetailResponse;
+import mocmien.com.dto.response.product.ProductListItemResponse;
+import mocmien.com.dto.product.ProductRowVM;
 
 import mocmien.com.dto.response.product.ProductDetailResponse;
 import mocmien.com.dto.response.product.ProductListItemResponse;
@@ -195,6 +201,90 @@ public class ProductServiceImpl implements ProductService {
 	public Page<Product> findByStore(Store store, Pageable pageable) {
 		return productRepo.findByStore(store, pageable);
 	}
+    @Override
+    public BigDecimal averageRatingByStore(Store store) {
+        return productRepo.averageRatingByStore(store);
+    }
+    
+
+    // ===================== HIỂN THỊ DANH SÁCH SẢN PHẨM (VM) =====================
+    @Override
+    public List<ProductRowVM> getAllProductRows() {
+        List<Product> products = productRepo.findAll();
+        List<ProductRowVM> list = new ArrayList<>();
+
+        for (Product p : products) {
+            ProductRowVM vm = new ProductRowVM();
+            vm.setMaSP(p.getId());
+            vm.setTenSP(p.getProductName());
+            vm.setGia(p.getPrice());
+
+            // ✅ Xác định trạng thái sản phẩm
+            if (!p.getIsActive()) {
+                vm.setTrangThai(0); // Ngừng bán
+            } else if (!p.getIsAvailable()) {
+                vm.setTrangThai(-1); // Hết hàng
+            } else {
+                vm.setTrangThai(1); // Đang bán
+            }
+
+            // 🔹 Lấy ảnh mặc định
+            String defaultImage = p.getImages().stream()
+                .filter(img -> Boolean.TRUE.equals(img.getIsDefault()))
+                .map(ProductImage::getImageUrl)
+                .findFirst()
+                .orElse("/styles/image/default.jpg");
+
+            vm.setHinhAnh(defaultImage);
+            list.add(vm);
+        }
+
+        return list;
+    }
+
+    @Override
+    public ProductDetailResponse getProductDetailById(Integer id) {
+        Product p = productRepo.findById(id)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy sản phẩm với id " + id));
+
+        // ✅ Lấy ảnh chính (is_default = 1)
+        String mainImageUrl = null;
+        List<String> galleryImages = new ArrayList<>();
+
+        if (p.getImages() != null && !p.getImages().isEmpty()) {
+            for (ProductImage img : p.getImages()) {
+                if (Boolean.TRUE.equals(img.getIsDefault())) {
+                    mainImageUrl = img.getImageUrl();
+                } else {
+                    galleryImages.add(img.getImageUrl());
+                }
+            }
+        }
+
+        // Nếu không có ảnh chính, chọn ảnh đầu tiên làm mặc định
+        if (mainImageUrl == null && !p.getImages().isEmpty()) {
+            mainImageUrl = p.getImages().get(0).getImageUrl();
+        }
+
+        return ProductDetailResponse.builder()
+                .id(p.getId())
+                .productName(p.getProductName())
+                .categoryId(p.getCategory().getId())
+                .categoryName(p.getCategory().getCategoryName())
+                .price(p.getPrice())
+                .promotionalPrice(p.getPromotionalPrice())
+                .size(p.getSize())
+                .stock(p.getStock())
+                .sold(p.getSold())
+                .status(statusOf(p))
+                .isActive(p.getIsActive())
+                .storeId(p.getStore().getId())
+                .storeName(p.getStore().getStoreName())
+                .mainImage(mainImageUrl) // ✅ thêm trường ảnh chính
+                .imageUrls(galleryImages) // ✅ ảnh phụ
+                .build();
+    }
+
 
 	@Override
 	public Page<Product> findByPriceRange(BigDecimal minPrice, BigDecimal maxPrice, Pageable pageable) {
@@ -232,11 +322,6 @@ public class ProductServiceImpl implements ProductService {
 	@Override
 	public long countOutOfStock() {
 		return productRepo.countOutOfStock();
-	}
-
-	@Override
-	public BigDecimal averageRatingByStore(Store store) {
-		return productRepo.averageRatingByStore(store);
 	}
 
 	// ====== Builder tạm cho ProductListItemResponse (nếu em dùng @Builder của
@@ -333,62 +418,5 @@ public class ProductServiceImpl implements ProductService {
 
 	    return new PageImpl<>(content, pageable, page.getTotalElements());
 	}
-
-    
-
-    // ===================== HIỂN THỊ DANH SÁCH SẢN PHẨM (VM) =====================
-    @Override
-    public List<ProductRowVM> getAllProductRows() {
-        List<Product> products = productRepo.findAll();
-        List<ProductRowVM> list = new ArrayList<>();
-
-        for (Product p : products) {
-            ProductRowVM vm = new ProductRowVM();
-            vm.setMaSP(p.getId());
-            vm.setTenSP(p.getProductName());
-            vm.setGia(p.getPrice());
-
-            // ✅ Xác định trạng thái sản phẩm
-            if (!p.getIsActive()) {
-                vm.setTrangThai(0); // Ngừng bán
-            } else if (!p.getIsAvailable()) {
-                vm.setTrangThai(-1); // Hết hàng
-            } else {
-                vm.setTrangThai(1); // Đang bán
-            }
-
-            // 🔹 Lấy ảnh mặc định
-            String defaultImage = p.getImages().stream()
-                .filter(img -> Boolean.TRUE.equals(img.getIsDefault()))
-                .map(ProductImage::getImageUrl)
-                .findFirst()
-                .orElse("/styles/image/default.jpg");
-
-            vm.setHinhAnh(defaultImage);
-            list.add(vm);
-        }
-
-        return list;
-    }
-
-    @Override
-    public ProductDetailResponse getProductDetailById(Integer id) {
-        Product p = productRepo.findById(id)
-            .orElseThrow(() -> new RuntimeException("Product not found"));
-
-        ProductDetailResponse res = new ProductDetailResponse();
-        res.setId(p.getId());
-        res.setProductName(p.getProductName());
-        res.setPrice(p.getPrice());
-        res.setSize("(Chưa có mô tả)");
-        res.setCategoryName(p.getCategory().getCategoryName());
-
-        List<String> images = p.getImages().stream()
-            .map(ProductImage::getImageUrl)
-            .toList();
-        res.setImageUrls(images);
-
-        return res;
-    }
 
 }
