@@ -248,13 +248,20 @@ public class CheckoutController {
             }
         }
 
-        // Sau khi tạo order: tính lại phí ship và cập nhật tổng thanh toán
+        // Sau khi tạo order: tính lại phí ship, gán delivery và cập nhật tổng thanh toán
         try {
             CustomerAddress defaultAddr = addressService.getDefaultAddress(profile);
             Store storeForFee = (order.getStore() != null) ? order.getStore() : null;
             int estWeight = order.getOrderDetails() != null && !order.getOrderDetails().isEmpty() ?
                     order.getOrderDetails().stream().mapToInt(d -> d.getQuantity() * 500).sum() : 500;
             if (storeForFee != null && defaultAddr != null) {
+                // Tìm delivery phù hợp
+                mocmien.com.entity.Delivery delivery = shippingService.findDeliveryForDistance(storeForFee, defaultAddr);
+                if (delivery != null) {
+                    order.setDelivery(delivery);
+                }
+                
+                // Tính phí ship
                 BigDecimal fee = shippingService.calculateShippingFee(storeForFee, defaultAddr, estWeight);
                 order.setShippingFee(fee);
                 if (order.getAmountFromCustomer() != null) {

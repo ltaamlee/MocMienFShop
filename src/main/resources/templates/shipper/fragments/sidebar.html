@@ -2,38 +2,40 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
 <meta charset="UTF-8">
-<link rel="stylesheet" href="/styles/css/sidebar.css">
-<link rel="stylesheet"
-	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
 </head>
 <body>
-	<div th:fragment="sidebar">
-		<nav class="sidebar">
-			<ul class="sidebar-menu">
-				<li><a th:href="@{/shipper/dashboard}"> <span class="icon"><i
-							class="fas fa-home"></i></span> <span class="text">Dashboard</span>
-				</a></li>
+	<aside th:fragment="sidebar" class="shipper-sidebar">
+		<!-- 🔹 Header Sidebar -->
+		<div class="sidebar-header">
+			<i class="fa fa-truck"></i> <span>SHIPPER PANEL</span>
+		</div>
 
-				<li><a th:href="@{/shipper/order}"> <span class="icon"><i
-							class="fas fa-box"></i></span> <span class="text">Đơn hàng</span>
-				</a></li>
+		<!-- 🔹 Menu Sidebar -->
+		<nav class="sidebar-menu">
 
-				<li><a th:href="@{/shipper/ewallet}"> <span class="icon"><i
-							class="fas fa-percent"></i></span> <span class="text">Ví
-					</span>
-				</a></li>
+			<!-- Dashboard -->
+			<a th:href="@{/shipper/dashboard}" class="menu-item"
+				th:classappend="${currentPath != null and currentPath.contains('/dashboard')} ? ' active' : ''">
+				<i class="fa fa-home"></i><span>Dashboard</span>
+			</a> <a th:href="@{/shipper/order}" class="menu-item"
+				th:classappend="${currentPath != null and currentPath.contains('/order')} ? ' active' : ''">
+				<i class="fa fa-box"></i><span>Quản lý đơn hàng</span>
+			</a> <a th:href="@{/shipper/ewallet}" class="menu-item"
+				th:classappend="${currentPath != null and currentPath.contains('/ewallet')} ? ' active' : ''">
+				<i class="fa fa-wallet"></i><span>Ví điện tử</span>
+			</a> <a th:href="@{/shipper/profile}" class="menu-item"
+				th:classappend="${currentPath != null and currentPath.contains('/profile')} ? ' active' : ''">
+				<i class="fa fa-user"></i><span>Thông tin cá nhân</span>
+			</a>
 
-				<li><a th:href="@{/shipper/profile}"> <span class="icon"><i
-							class="fas fa-user-circle"></i></span> <span class="text">Profile</span>
-				</a></li>
 
-				<li><a th:href="@{/logout}"> <span class="icon"><i
-							class="fas fa-sign-out-alt"></i></span> <span class="text">Đăng
-							xuất</span>
-				</a></li>
-			</ul>
+			<div class="menu-divider"></div>
+
+			<!-- Logout -->
+			<a th:href="@{/logout}" class="menu-item logout"> <i
+				class="fa fa-sign-out-alt"></i> <span>Đăng xuất</span>
+			</a>
 		</nav>
-	</div>
-
+	</aside>
 </body>
 </html>

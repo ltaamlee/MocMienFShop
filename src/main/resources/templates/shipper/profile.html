@@ -1,24 +1,206 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{shipper/layout}">
 <head>
-    <title>Hồ sơ Shipper</title>
-    <th:block layout:fragment="styles"></th:block>
- </head>
- <body>
- <div layout:fragment="content">
-   <div class="mobile-card">
-     <h3>Thông tin cá nhân</h3>
-     <form id="profileForm">
-       <div class="row"><label>Biển số</label><input name="vehicleNumber" /></div>
-       <div class="row"><label>Loại xe</label><input name="vehicleType" /></div>
-       <div class="row"><label>Giấy phép</label><input name="license" /></div>
-       <div style="height:6px"></div>
-       <button type="submit" class="btn">Lưu</button>
-     </form>
-   </div>
- </div>
- <th:block layout:fragment="scripts">
-   <script th:src="@{/styles/js/shipper/profile.js}"></script>
- </th:block>
- </body>
- </html>
+    <title>Hồ sơ cá nhân - Shipper</title>
+    <th:block layout:fragment="styles">
+        <style>
+            .profile-header {
+                text-align: center;
+                padding: 24px 16px;
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                border-radius: 16px;
+                color: white;
+                margin-bottom: 24px;
+            }
+            
+            .profile-avatar-large {
+                width: 100px;
+                height: 100px;
+                border-radius: 50%;
+                border: 4px solid white;
+                margin: 0 auto 12px;
+                overflow: hidden;
+                background: white;
+            }
+            
+            .profile-avatar-large img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+            }
+            
+            .profile-name {
+                font-size: 1.5rem;
+                font-weight: 700;
+                margin-bottom: 4px;
+            }
+            
+            .profile-role {
+                font-size: 0.9rem;
+                opacity: 0.9;
+            }
+            
+            .stats-grid {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 12px;
+                margin: 20px 0;
+            }
+            
+            .stat-item {
+                text-align: center;
+                padding: 12px;
+                background: rgba(255, 255, 255, 0.2);
+                border-radius: 12px;
+            }
+            
+            .stat-value {
+                font-size: 1.5rem;
+                font-weight: 700;
+                display: block;
+            }
+            
+            .stat-label {
+                font-size: 0.75rem;
+                opacity: 0.9;
+                margin-top: 4px;
+            }
+            
+            .form-group {
+                margin-bottom: 16px;
+            }
+            
+            .form-label {
+                display: block;
+                font-weight: 600;
+                color: #374151;
+                margin-bottom: 6px;
+                font-size: 0.9rem;
+            }
+            
+            .form-input {
+                width: 100%;
+                padding: 10px 14px;
+                border: 1px solid #d1d5db;
+                border-radius: 8px;
+                font-size: 0.95rem;
+                transition: all 0.2s;
+            }
+            
+            .form-input:focus {
+                outline: none;
+                border-color: #667eea;
+                box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            }
+            
+            .btn-save {
+                width: 100%;
+                padding: 12px;
+                background: #667eea;
+                color: white;
+                border: none;
+                border-radius: 8px;
+                font-weight: 600;
+                font-size: 1rem;
+                cursor: pointer;
+                transition: all 0.2s;
+            }
+            
+            .btn-save:hover {
+                background: #5568d3;
+                transform: translateY(-1px);
+            }
+            
+            .btn-logout {
+                width: 100%;
+                padding: 12px;
+                background: #ef4444;
+                color: white;
+                border: none;
+                border-radius: 8px;
+                font-weight: 600;
+                font-size: 1rem;
+                cursor: pointer;
+                transition: all 0.2s;
+                margin-top: 12px;
+            }
+            
+            .btn-logout:hover {
+                background: #dc2626;
+            }
+        </style>
+    </th:block>
+</head>
+<body>
+<div layout:fragment="content">
+    <!-- Profile Header -->
+    <div class="profile-header">
+        <div class="profile-avatar-large">
+            <img th:src="${user != null && user.avatar != null} ? ${user.avatar} : '/styles/image/customer/default-avatar.png'" 
+                 alt="Avatar">
+        </div>
+        <div class="profile-name" th:text="${user != null && user.userProfile != null} ? ${user.userProfile.fullName} : 'Shipper'">Nguyễn Văn A</div>
+        <div class="profile-role"><i class="fa fa-truck"></i> Tài xế giao hàng</div>
+        
+        <div class="stats-grid">
+            <div class="stat-item">
+                <span class="stat-value">45</span>
+                <span class="stat-label">Đơn giao</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-value">4.8</span>
+                <span class="stat-label">Đánh giá</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-value">98%</span>
+                <span class="stat-label">Thành công</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Profile Form -->
+    <div class="mobile-card">
+        <h3 style="margin-bottom: 20px; color: #111827; font-size: 1.2rem;">
+            <i class="fa fa-user-edit"></i> Thông tin cá nhân
+        </h3>
+        <form id="profileForm">
+            <div class="form-group">
+                <label class="form-label">
+                    <i class="fa fa-id-card"></i> Biển số xe
+                </label>
+                <input type="text" name="vehicleNumber" class="form-input" placeholder="VD: 29A-12345">
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">
+                    <i class="fa fa-motorcycle"></i> Loại phương tiện
+                </label>
+                <input type="text" name="vehicleType" class="form-input" placeholder="VD: Xe máy, Ô tô">
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">
+                    <i class="fa fa-certificate"></i> Giấy phép lái xe
+                </label>
+                <input type="text" name="license" class="form-input" placeholder="Số giấy phép">
+            </div>
+            
+            <button type="submit" class="btn-save">
+                <i class="fa fa-save"></i> Lưu thay đổi
+            </button>
+        </form>
+    </div>
+
+    <!-- Logout -->
+    <div class="mobile-card" style="text-align: center;">
+        <a href="/logout" class="btn-logout" style="display: inline-block; text-decoration: none;">
+            <i class="fa fa-sign-out-alt"></i> Đăng xuất
+        </a>
+    </div>
+</div>
+
+<th:block layout:fragment="scripts">
+    <script th:src="@{/styles/js/shipper/profile.js}"></script>
+</th:block>
+</body>
+</html>

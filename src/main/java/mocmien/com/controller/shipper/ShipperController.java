@@ -11,6 +11,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import jakarta.servlet.http.HttpServletRequest;
 import mocmien.com.entity.User;
 import mocmien.com.security.CustomUserDetails;
 import mocmien.com.service.AdminDeliveryService;
@@ -32,18 +33,23 @@ public class ShipperController {
 	}
 
 
-	// Trang chủ
-    @GetMapping("/dashboard")
-    @PreAuthorize("hasRole('SHIPPER')")
-	public String dashboard(@AuthenticationPrincipal CustomUserDetails userDetails, Model model) {
+	@GetMapping("/dashboard")
+	@PreAuthorize("hasRole('SHIPPER')")
+	public String dashboard(@AuthenticationPrincipal CustomUserDetails userDetails, 
+	                        HttpServletRequest request, 
+	                        Model model) {
 
-		if (userDetails != null) {
-			Optional<User> userOpt = userService.findByUsername(userDetails.getUsername());
-			userOpt.ifPresent(user -> model.addAttribute("user", user));
-		}
+	    if (userDetails != null) {
+	        userService.findByUsername(userDetails.getUsername())
+	                   .ifPresent(user -> model.addAttribute("user", user));
+	    }
 
-        return "shipper/app";
+	    // ✅ Thêm dòng này
+	    model.addAttribute("currentPath", request.getRequestURI());
+
+	    return "shipper/dashboard";
 	}
+
 
 	// Đơn hàng
     @GetMapping("/order")
@@ -55,7 +61,7 @@ public class ShipperController {
 			userOpt.ifPresent(user -> model.addAttribute("user", user));
 		}
 
-        return "shipper/app";
+        return "shipper/order";
 	}
 
 	// Đơn hàng

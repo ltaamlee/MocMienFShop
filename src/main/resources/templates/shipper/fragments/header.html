@@ -2,31 +2,32 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
 <meta charset="UTF-8">
-<link rel="stylesheet" href="/styles/css/shipper/header.css">
-<link rel="stylesheet"
-	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" />
-<link
-	href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap"
-	rel="stylesheet">
 </head>
 <body>
-	<header th:fragment="header">
-		<div class="header-top">
+	<header th:fragment="header" class="shipper-header">
+		<div class="header-container">
 			<!-- Logo -->
-			<div class="logo">
-				<a href="/home"> <img src="/styles/image/logo.png" alt="Logo">
+			<div class="header-logo">
+				<a th:href="@{/shipper/dashboard}">
+					<img src="/styles/image/logo.png" alt="MocMien Shop">
+					<span class="header-brand">Shipper</span>
 				</a>
 			</div>
 
-			<div class="user-info">
+			<!-- User Info -->
+			<div class="header-user">
 				<div class="user-details">
-					<span class="user-name"></span> <span class="user-role"></span>
+					<span class="user-name" th:text="${user != null && user.userProfile != null} ? ${user.userProfile.fullName} : 'Shipper'">Shipper</span>
+					<span class="user-role">
+						<i class="fa fa-truck"></i> Tài xế giao hàng
+					</span>
 				</div>
-				<img th:src="${user.avatar != null} ? ${user.avatar}" alt="Avatar" class="user-avatar">
+				<div class="user-avatar">
+					<img th:src="${user != null && user.avatar != null} ? ${user.avatar} : '/styles/image/customer/default-avatar.png'" 
+					     alt="Avatar">
+				</div>
 			</div>
-
 		</div>
 	</header>
-
 </body>
 </html>

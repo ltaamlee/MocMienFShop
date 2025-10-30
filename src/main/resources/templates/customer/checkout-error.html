@@ -14,8 +14,34 @@
 	<div layout:fragment="content">
 		<div class="error-box">
 			<h2>❌ Thanh toán thất bại!</h2>
-			<p>Đã có lỗi xảy ra khi xử lý đơn hàng của bạn. Vui lòng thử lại.</p>
-			<a href="/product" class="btn-retry">Thử lại</a>
+			
+			<!-- Hiển thị lỗi cụ thể -->
+			<div th:if="${param.msg != null}">
+				<p th:if="${param.msg[0] == 'OutOfRadius'}" style="color: #d33; font-weight: 600; margin: 20px 0;">
+					📍 Đơn hàng không áp dụng tại địa chỉ của bạn.<br>
+					Khoảng cách từ shop đến địa chỉ giao hàng vượt quá 150km cho phép.<br>
+					<small style="font-weight: 400;">Vui lòng chọn sản phẩm từ shop gần bạn hơn hoặc thay đổi địa chỉ giao hàng.</small>
+				</p>
+				<p th:if="${param.msg[0] == 'MomoError'}" style="color: #d33;">
+					Thanh toán MoMo thất bại. Vui lòng thử lại sau.
+				</p>
+				<p th:if="${param.msg[0] == 'Exception'}" style="color: #d33;">
+					Đã có lỗi hệ thống xảy ra. Vui lòng liên hệ hỗ trợ.
+				</p>
+				<p th:if="${param.msg[0] == 'InvalidMethod'}" style="color: #d33;">
+					Phương thức thanh toán không hợp lệ.
+				</p>
+			</div>
+			
+			<!-- Lỗi chung -->
+			<p th:if="${param.msg == null}">
+				Đã có lỗi xảy ra khi xử lý đơn hàng của bạn. Vui lòng thử lại.
+			</p>
+			
+			<div style="margin-top: 30px;">
+				<a href="/product" class="btn-retry" style="margin-right: 10px;">🏠 Về trang chủ</a>
+				<a href="/cart" class="btn-retry">🛒 Về giỏ hàng</a>
+			</div>
 		</div>
 	</div>
 	<th:block layout:fragment="scripts">
