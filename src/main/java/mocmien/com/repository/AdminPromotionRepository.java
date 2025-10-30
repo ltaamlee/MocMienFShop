@@ -29,4 +29,7 @@ public interface AdminPromotionRepository extends JpaRepository<Promotion, Integ
 
 	long countByStatus(PromotionStatus active);
 	
+    @Query("SELECT p FROM Promotion p WHERE p.store IS NULL AND p.isActive = true AND p.status = mocmien.com.enums.PromotionStatus.ACTIVE AND p.startDate <= CURRENT_TIMESTAMP AND (p.endDate IS NULL OR p.endDate >= CURRENT_TIMESTAMP) ORDER BY p.createdAt DESC")
+    java.util.List<Promotion> findActiveGlobalPromotions();
+
 }

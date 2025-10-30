@@ -21,6 +21,8 @@ function fetchPromotionStats() {
 ========================== */
 let currentPage = 0;
 const pageSize = 10;
+let commissionCurrentPage = 0;
+const commissionPageSize = 10;
 
 const tableBody = document.getElementById("promotionTableBody");
 const paginationContainer = document.getElementById("promotionPagination");
@@ -30,10 +32,13 @@ const addPromotionModal = document.getElementById("addPromotionModal");
 
 
 const promotionForm = document.getElementById("promotionForm");
+const commissionForm = document.getElementById("commissionForm");
+const commissionTableBody = document.getElementById("commissionTableBody");
+const addCommissionModal = document.getElementById('addCommissionModal');
 
 // Input Fields for Modal (Thêm/Sửa)
 const nameInput = document.getElementById("name");
-const typeInput = document.getElementById("type");
+const typeInput = document.getElementById("promoType");
 const valueInput = document.getElementById("value");
 const bannerInput = document.getElementById("banner");
 const ribbonInput = document.getElementById("ribbon");
@@ -48,7 +53,7 @@ async function loadPromotions(page = 0) {
 	currentPage = page;
 	// Lấy giá trị từ các bộ lọc
 	const keyword = document.querySelector('input[name="keyword"]')?.value || '';
-	const typeValue = document.querySelector('#type')?.value || '';
+    const typeValue = document.querySelector('#typeFilter')?.value || '';
 	const statusValue = document.querySelector('#statusFilter')?.value || '';
 
 	const sortValue = document.querySelector('#sortFilter')?.value || 'createdAt,desc';
@@ -86,6 +91,25 @@ async function loadPromotions(page = 0) {
 		const displayError = error.message.includes('Lỗi tải danh sách') ? error.message : "LỖI KẾT NỐI API";
 		if (tableBody) tableBody.innerHTML = `<tr><td colspan="7" style="text-align:center;">${displayError}</td></tr>`;
 	}
+}
+
+async function loadCommissions(page = 0) {
+    commissionCurrentPage = page;
+    try {
+        const params = new URLSearchParams({ page: page, size: commissionPageSize });
+        const res = await fetch(`/api/admin/commission?${params.toString()}`);
+        if (!res.ok) {
+            const msg = await handleFetchError(res);
+            throw new Error(msg);
+        }
+        const data = await res.json();
+        renderCommissionTable(data.content);
+        renderCommissionPagination(data);
+    } catch (err) {
+        if (commissionTableBody) {
+            commissionTableBody.innerHTML = `<tr><td colspan="7" style="text-align:center;">${err.message || 'LỖI TẢI DỮ LIỆU'}</td></tr>`;
+        }
+    }
 }
 
 
@@ -180,6 +204,86 @@ function renderPromotionTable(promotions) {
         `;
 		tableBody.appendChild(tr);
 	});
+}
+
+function renderCommissionTable(items) {
+    if (!commissionTableBody) return;
+    commissionTableBody.innerHTML = '';
+    if (!items || items.length === 0) {
+        commissionTableBody.innerHTML = `<tr><td colspan="7" style="text-align:center;">KHÔNG CÓ DỮ LIỆU</td></tr>`;
+        return;
+    }
+    items.forEach((c, idx) => {
+        const tr = document.createElement('tr');
+        const storeName = c.store && c.store.storeName ? escapeHTML(c.store.storeName) : 'Mặc định';
+        tr.innerHTML = `
+            <td>${idx + 1}</td>
+            <td>${storeName}</td>
+            <td>${c.ratePercent != null ? c.ratePercent : ''}</td>
+            <td>
+              <label class="switch" title="Kích hoạt/Nhấc kích hoạt">
+                <input type="checkbox" class="commission-toggle" data-id="${c.id}" ${c.isActive ? 'checked' : ''}>
+                <span class="slider round"></span>
+              </label>
+            </td>
+            <td>${formatDateTime(c.createdAt)}</td>
+            <td>${formatDateTime(c.updatedAt)}</td>
+            <td>${escapeHTML(c.note || '')}</td>
+        `;
+        commissionTableBody.appendChild(tr);
+    });
+}
+
+function renderCommissionPagination(data) {
+    let container = document.getElementById('commissionPagination');
+    if (!container) {
+        container = document.createElement('div');
+        container.id = 'commissionPagination';
+        const tableWrapper = commissionTableBody?.closest('.table-promotions');
+        if (tableWrapper) tableWrapper.appendChild(container);
+    }
+    container.innerHTML = '';
+
+    const totalPages = Math.max(1, data.totalPages);
+    const curr = data.number;
+
+    const prev = document.createElement('a');
+    prev.innerHTML = '&laquo;';
+    prev.href = '#';
+    if (curr === 0) prev.classList.add('disabled');
+    else prev.addEventListener('click', (e) => { e.preventDefault(); loadCommissions(curr - 1); });
+    container.appendChild(prev);
+
+    const maxVisible = 7;
+    const addLink = (idx) => {
+        const a = document.createElement('a');
+        a.textContent = idx + 1;
+        a.href = '#';
+        if (idx === curr) a.classList.add('active');
+        else a.addEventListener('click', (e) => { e.preventDefault(); loadCommissions(idx); });
+        container.appendChild(a);
+    };
+
+    if (totalPages <= maxVisible) {
+        for (let i = 0; i < totalPages; i++) addLink(i);
+    } else {
+        addLink(0);
+        if (curr > 3) addDots(container);
+        let start = Math.max(1, curr - 2);
+        let end = Math.min(totalPages - 2, curr + 2);
+        if (curr < 3) end = Math.min(totalPages - 2, 4);
+        else if (curr > totalPages - 4) start = Math.max(1, totalPages - 5);
+        for (let i = start; i <= end; i++) addLink(i);
+        if (curr < totalPages - 4) addDots(container);
+        addLink(totalPages - 1);
+    }
+
+    const next = document.createElement('a');
+    next.innerHTML = '&raquo;';
+    next.href = '#';
+    if (curr === totalPages - 1) next.classList.add('disabled');
+    else next.addEventListener('click', (e) => { e.preventDefault(); loadCommissions(curr + 1); });
+    container.appendChild(next);
 }
 
 /* ==========================
@@ -279,6 +383,63 @@ async function savePromotion(e) {
 	}
 }
 
+async function saveCommission(e) {
+    e.preventDefault();
+
+	const errorEl = document.getElementById('commissionRate-error');
+	if (errorEl) {
+		errorEl.textContent = '';
+	}
+    const storeSelect = document.getElementById('commissionStore');
+    const rateInput = document.getElementById('commissionRate');
+    const noteInput = document.getElementById('commissionNote');
+    const activeInput = document.getElementById('commissionActive');
+
+    if (!rateInput.value) {
+        document.getElementById('commissionRate-error').textContent = 'Vui lòng nhập tỷ lệ';
+        return;
+    }
+    const rate = parseFloat(rateInput.value);
+    if (isNaN(rate) || rate < 0 || rate > 100) {
+        document.getElementById('commissionRate-error').textContent = 'Tỷ lệ phải từ 0 đến 100';
+        return;
+    }
+
+    const payload = {
+        storeId: storeSelect && storeSelect.value ? parseInt(storeSelect.value) : null,
+        ratePercent: rate,
+        note: noteInput && noteInput.value ? noteInput.value.trim() : null
+    };
+
+    try {
+        const res = await fetch('/api/admin/commission', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+        if (!res.ok) {
+            const msg = await handleFetchError(res);
+            throw new Error(msg);
+        }
+        rateInput.value = '';
+        if (noteInput) noteInput.value = '';
+        if (storeSelect) storeSelect.value = '';
+        if (activeInput) activeInput.checked = true;
+        closeModal('addCommissionModal');
+        loadCommissions();
+        alert('Lưu chiết khấu thành công');
+    } catch (err) {
+        alert(err.message || 'Lỗi lưu chiết khấu');
+    }
+}
+
+function openAddCommissionModal() {
+    commissionForm?.reset();
+    addCommissionModal.style.display = 'block';
+    addCommissionModal.style.opacity = '1';
+    addCommissionModal.classList.add('show');
+}
+
 async function confirmDeletePromotion(id, name) {
 	const confirmAction = confirm(`Bạn có chắc muốn xóa khuyến mãi "${escapeHTML(name)}"?`);
 	if (!confirmAction) return;
@@ -312,6 +473,7 @@ document.addEventListener("DOMContentLoaded", function() {
 	// Tải dữ liệu ban đầu
 	fetchPromotionStats();
 	loadPromotions(0);
+	loadCommissions();
 
 	// Listener cho form tìm kiếm và các bộ lọc
 	searchFilterForm?.addEventListener("submit", function(e) {
@@ -319,7 +481,7 @@ document.addEventListener("DOMContentLoaded", function() {
 		loadPromotions(0);
 	});
 
-	document.getElementById("type")?.addEventListener("change", function(e) {
+    document.getElementById("typeFilter")?.addEventListener("change", function(e) {
 		e.preventDefault();
 		loadPromotions(0);
 	});
@@ -346,6 +508,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
 	// Lắng nghe form modal
 	promotionForm?.addEventListener("submit", savePromotion);
+	commissionForm?.addEventListener('submit', saveCommission);
 
     // Toggle activate/deactivate
     tableBody?.addEventListener('change', async function(e) {
@@ -387,6 +550,26 @@ document.addEventListener("DOMContentLoaded", function() {
             const id = deleteBtn.dataset.id;
             const name = deleteBtn.dataset.name;
             confirmDeletePromotion(id, name);
+        }
+    });
+
+    // Toggle commission active
+    commissionTableBody?.addEventListener('change', async function(e) {
+        const toggle = e.target.closest('.commission-toggle');
+        if (toggle) {
+            const id = toggle.dataset.id;
+            try {
+                const endpoint = toggle.checked ? `/api/admin/commission/${id}/activate` : `/api/admin/commission/${id}/deactivate`;
+                const res = await fetch(endpoint, { method: 'PATCH' });
+                if (!res.ok) {
+                    const msg = await handleFetchError(res);
+                    throw new Error(msg);
+                }
+                loadCommissions();
+            } catch (err) {
+                alert(err.message || 'Lỗi cập nhật trạng thái');
+                loadCommissions();
+            }
         }
     });
 

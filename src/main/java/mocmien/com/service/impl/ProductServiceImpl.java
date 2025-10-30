@@ -1,12 +1,8 @@
 package mocmien.com.service.impl;
 
 import java.math.BigDecimal;
-import java.util.Comparator;
-
-import java.util.ArrayList;
 import java.util.ArrayList;
 import java.util.Comparator;
-
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -17,15 +13,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-
 import mocmien.com.dto.response.product.ProductDetailResponse;
 import mocmien.com.dto.response.product.ProductListItemResponse;
 import mocmien.com.dto.product.ProductRowVM;
-
-import mocmien.com.dto.response.product.ProductDetailResponse;
-import mocmien.com.dto.response.product.ProductListItemResponse;
-import mocmien.com.dto.product.ProductRowVM;
-
 import mocmien.com.entity.Category;
 import mocmien.com.entity.Product;
 import mocmien.com.entity.ProductImage;
@@ -34,10 +24,6 @@ import mocmien.com.enums.ProductStatus;
 import mocmien.com.repository.CategoryRepository;
 import mocmien.com.repository.ProductRepository;
 import mocmien.com.service.ProductService;
-import org.springframework.data.domain.*;
-
-import lombok.RequiredArgsConstructor;
-
 
 
 @Service
@@ -104,7 +90,7 @@ public class ProductServiceImpl implements ProductService {
 			dto.setIsActive(p.getIsActive());
 			dto.setDefaultImage((p.getImages() == null) ? null
 					: p.getImages().stream().sorted(imageOrder()).map(ProductImage::getImageUrl).findFirst()
-							.orElse(null));
+						.orElse(null));
 			return dto;
 		}).filter(d -> status == null || d.getStatus() == status).collect(Collectors.toList());
 
@@ -201,6 +187,7 @@ public class ProductServiceImpl implements ProductService {
 	public Page<Product> findByStore(Store store, Pageable pageable) {
 		return productRepo.findByStore(store, pageable);
 	}
+
     @Override
     public BigDecimal averageRatingByStore(Store store) {
         return productRepo.averageRatingByStore(store);
@@ -214,6 +201,10 @@ public class ProductServiceImpl implements ProductService {
         List<ProductRowVM> list = new ArrayList<>();
 
         for (Product p : products) {
+            // Bỏ sản phẩm nếu cửa hàng bị khóa (không hoạt động)
+            if (p.getStore() != null && !p.getStore().isActive()) {
+                continue;
+            }
             ProductRowVM vm = new ProductRowVM();
             vm.setMaSP(p.getId());
             vm.setTenSP(p.getProductName());
@@ -242,49 +233,48 @@ public class ProductServiceImpl implements ProductService {
         return list;
     }
 
-    @Override
-    public ProductDetailResponse getProductDetailById(Integer id) {
-        Product p = productRepo.findById(id)
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy sản phẩm với id " + id));
+	@Override
+	public ProductDetailResponse getProductDetailById(Integer id) {
+		Product p = productRepo.findById(id)
+				.orElseThrow(() -> new RuntimeException("Không tìm thấy sản phẩm với id " + id));
 
-        // ✅ Lấy ảnh chính (is_default = 1)
-        String mainImageUrl = null;
-        List<String> galleryImages = new ArrayList<>();
+		// ✅ Lấy ảnh chính (is_default = 1)
+		String mainImageUrl = null;
+		List<String> galleryImages = new ArrayList<>();
 
-        if (p.getImages() != null && !p.getImages().isEmpty()) {
-            for (ProductImage img : p.getImages()) {
-                if (Boolean.TRUE.equals(img.getIsDefault())) {
-                    mainImageUrl = img.getImageUrl();
-                } else {
-                    galleryImages.add(img.getImageUrl());
-                }
-            }
-        }
+		if (p.getImages() != null && !p.getImages().isEmpty()) {
+			for (ProductImage img : p.getImages()) {
+				if (Boolean.TRUE.equals(img.getIsDefault())) {
+					mainImageUrl = img.getImageUrl();
+				} else {
+					galleryImages.add(img.getImageUrl());
+				}
+			}
+		}
 
-        // Nếu không có ảnh chính, chọn ảnh đầu tiên làm mặc định
-        if (mainImageUrl == null && !p.getImages().isEmpty()) {
-            mainImageUrl = p.getImages().get(0).getImageUrl();
-        }
+		// Nếu không có ảnh chính, chọn ảnh đầu tiên làm mặc định
+		if (mainImageUrl == null && !p.getImages().isEmpty()) {
+			mainImageUrl = p.getImages().get(0).getImageUrl();
+		}
 
-        return ProductDetailResponse.builder()
-                .id(p.getId())
-                .productName(p.getProductName())
-                .categoryId(p.getCategory().getId())
-                .categoryName(p.getCategory().getCategoryName())
-                .price(p.getPrice())
-                .promotionalPrice(p.getPromotionalPrice())
-                .size(p.getSize())
-                .stock(p.getStock())
-                .sold(p.getSold())
-                .status(statusOf(p))
-                .isActive(p.getIsActive())
-                .storeId(p.getStore().getId())
-                .storeName(p.getStore().getStoreName())
-                .mainImage(mainImageUrl) // ✅ thêm trường ảnh chính
-                .imageUrls(galleryImages) // ✅ ảnh phụ
-                .build();
-    }
-
+		return ProductDetailResponse.builder()
+				.id(p.getId())
+				.productName(p.getProductName())
+				.categoryId(p.getCategory().getId())
+				.categoryName(p.getCategory().getCategoryName())
+				.price(p.getPrice())
+				.promotionalPrice(p.getPromotionalPrice())
+				.size(p.getSize())
+				.stock(p.getStock())
+				.sold(p.getSold())
+				.status(statusOf(p))
+				.isActive(p.getIsActive())
+				.storeId(p.getStore().getId())
+				.storeName(p.getStore().getStoreName())
+				.mainImage(mainImageUrl) // ✅ thêm trường ảnh chính
+				.imageUrls(galleryImages) // ✅ ảnh phụ
+				.build();
+	}
 
 	@Override
 	public Page<Product> findByPriceRange(BigDecimal minPrice, BigDecimal maxPrice, Pageable pageable) {
@@ -322,61 +312,6 @@ public class ProductServiceImpl implements ProductService {
 	@Override
 	public long countOutOfStock() {
 		return productRepo.countOutOfStock();
-	}
-
-	// ====== Builder tạm cho ProductListItemResponse (nếu em dùng @Builder của
-	// Lombok thì không cần class này) ======
-	private static class ProductListItemResponseBuilder {
-		private final ProductListItemResponse dto = new ProductListItemResponse();
-
-		public ProductListItemResponseBuilder id(Integer v) {
-			dto.setId(v);
-			return this;
-		}
-
-		public ProductListItemResponseBuilder productName(String v) {
-			dto.setProductName(v);
-			return this;
-		}
-
-		public ProductListItemResponseBuilder categoryName(String v) {
-			dto.setCategoryName(v);
-			return this;
-		}
-
-		public ProductListItemResponseBuilder price(BigDecimal v) {
-			dto.setPrice(v);
-			return this;
-		}
-
-		public ProductListItemResponseBuilder promotionalPrice(BigDecimal v) {
-			dto.setPromotionalPrice(v);
-			return this;
-		}
-
-		public ProductListItemResponseBuilder stock(Integer v) {
-			dto.setStock(v);
-			return this;
-		}
-
-		public ProductListItemResponseBuilder status(ProductStatus v) {
-			dto.setStatus(v);
-			return this;
-		}
-
-		public ProductListItemResponseBuilder defaultImage(String v) {
-			dto.setDefaultImage(v);
-			return this;
-		}
-
-		public ProductListItemResponseBuilder isActive(Boolean v) {
-			dto.setIsActive(v);
-			return this;
-		}
-
-		public ProductListItemResponse build() {
-			return dto;
-		}
 	}
 
 	@Override

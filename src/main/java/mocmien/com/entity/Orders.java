@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.UUID;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -111,11 +112,10 @@ public class Orders {
 
         if (id == null || id.isEmpty()) {
             String datePart = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
-            String randomPart = String.format("%04d", (int) (Math.random() * 10000)); // 4 chữ số ngẫu nhiên
-            id = "ORD-" + datePart + "-" + randomPart;
+            String uuidPart = UUID.randomUUID().toString().substring(0, 6).toUpperCase(); // 6 ký tự đầu
+            id = "ORD-" + datePart + "-" + uuidPart;
         }
     }
-
 
     @PreUpdate
     protected void onUpdate() {

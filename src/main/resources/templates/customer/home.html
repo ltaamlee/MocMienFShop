@@ -52,6 +52,8 @@
 				<h3>Gợi ý hôm nay</h3>
 				<div class="product-list">
 					<div class="product-card" th:each="p : ${products}">
+						<!-- Ribbon khuyến mãi toàn sàn -->
+						<div class="ribbon" th:if="${globalPromoName != null}" th:text="${globalPromoName}"></div>
 						<!-- Ảnh sản phẩm -->
 						<a th:href="@{'/product/' + ${p.maSP}}"> <img
 							th:src="${p.hinhAnh}" alt="Ảnh sản phẩm" />

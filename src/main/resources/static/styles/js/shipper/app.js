@@ -7,21 +7,35 @@ function getCsrf() {
 }
 
 async function initMap() {
-    map = L.map('map');
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19 }).addTo(map);
-    marker = L.marker([0, 0]).addTo(map);
+    // Ranh giới Việt Nam (xấp xỉ)
+    const VN_BOUNDS = L.latLngBounds(L.latLng(8.179, 102.144), L.latLng(23.393, 109.469));
+
+    map = L.map('map', { maxBounds: VN_BOUNDS, maxBoundsViscosity: 1.0 });
+    // Bản đồ hành chính (Carto Voyager có ranh giới, nhãn hành chính rõ)
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+        maxZoom: 19,
+        attribution: '&copy; OpenStreetMap & CARTO'
+    }).addTo(map);
+
+    // Mặc định fit Việt Nam
+    map.fitBounds(VN_BOUNDS);
+    marker = L.marker([16.047, 108.206]).addTo(map); // tâm VN gần Đà Nẵng
+
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(pos => {
             const { latitude, longitude } = pos.coords;
-            map.setView([latitude, longitude], 15);
-            marker.setLatLng([latitude, longitude]);
+            const latlng = [latitude, longitude];
+            marker.setLatLng(latlng);
+            map.setView(latlng, 15);
             updateLocation(latitude, longitude);
+        }, () => {
+            // Bỏ qua lỗi, giữ mặc định VN
         });
         navigator.geolocation.watchPosition(pos => {
             const { latitude, longitude } = pos.coords;
             marker.setLatLng([latitude, longitude]);
             updateLocation(latitude, longitude);
-        });
+        }, () => {});
     }
 }
 

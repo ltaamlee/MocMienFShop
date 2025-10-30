@@ -136,3 +136,71 @@
 .sidebar-menu li:hover > .sidebar-submenu {
     display: block;
 }
+
+/* ========================
+   Mobile bottom tab (shipper)
+   ======================== */
+@media (max-width: 768px) {
+    .sidebar {
+        position: fixed;
+        bottom: 0;
+        top: auto;
+        left: 0;
+        right: 0;
+        width: 100%;
+        height: 64px;
+        transform: none;
+        border-radius: 14px 14px 0 0;
+        padding: 0;
+        box-shadow: 0 -6px 16px rgba(0,0,0,0.08);
+        background-color: #fff;
+        z-index: 1600;
+    }
+
+    .sidebar:hover { width: 100%; cursor: default; }
+
+    .sidebar-menu {
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
+        padding: 8px 10px;
+    }
+
+    .sidebar-menu li { margin: 0; flex: 1; }
+
+    .sidebar-menu li a {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 4px;
+        background: transparent;
+        box-shadow: none !important;
+        padding: 6px 4px;
+        border-radius: 10px;
+        min-height: auto;
+        font-size: 0.78rem;
+    }
+
+    .sidebar-menu .icon {
+        width: 28px;
+        height: 28px;
+        font-size: 1.05rem;
+    }
+
+    .sidebar-menu .text {
+        opacity: 1 !important;
+        margin-left: 0;
+        font-weight: 600;
+    }
+
+    .sidebar-menu li a.active::before { display: none; }
+
+    .sidebar-menu li a.active {
+        background-color: var(--fifth-color);
+        color: var(--text2-color);
+    }
+
+    /* Ẩn submenu trên mobile để không che nội dung */
+    .sidebar-submenu { display: none !important; }
+}

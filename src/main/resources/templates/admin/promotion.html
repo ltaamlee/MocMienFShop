@@ -24,13 +24,6 @@
 				<div class="value" id="activePromotionsStat"
 					th:text="${activePromotions} ?: '0'">0</div>
 			</div>
-
-			<div class="stat-card upcoming">
-				<h3>Sắp bắt đầu</h3>
-				<div class="value" id="upcomingPromotionsStat"
-					th:text="${upcomingPromotions} ?: '0'">0</div>
-			</div>
-
 			<div class="stat-card expiring">
 				<h3>Sắp hết hạn</h3>
 				<div class="value" id="expiringPromotionsStat"
@@ -57,7 +50,7 @@
 
 				<div class="filter-group">
 					<div class="filter-item">
-						<label for="type">Loại khuyến mãi:</label> <select id="type"
+						<label for="typeFilter">Loại khuyến mãi:</label> <select id="typeFilter"
 							name="type" required>
 							<option value="">Chọn loại khuyến mãi</option>
 							<option th:each="type : ${promotionTypes}"
@@ -129,6 +122,76 @@
 
 		<div class="pagination" id="promotionPagination"></div>
 
+		<!-- CHIẾT KHẤU APP CHO SHOP -->
+		<div class="d-flex justify-content-between align-items-center mb-3" style="margin-top:24px;">
+			<h3>Chiết khấu App</h3>
+			<button class="btn btn-primary" onclick="openAddCommissionModal()">
+				<i class="fas fa-plus-circle"></i> Thêm chiết khấu app
+			</button>
+		</div>
+		<div class="table-promotions">
+			<table>
+				<thead>
+					<tr>
+						<th>STT</th>
+						<th>Cửa hàng</th>
+						<th>Tỷ lệ (%)</th>
+						<th>Kích hoạt</th>
+						<th>Tạo lúc</th>
+						<th>Cập nhật</th>
+						<th>Ghi chú</th>
+					</tr>
+				</thead>
+				<tbody id="commissionTableBody">
+					<tr>
+						<td colspan="7" style="text-align:center;">KHÔNG CÓ DỮ LIỆU</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+
+		<div class="pagination" id="commissionPagination"></div>
+
+		<!-- MODAL: Thêm Chiết Khấu App -->
+		<div id="addCommissionModal" class="modal">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h2>Thêm Chiết Khấu App</h2>
+					<button type="button" class="close-modal" onclick="closeModal('addCommissionModal')">&times;</button>
+				</div>
+				<div class="modal-body">
+					<form id="commissionForm" novalidate>
+						<div class="form-group">
+							<label for="commissionStore">Cửa hàng (tùy chọn):</label>
+							<select id="commissionStore" name="storeId">
+								<option value="">— Áp dụng mặc định (tất cả shop) —</option>
+								<option th:each="s : ${allStores}" th:value="${s.id}" th:text="${s.storeName}"></option>
+							</select>
+						</div>
+
+						<div class="form-group">
+							<label for="commissionRate">Tỷ lệ chiết khấu (%):</label>
+							<input type="number" id="commissionRate" name="ratePercent" min="0" max="100" step="0.01" required>
+							<div class="error-message" id="commissionRate-error"></div>
+						</div>
+
+						<div class="form-group">
+							<label><input type="checkbox" id="commissionActive" checked> Kích hoạt ngay</label>
+						</div>
+
+						<div class="form-group">
+							<label for="commissionNote">Ghi chú:</label>
+							<input type="text" id="commissionNote" name="note" placeholder="Ví dụ: áp dụng cho đợt T11">
+						</div>
+
+						<div class="form-group text-right">
+							<button type="submit" class="btn btn-primary">Lưu Chiết khấu</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+
 		<!-- THÊM KHUYẾN MÃI CHO ADMIN -->
 		<div id="addPromotionModal" class="modal">
 			<div class="modal-content">
@@ -148,9 +211,9 @@
 						</div>
 
 						<!-- Loại khuyến mãi -->
-						<div class="form-group">
-							<label for="type">Loại khuyến mãi:</label> <select id="type"
-								name="type" required>
+					<div class="form-group">
+						<label for="promoType">Loại khuyến mãi:</label> <select id="promoType"
+							name="type" required>
 								<option value="">Chọn loại khuyến mãi</option>
 								<option th:each="type : ${promotionTypes}"
 									th:value="${type.name()}" th:text="${type.displayName}"></option>

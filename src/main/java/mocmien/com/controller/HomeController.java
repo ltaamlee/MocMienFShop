@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import mocmien.com.service.ProductService;
+import mocmien.com.repository.AdminPromotionRepository;
 import mocmien.com.service.UserService;
 import mocmien.com.dto.product.ProductRowVM;
 import mocmien.com.entity.Category;
@@ -23,12 +24,14 @@ public class HomeController {
 	
 	private final UserService userService;
 	private final ProductService productService;
-	private final CategoryRepository categoryRepository;
+    private final CategoryRepository categoryRepository;
+    private final AdminPromotionRepository adminPromotionRepository;
 
-	public HomeController(UserService userService, ProductService productService, CategoryRepository categoryRepository) {
+    public HomeController(UserService userService, ProductService productService, CategoryRepository categoryRepository, AdminPromotionRepository adminPromotionRepository) {
 		this.userService = userService;
 		this.productService = productService;
 		this.categoryRepository = categoryRepository;
+        this.adminPromotionRepository = adminPromotionRepository;
 	}
 
 	@GetMapping("/")
@@ -43,9 +46,15 @@ public class HomeController {
 	    addUserToModel(model, authentication);
 	    model.addAttribute("title", "MocMien Flower Shop");
 
-	    // ✅ Lấy danh sách sản phẩm hiển thị ra trang home
+        // ✅ Lấy danh sách sản phẩm hiển thị ra trang home
 	    List<ProductRowVM> products = productService.getAllProductRows();
 	    model.addAttribute("products", products);
+
+        // Global Promotion Ribbon (nếu có khuyến mãi toàn sàn đang ACTIVE)
+        var globals = adminPromotionRepository.findActiveGlobalPromotions();
+        if (globals != null && !globals.isEmpty()) {
+            model.addAttribute("globalPromoName", globals.get(0).getName());
+        }
 
 	    return "customer/home";
 	}
