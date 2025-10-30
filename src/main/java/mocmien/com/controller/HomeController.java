@@ -72,7 +72,7 @@ public class HomeController {
 	    model.addAttribute("sort", sort);
 
 	    // ✅ Lấy danh sách sản phẩm theo filter + sort
-	    List<ProductRowVM> products = productService.getAllProductRows(); // hoặc service filter theo categoryIds/sort
+	    List<ProductRowVM> products = productService.searchProductAdvanced(categoryIds, keyword, sort);
 	    model.addAttribute("products", products);
 
 	    return "customer/product";

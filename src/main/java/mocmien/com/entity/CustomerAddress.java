@@ -68,6 +68,12 @@ public class CustomerAddress {
 	public String getPhone() { return phone; }
 	public void setPhone(String phone) { this.phone = phone; }
 
+	public BigDecimal getLatitude() { return latitude; }
+	public void setLatitude(BigDecimal latitude) { this.latitude = latitude; }
+
+	public BigDecimal getLongitude() { return longitude; }
+	public void setLongitude(BigDecimal longitude) { this.longitude = longitude; }
+
 	public String getLine() { return line; }
 	public void setLine(String line) { this.line = line; }
 

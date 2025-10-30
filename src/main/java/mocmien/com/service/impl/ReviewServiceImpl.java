@@ -45,5 +45,25 @@ public class ReviewServiceImpl implements ReviewService {
         return reviewRepository.findByProductOrderByCreateAtDesc(product);
     }
 
+    @Override
+    public Double getAverageRatingOfProduct(Product product) {
+        List<Review> reviews = reviewRepository.findByProductOrderByCreateAtDesc(product);
+        if (reviews == null || reviews.isEmpty()) return 0.0;
+        return reviews.stream().filter(r -> r.getRating() != null)
+            .mapToInt(Review::getRating).average().orElse(0.0);
+    }
+
+    @Override
+    public Double getAverageRatingOfShop(Integer storeId) {
+        // Lấy tất cả sản phẩm theo storeId, rồi gom rating từ review của từng sản phẩm
+        List<Product> products = productRepository.findByStore_Id(storeId);
+        List<Review> allReviews = products.stream()
+            .flatMap(p -> reviewRepository.findByProductOrderByCreateAtDesc(p).stream())
+            .collect(java.util.stream.Collectors.toList());
+        if (allReviews == null || allReviews.isEmpty()) return 0.0;
+        return allReviews.stream().filter(r -> r.getRating() != null)
+            .mapToInt(Review::getRating).average().orElse(0.0);
+    }
+
 
 }

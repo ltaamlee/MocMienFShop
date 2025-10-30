@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{customer/layout}">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Danh sách yêu thích</title>
+	<th:block layout:fragment="styles">
+		<link rel="stylesheet" href="/styles/css/customer/base.css">
+		<link rel="stylesheet" href="/styles/css/customer/home.css">
+		<link rel="stylesheet" href="/styles/css/customer/banner.css">
+		<link rel="stylesheet" href="/styles/css/customer/product.css">
+		<link rel="stylesheet"
+			href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
+	</th:block>
+</head>
+<body>
+	<div layout:fragment="content" class="favorite-page">
+		<div class="favorite-container">
+			<h2 class="favorite-title" style="text-align:center; color:#b53e50; margin: 30px 0;">
+				💖 Sản phẩm yêu thích của bạn
+			</h2>
+
+			<!-- Nếu chưa có sản phẩm yêu thích -->
+			<div th:if="${#lists.isEmpty(favorites)}" class="no-favorite" style="text-align:center; padding:50px 0;">
+				<p style="font-size:1.1rem; color:#777;">Bạn chưa có sản phẩm yêu thích nào.</p>
+				<a href="/product" class="btn-back-home"
+					style="display:inline-block; margin-top:16px; padding:10px 20px; background:#b53e50; color:#fff; border-radius:8px; text-decoration:none;">
+					Tiếp tục mua sắm
+				</a>
+			</div>
+
+			<!-- Danh sách sản phẩm yêu thích -->
+			<div class="product-grid" th:if="${!#lists.isEmpty(favorites)}" style="margin: 0 auto; max-width:1200px;">
+				<div class="product-card" th:each="prod : ${favorites}" style="position:relative;">
+					
+					<!-- Nút xóa khỏi yêu thích -->
+					<button class="remove-fav-btn" th:data-prod-id="${prod.id}"
+						onclick="removeFavorite(this)"
+						style="position:absolute; top:10px; right:10px; background:none; border:none; font-size:1.4rem; color:#e52e4d; cursor:pointer;">
+						<i class="fa-solid fa-heart-circle-xmark"></i>
+					</button>
+
+					<!-- Liên kết đến chi tiết sản phẩm -->
+					<a th:href="@{'/product/' + ${prod.id}}" class="product-link">
+						<div class="product-image">
+							<img th:src="${!#lists.isEmpty(prod.images) ? prod.images[0].imageUrl : '/styles/image/default.jpg'}"
+								th:alt="${prod.productName}" />
+						</div>
+						<div class="product-info">
+							<h3 class="product-name" th:text="${prod.productName}"></h3>
+							<p class="product-price"
+								th:text="${#numbers.formatDecimal(prod.price, 0, 'COMMA', 0, 'POINT')} + ' ₫'"></p>
+						</div>
+					</a>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<th:block layout:fragment="scripts">
+		<script src="/styles/js/customer/header.js"></script>
+		<script th:src="@{/styles/js/customer/avatar.js}"></script>
+		<script src="/styles/js/customer/favorite-products.js"></script>
+	</th:block>
+</body>
+</html>

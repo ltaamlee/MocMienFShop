@@ -10,16 +10,11 @@ import org.springframework.data.domain.Pageable;
 import mocmien.com.dto.response.product.ProductDetailResponse;
 import mocmien.com.dto.response.product.ProductListItemResponse;
 
-import mocmien.com.dto.product.ProductRowVM;
-
-import mocmien.com.dto.product.ProductRowVM;
-
-import mocmien.com.dto.response.product.ProductDetailResponse;
-import mocmien.com.dto.response.product.ProductListItemResponse;
 import mocmien.com.entity.Category;
 import mocmien.com.entity.Product;
 import mocmien.com.entity.Store;
 import mocmien.com.enums.ProductStatus;
+import mocmien.com.dto.product.ProductRowVM;
 
 public interface ProductService {
 
@@ -60,6 +55,12 @@ public interface ProductService {
     long countDiscounted();
     long countOutOfStock();
     BigDecimal averageRatingByStore(Store store);
+    // ===================== HIỂN THỊ DANH SÁCH SẢN PHẨM (VM) =====================
     List<ProductRowVM> getAllProductRows();
     ProductDetailResponse getProductDetailById(Integer id);
+
+    /**
+     * Nâng cao: Lọc, tìm kiếm, sort đa tiêu chí sản phẩm
+     */
+    List<ProductRowVM> searchProductAdvanced(List<Integer> categoryIds, String keyword, String sort);
 }

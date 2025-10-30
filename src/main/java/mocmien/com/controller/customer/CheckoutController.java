@@ -17,6 +17,7 @@ import mocmien.com.entity.CustomerAddress;
 import mocmien.com.entity.Orders;
 import mocmien.com.entity.Product;
 import mocmien.com.entity.User;
+import mocmien.com.entity.Store;
 import mocmien.com.entity.UserProfile;
 import mocmien.com.enums.OrderStatus;
 import mocmien.com.enums.PaymentMethod;
@@ -39,6 +40,7 @@ public class CheckoutController {
     @Autowired private CustomerAddressService addressService;
     @Autowired private CartService cartService;
     @Autowired private MomoService momoService;
+    @Autowired private mocmien.com.service.ShippingService shippingService;
 
     // === 1) Trang thanh toán ===
     @GetMapping
@@ -97,7 +99,27 @@ public class CheckoutController {
                     .reduce(BigDecimal.ZERO, BigDecimal::add);
         }
 
-        BigDecimal shippingFee = BigDecimal.valueOf(30000);
+        BigDecimal shippingFee;
+        try {
+            CustomerAddress useAddress = defaultAddress;
+            Store storeForFee = null;
+            if (productId != null) {
+                Product product = productService.getProductById(productId)
+                        .orElseThrow(() -> new RuntimeException("Sản phẩm không tồn tại"));
+                storeForFee = product.getStore();
+            } else if (!cartItems.isEmpty()) {
+                storeForFee = cartItems.get(0).getProduct().getStore();
+            }
+            int estWeight = cartItems.stream().mapToInt(i -> i.getQuantity() * 500).sum();
+            shippingFee = (useAddress != null && storeForFee != null)
+                    ? shippingService.calculateShippingFee(storeForFee, useAddress, estWeight)
+                    : BigDecimal.valueOf(30000);
+        } catch (IllegalArgumentException ex) {
+            model.addAttribute("shippingError", ex.getMessage());
+            shippingFee = BigDecimal.ZERO;
+        } catch (Exception e) {
+            shippingFee = BigDecimal.valueOf(30000);
+        }
         BigDecimal grandTotal = total.add(shippingFee);
 
         model.addAttribute("user", user);
@@ -138,6 +160,38 @@ public class CheckoutController {
 
         Orders order;
 
+        // Kiểm tra khoảng cách & phí vận chuyển trước khi tạo đơn
+        try {
+            CustomerAddress defaultAddr = addressService.getDefaultAddress(profile);
+            Store storeForFee = null;
+            if (productId != null) {
+                Product product = productService.getProductById(productId)
+                        .orElseThrow(() -> new RuntimeException("Sản phẩm không tồn tại"));
+                storeForFee = product.getStore();
+            } else {
+                List<CartItem> tmpItems;
+                if (cartItemIds != null && !cartItemIds.isBlank()) {
+                    List<Integer> ids = Arrays.stream(cartItemIds.split(","))
+                            .map(String::trim)
+                            .filter(s -> s.matches("\\d+"))
+                            .map(Integer::parseInt)
+                            .toList();
+                    tmpItems = cartService.getCartByUser(user).stream().filter(i -> ids.contains(i.getId())).toList();
+                } else {
+                    tmpItems = cartService.getCartByUser(user);
+                }
+                if (!tmpItems.isEmpty()) {
+                    storeForFee = tmpItems.get(0).getProduct().getStore();
+                }
+            }
+            int estWeight = 500; // đơn giản: tối thiểu 500g
+            if (storeForFee != null && defaultAddr != null) {
+                shippingService.calculateShippingFee(storeForFee, defaultAddr, estWeight);
+            }
+        } catch (IllegalArgumentException ex) {
+            return "redirect:/checkout/error?msg=OutOfRadius";
+        } catch (Exception ignore) { }
+
         // Tạo order
         if (productId != null) {
             Product product = productService.getProductById(productId)
@@ -173,6 +227,24 @@ public class CheckoutController {
                 );
             }
         }
+
+        // Sau khi tạo order: tính lại phí ship và cập nhật tổng thanh toán
+        try {
+            CustomerAddress defaultAddr = addressService.getDefaultAddress(profile);
+            Store storeForFee = (order.getStore() != null) ? order.getStore() : null;
+            int estWeight = order.getOrderDetails() != null && !order.getOrderDetails().isEmpty() ?
+                    order.getOrderDetails().stream().mapToInt(d -> d.getQuantity() * 500).sum() : 500;
+            if (storeForFee != null && defaultAddr != null) {
+                BigDecimal fee = shippingService.calculateShippingFee(storeForFee, defaultAddr, estWeight);
+                order.setShippingFee(fee);
+                if (order.getAmountFromCustomer() != null) {
+                    order.setAmountFromCustomer(order.getAmountFromCustomer().add(fee));
+                }
+                orderService.save(order);
+            }
+        } catch (IllegalArgumentException ex) {
+            return "redirect:/checkout/error?msg=OutOfRadius";
+        } catch (Exception ignore) { }
 
         // COD
         if (paymentMethod.equalsIgnoreCase("COD")) {

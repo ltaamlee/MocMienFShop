@@ -70,4 +70,7 @@ public interface OrdersRepository extends JpaRepository<Orders, String>, JpaSpec
 	List<Orders> findByCustomer(UserProfile customer);
 
 	List<Orders> findByCustomerAndStatus(UserProfile customer, OrderStatus status);
+
+	List<Orders> findByCustomerOrderByCreatedAtDesc(UserProfile customer);
+	List<Orders> findByCustomerAndStatusOrderByCreatedAtDesc(UserProfile customer, OrderStatus status);
 }

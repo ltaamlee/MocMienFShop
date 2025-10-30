@@ -146,4 +146,6 @@ public interface ProductRepository extends JpaRepository<Product, Integer>, JpaS
 
     @Query("SELECT p FROM Product p WHERE p.category.id IN :ids AND p.isActive = true")
     Page<Product> findByCategoryIds(@Param("ids") List<Integer> ids, Pageable pageable);
+
+    List<Product> findByStore_Id(Integer id);
 }

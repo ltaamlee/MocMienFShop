@@ -20,6 +20,7 @@
 		<!-- ========== Chi tiết sản phẩm ========== -->
 		<section class="product-detail">
 			<div class="image-wrapper">
+
 				<!-- Ảnh chính -->
 				<img id="mainImage" th:src="${product.mainImage}"
 					th:alt="${product.productName}" class="main-photo">
@@ -47,10 +48,19 @@
 					th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT')} + ' ₫'"></p>
 
 				<!-- ⭐ Tổng đánh giá trung bình -->
-				<div class="rating">
+				<div class="rating"
+					style="display: flex; align-items: center; gap: 14px;">
 					<i class="fa-solid fa-star" style="color: #f7b500;"></i> <span
-						th:text="${avgRating != null ? #numbers.formatDecimal(avgRating, 1, 'COMMA', 1, 'POINT') : '5.0'}"></span>
-					/ 5
+						th:text="${product.productRating != null ? #numbers.formatDecimal(product.productRating, 1, 'COMMA', 1, 'POINT') : '0.0'}"></span>
+					/ 5 <span class="product-rating-count">( <span
+						th:text="${product.productRatingCount}"></span> lượt đánh giá)
+					</span>
+					<button id="favoriteBtn" class="btn-favorite"
+						th:data-product-id="${product.id}"
+						th:classappend="${isFavorite} ? ' favorited' : ''"
+						style="margin-left: 10px; font-size: 1.6rem;">
+						<i class="fa-solid fa-heart"></i>
+					</button>
 				</div>
 
 				<!-- Mô tả sản phẩm -->
@@ -68,10 +78,44 @@
 						vào giỏ hàng</button>
 					<button id="buyNow" th:data-id="${product.id}">⚡ Mua ngay</button>
 				</div>
+
 			</div>
 		</section>
 
-
+		<!-- Shop Info Box START -->
+		<div class="shop-info-card">
+			<div class="shop-info-main">
+				<img class="shop-logo" th:src="${product.storeAvatar}"
+					alt="shop logo" />
+				<div>
+					<h3 th:text="${product.storeName}"></h3>
+					<div class="shop-status-row">
+						<span class="shop-online">Online ... trước</span>
+						<!-- Nếu lấy được online time -->
+					</div>
+					<div>
+						<button class="btn-like-shop">Yêu Thích+</button>
+						<button class="btn-chat">
+							<i class="fa fa-comment"></i> Chat Ngay
+						</button>
+						<a th:href="@{'/shop/' + ${product.storeId}}"
+							class="btn-shop-view">Xem Shop</a>
+					</div>
+				</div>
+			</div>
+			<div class="shop-info-meta">
+				<div>
+					<span>Đánh Giá</span><span class="num"
+						th:text="${product.storeRating}"></span>
+				</div>
+				<div>
+					<span>Sản Phẩm</span><span class="num"
+						th:text="${product.storeProductCount}"></span>
+				</div>
+				<!-- Có thể thêm các trường khác như Tham Gia/Follow/Response rate... -->
+			</div>
+		</div>
+		<!-- Shop Info Box END -->
 		<!-- ========== Đánh giá ========== -->
 		<section class="reviews">
 			<h2>Đánh giá sản phẩm</h2>

@@ -84,6 +84,12 @@
 					<a
 						th:href="@{/product(q=${keyword}, sort='newest', categoryIds=${selectedCategories})}"
 						th:classappend="${sort == 'newest'} ? 'active'">Mới nhất</a>
+					<a
+						th:href="@{/product(q=${keyword}, sort='rating', categoryIds=${selectedCategories})}"
+						th:classappend="${sort == 'rating'} ? 'active'">Đánh giá cao</a>
+					<a
+						th:href="@{/product(q=${keyword}, sort='promotion', categoryIds=${selectedCategories})}"
+						th:classappend="${sort == 'promotion'} ? 'active'">Ưu đãi</a>
 				</div>
 
 				<!-- Danh sách sản phẩm -->

@@ -1,6 +1,7 @@
 package mocmien.com.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -17,6 +18,9 @@ public class GlobalModelAttributes {
 	@Autowired
 	private UserService userService;
 
+	@Value("${google.maps.apiKey:}")
+	private String googleMapsApiKey;
+
 	@ModelAttribute
 	public void addLoggedInUser(Model model, Authentication authentication) {
 		if (authentication != null && authentication.isAuthenticated()) {
@@ -28,5 +32,7 @@ public class GlobalModelAttributes {
 			model.addAttribute("user", null);
 			model.addAttribute("avatarUrl", null);
 		}
+
+		model.addAttribute("googleMapsApiKey", googleMapsApiKey);
 	}
 }

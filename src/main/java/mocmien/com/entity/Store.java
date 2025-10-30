@@ -4,7 +4,6 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
@@ -13,10 +12,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
@@ -24,7 +19,6 @@ import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import mocmien.com.enums.Rank;
 
 @Entity
 @Table(name = "Store")
@@ -56,6 +50,12 @@ public class Store {
     
     @Column(name = "address", columnDefinition = "nvarchar(500)")
     private String address;
+
+    @Column(name = "latitude", columnDefinition = "DECIMAL(10,7)")
+    private BigDecimal latitude;
+
+    @Column(name = "longitude", columnDefinition = "DECIMAL(10,7)")
+    private BigDecimal longitude;
 
 	@Column(name = "avatar", columnDefinition = "varchar(MAX)")
 	private String avatar;
@@ -154,6 +154,22 @@ public class Store {
 	public void setAddress(String address) {
 		this.address = address;
 	}
+
+    public BigDecimal getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(BigDecimal latitude) {
+        this.latitude = latitude;
+    }
+
+    public BigDecimal getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(BigDecimal longitude) {
+        this.longitude = longitude;
+    }
 
 	public String getAvatar() {
 		return avatar;

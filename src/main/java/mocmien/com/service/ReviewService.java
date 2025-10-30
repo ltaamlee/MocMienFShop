@@ -13,5 +13,6 @@ public interface ReviewService {
 	
 	List<Review> getReviewsByProductId(Integer productId);
 
-
+    Double getAverageRatingOfProduct(Product product);
+    Double getAverageRatingOfShop(Integer storeId);
 }

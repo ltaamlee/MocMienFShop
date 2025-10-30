@@ -124,12 +124,12 @@ public class OrderServiceImpl implements OrderService {
 	
 	@Override
     public List<Orders> getOrdersByCustomer(UserProfile customer) {
-        return orderRepo.findByCustomer(customer);
+        return orderRepo.findByCustomerOrderByCreatedAtDesc(customer);
     }
 
 	@Override
 	public List<Orders> getOrdersByCustomerAndStatus(UserProfile customer, OrderStatus status) {
-	    return orderRepo.findByCustomerAndStatus(customer, status);
+	    return orderRepo.findByCustomerAndStatusOrderByCreatedAtDesc(customer, status);
 	}
 
     @Override
