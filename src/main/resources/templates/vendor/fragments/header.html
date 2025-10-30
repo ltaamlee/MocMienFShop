@@ -20,7 +20,7 @@
 
 			<div class="user-info">
 				<div class="user-details">
-					<span class="user-name">vendor</span> <span class="user-role">Quản
+					<span class="user-name" th:text="${user.userProfile?.fullName}">vendor</span> <span class="user-role">Quản
 						lý cửa hàng</span>
 				</div>
 				<img th:src="${user.avatar != null} ? ${user.avatar}" alt="Avatar" class="user-avatar">

@@ -140,32 +140,41 @@ public class UserServiceImpl implements UserService {
 		// Hash password
 		user.setPassword(passwordEncoder.encode(user.getPassword()));
 
-		// Gán role mặc định CUSTOMER
-		Role customerRole = roleRepository.findByRoleName(RoleName.CUSTOMER)
-				.orElseThrow(() -> new RuntimeException("Role CUSTOMER không tồn tại"));
-		user.setRole(customerRole);
+		// ✅ Gán role theo parameter (không hardcode CUSTOMER)
+		Role role = roleRepository.findByRoleName(roleName)
+				.orElseThrow(() -> new RuntimeException("Role " + roleName + " không tồn tại"));
+		user.setRole(role);
 
 		// Trạng thái mặc định
 		user.setActive(true);
 		user.setStatus(UserStatus.OFFLINE);
 
-		// Avatar mặc định
+		// Avatar mặc định theo role
 		if (user.getAvatar() == null || user.getAvatar().isEmpty()) {
-			user.setAvatar("profile/customer/default.png");
+			switch (roleName) {
+				case VENDOR:
+					user.setAvatar("profile/vendor/default.png");
+					break;
+				case SHIPPER:
+					user.setAvatar("profile/shipper/default.png");
+					break;
+				default:
+					user.setAvatar("profile/customer/default.png");
+			}
 		}
 
 		// Lưu User trước
 		User savedUser = userRepository.save(user);
 
-		// Lưu Customer, liên kết user
-		UserProfile customer = new UserProfile();
-		customer.setUser(savedUser);
-		customer.setFullName(fullName);
-
+		// ✅ TẤT CẢ role đều tạo UserProfile
 		Level basicLevel = levelRepository.findByName(Rank.NEW)
 				.orElseThrow(() -> new RuntimeException("Level NEW không tồn tại"));
-		customer.setLevel(basicLevel);
-		customerRepository.save(customer);
+		
+		UserProfile profile = new UserProfile();
+		profile.setUser(savedUser);
+		profile.setFullName(fullName);
+		profile.setLevel(basicLevel);
+		customerRepository.save(profile);
 
 		return Optional.of(savedUser);
 	}

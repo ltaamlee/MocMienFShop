@@ -26,6 +26,8 @@ public class RegisterRequest {
     @NotBlank(message = "Số điện thoại không được để trống")
     @Pattern(regexp = "^[0-9]{10,11}$", message = "Số điện thoại phải có 10 chữ số")
     private String phone;
+    
+    private String role = "CUSTOMER"; // Mặc định là CUSTOMER
 
 	public String getUsername() {
 		return username;
@@ -65,6 +67,14 @@ public class RegisterRequest {
 
 	public void setPhone(String phone) {
 		this.phone = phone;
+	}
+	
+	public String getRole() {
+		return role;
+	}
+	
+	public void setRole(String role) {
+		this.role = role;
 	}
     
     

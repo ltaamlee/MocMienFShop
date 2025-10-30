@@ -41,6 +41,7 @@ public class RegisterController {
                 System.out.println("Email: " + request.getEmail());
                 System.out.println("Phone: " + request.getPhone());
                 System.out.println("FullName: " + request.getFullName());
+                System.out.println("Role: " + request.getRole()); // ✅ LOG ROLE
             }
             System.out.println("====================================");
             
@@ -58,7 +59,15 @@ public class RegisterController {
             user.setPassword(request.getPassword());
             user.setPhone(request.getPhone());
             
-            userService.register(user, RoleName.CUSTOMER, request.getFullName());
+            // ✅ Parse role từ request
+            RoleName roleName;
+            try {
+                roleName = RoleName.valueOf(request.getRole());
+            } catch (Exception e) {
+                roleName = RoleName.CUSTOMER; // Mặc định nếu parse lỗi
+            }
+            
+            userService.register(user, roleName, request.getFullName());
             
             model.addAttribute("success", "Đăng ký thành công! Bạn có thể đăng nhập ngay.");
             // Reset form
