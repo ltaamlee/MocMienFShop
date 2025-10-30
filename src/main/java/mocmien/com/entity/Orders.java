@@ -2,6 +2,7 @@ package mocmien.com.entity;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import jakarta.persistence.CascadeType;
@@ -108,11 +109,13 @@ public class Orders {
         createdAt = LocalDateTime.now();
         updatedAt = LocalDateTime.now();
 
-        // Nếu chưa có id thì tự tạo theo timestamp
         if (id == null || id.isEmpty()) {
-            id = "ORD-" + System.currentTimeMillis();
+            String datePart = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+            String randomPart = String.format("%04d", (int) (Math.random() * 10000)); // 4 chữ số ngẫu nhiên
+            id = "ORD-" + datePart + "-" + randomPart;
         }
     }
+
 
     @PreUpdate
     protected void onUpdate() {
