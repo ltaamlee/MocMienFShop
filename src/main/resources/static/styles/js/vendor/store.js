@@ -14,7 +14,12 @@ const submitLoading = document.getElementById("submitLoading");
 const vendorIdInput = document.getElementById("vendorId");
 
 const storeNameInput = document.getElementById("storeName");
-const addressInput = document.getElementById("address");
+const lineInput = document.getElementById("line");
+const provinceSelect = document.getElementById("provinceSelect");
+const districtSelect = document.getElementById("districtSelect");
+const wardSelect = document.getElementById("wardSelect");
+const latitudeInput = document.getElementById("latitude");
+const longitudeInput = document.getElementById("longitude");
 const avatarFileInput = document.getElementById("avatarFile");
 const coverFileInput = document.getElementById("coverFile");
 const featureFilesInput = document.getElementById("featureFiles");
@@ -115,11 +120,16 @@ submitBtn?.addEventListener("click", async () => {
 
 	try {
 		const vendorId = vendorIdInput?.value?.trim();
-		const storeName = storeNameInput.value.trim();
-		const address = addressInput.value.trim();
+        const storeName = storeNameInput.value.trim();
+        const line = (lineInput?.value || '').trim();
+        const province = provinceSelect && provinceSelect.value ? provinceSelect.options[provinceSelect.selectedIndex].text : '';
+        const district = districtSelect && districtSelect.value ? districtSelect.options[districtSelect.selectedIndex].text : '';
+        const ward = wardSelect && wardSelect.value ? wardSelect.options[wardSelect.selectedIndex].text : '';
+        const latitude = latitudeInput?.value ? parseFloat(latitudeInput.value) : null;
+        const longitude = longitudeInput?.value ? parseFloat(longitudeInput.value) : null;
 
-		if (!storeName || !address) {
-			alert("Vui lòng nhập Tên cửa hàng và Địa chỉ.");
+        if (!storeName || !line || !province || !district || !ward) {
+            alert("Vui lòng nhập Tên cửa hàng, địa chỉ và chọn khu vực.");
 			return;
 		}
 
@@ -134,15 +144,22 @@ submitBtn?.addEventListener("click", async () => {
 			if (url) featureUrls.push(url);
 		}
 
-		const payload = {
-			vendorId: vendorId ? parseInt(vendorId) : null,
-			storeName,
-			address,
-			avatar: avatarUrl,
-			cover: coverUrl,
-			featureImages: featureUrls,
-			isOpen: isOpenToggle.checked
-		};
+        const payload = {
+            vendorId: vendorId ? parseInt(vendorId) : null,
+            storeName,
+            // Keep address for backward compatibility, also send structured fields
+            address: [line, ward, district, province].filter(Boolean).join(', '),
+            line,
+            ward,
+            district,
+            province,
+            latitude,
+            longitude,
+            avatar: avatarUrl,
+            cover: coverUrl,
+            featureImages: featureUrls,
+            isOpen: isOpenToggle.checked
+        };
 
 		const res = await fetch("/api/vendor/store/register", {
 			method: "POST",

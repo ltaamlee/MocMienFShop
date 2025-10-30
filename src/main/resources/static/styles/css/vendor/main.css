@@ -643,6 +643,40 @@ tbody tr:hover {
     padding: 25px;
 }
 
+.form-section{ 
+    padding: 12px 0 4px 0; 
+    border-top: 1px dashed #eee; 
+    margin-top: 8px; 
+}
+.form-section:first-of-type{ border-top: none; margin-top: 0; }
+.section-mini-title{ 
+    font-size: 14px; 
+    font-weight: 700; 
+    color: #374151; 
+    margin-bottom: 10px; 
+    text-transform: uppercase; 
+    letter-spacing: .02em; 
+}
+.inline-hint{ font-size: 12px; color:#6b7280; margin: -4px 0 12px 0; }
+
+.address-select-group{ 
+    display: grid; 
+    grid-template-columns: 1fr 1fr 1fr auto; 
+    gap: 10px; 
+}
+.address-select-group .btn-select{ 
+    padding: 12px 14px; 
+    background: #f3f4f6; 
+    color: #374151; 
+    border: 1px solid #e5e7eb; 
+    border-radius: 6px; 
+    cursor: pointer; 
+    white-space: nowrap; 
+}
+.address-select-group .btn-select:hover{ 
+    background:#e5e7eb; 
+}
+
 .form-group {
     margin-bottom: 20px;
 }
