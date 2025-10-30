@@ -167,8 +167,9 @@ public interface OrdersRepository extends JpaRepository<Orders, String>, JpaSpec
 
 	Optional<Orders> findByIdAndShipper_Id(String id, Integer shipperId);
 
-    @Query("SELECT SUM(o.amountToSys) FROM Orders o WHERE o.status = 'DELIVERED'")
-	Optional<BigDecimal> getAdminTotalRevenue(OrderStatus delivered);
+    // Admin total revenue = fixed 10% commission of gross (amountFromCustomer) for delivered orders
+    @Query("SELECT COALESCE(SUM(o.amountFromCustomer) * 0.1, 0) FROM Orders o WHERE o.status = 'DELIVERED'")
+    Optional<BigDecimal> getAdminTotalRevenue(OrderStatus delivered);
 
 	@Query("SELECT COUNT(o) FROM Orders o WHERE o.status = :status AND o.createdAt >= :sinceDate")
 	long countCompletedOrdersSince(@Param("status") OrderStatus status, @Param("sinceDate") LocalDateTime sinceDate);
@@ -176,16 +177,18 @@ public interface OrdersRepository extends JpaRepository<Orders, String>, JpaSpec
 	@Query("SELECT o FROM Orders o ORDER BY o.createdAt DESC")
 	List<Orders> findRecentOrders(Pageable pageable);
 
+    // Chart (daily): admin revenue = 10% of amountFromCustomer
     @Query("SELECT YEAR(o.createdAt) as orderYear, " + "       MONTH(o.createdAt) as orderMonth, "
-            + "       DAY(o.createdAt) as orderDay, " + "       SUM(o.amountToSys) as total " + "FROM Orders o "
+            + "       DAY(o.createdAt) as orderDay, " + "       SUM(o.amountFromCustomer) * 0.1 as total " + "FROM Orders o "
 			+ "WHERE o.status = :status AND o.createdAt >= :startDate AND o.createdAt < :endDate "
 			+ "GROUP BY YEAR(o.createdAt), MONTH(o.createdAt), DAY(o.createdAt) "
 			+ "ORDER BY orderYear ASC, orderMonth ASC, orderDay ASC")
 	List<Object[]> findDailyRevenue(@Param("status") OrderStatus status, @Param("startDate") LocalDateTime startDate,
 			@Param("endDate") LocalDateTime endDate);
 
-    @Query("SELECT YEAR(o.createdAt) as orderYear, MONTH(o.createdAt) as orderMonth, SUM(o.amountToSys) as total "
-			+ "FROM Orders o " + "WHERE o.status = :status AND o.createdAt >= :startDate AND o.createdAt < :endDate "
+    // Chart (monthly): admin revenue = 10% of amountFromCustomer
+    @Query("SELECT YEAR(o.createdAt) as orderYear, MONTH(o.createdAt) as orderMonth, SUM(o.amountFromCustomer) * 0.1 as total "
+            + "FROM Orders o " + "WHERE o.status = :status AND o.createdAt >= :startDate AND o.createdAt < :endDate "
 			+ "GROUP BY YEAR(o.createdAt), MONTH(o.createdAt) " + "ORDER BY orderYear ASC, orderMonth ASC")
 	List<Object[]> findMonthlyRevenue(@Param("status") OrderStatus status, @Param("startDate") LocalDateTime startDate,
 			@Param("endDate") LocalDateTime endDate);
