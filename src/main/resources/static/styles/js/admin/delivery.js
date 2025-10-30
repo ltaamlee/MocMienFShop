@@ -109,7 +109,7 @@ function renderDeliveryTable(deliveries) {
             <td class="text-end">${delivery.maxDistance !== null && delivery.maxDistance !== undefined ? delivery.maxDistance : '-'}</td>
             <td>${escapeHTML(delivery.description || '')}</td>
             <td><span class="${statusClass}">${statusText}</span></td>
-            <td>${formatDateTime(delivery.createAt)}</td> <td>
+            <td>${formatDateTime(delivery.createdAt)}</td> <td>
                 <button class="btn btn-sm btn-warning btn-edit-delivery" 
                         data-id="${delivery.id}" title="Sửa">
                     <i class="fas fa-edit"></i>

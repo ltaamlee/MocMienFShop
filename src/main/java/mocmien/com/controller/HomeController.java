@@ -2,6 +2,9 @@ package mocmien.com.controller;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -74,9 +77,13 @@ public class HomeController {
 	}
 
 	@GetMapping("/product")
-	public String showProducts(@RequestParam(value = "q", required = false) String keyword,
+	public String showProducts(
+			@RequestParam(value = "q", required = false) String keyword,
 			@RequestParam(value = "sort", required = false) String sort,
-			@RequestParam(value = "categoryIds", required = false) List<Integer> categoryIds, Model model,
+			@RequestParam(value = "categoryIds", required = false) List<Integer> categoryIds,
+			@RequestParam(value = "page", required = false, defaultValue = "0") int page,
+			@RequestParam(value = "size", required = false, defaultValue = "15") int size,
+			Model model,
 			Authentication authentication) {
 		addUserToModel(model, authentication);
 
@@ -90,9 +97,17 @@ public class HomeController {
 		model.addAttribute("keyword", keyword);
 		model.addAttribute("sort", sort);
 
-		// ✅ Lấy danh sách sản phẩm theo filter + sort
-		List<mocmien.com.dto.response.product.ProductRowVM> products = productService.getAllProductRows(); // hoặc service filter theo categoryIds/sort
-		model.addAttribute("products", products);
+		// ✅ Tạo Pageable
+		Pageable pageable = PageRequest.of(page, size);
+
+		// ✅ Lấy danh sách sản phẩm theo filter + sort + pagination
+		Page<mocmien.com.dto.response.product.ProductRowVM> productPage = 
+			productService.searchProductAdvancedWithPagination(categoryIds, keyword, sort, pageable);
+		
+		model.addAttribute("products", productPage.getContent());
+		model.addAttribute("currentPage", page);
+		model.addAttribute("totalPages", productPage.getTotalPages());
+		model.addAttribute("totalItems", productPage.getTotalElements());
 
 		// Banner khuyến mãi toàn sàn
 		var globals2 = adminPromotionRepository.findActiveGlobalPromotions();

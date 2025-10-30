@@ -150,6 +150,56 @@
 						</div>
 					</div>
 
+					<!-- Pagination Controls -->
+					<div class="pagination-container" th:if="${totalPages > 1}">
+						<div class="pagination-info">
+							<p>Hiển thị <strong th:text="${products.size()}"></strong> trên <strong th:text="${totalItems}"></strong> sản phẩm</p>
+						</div>
+						
+						<div class="pagination">
+							<!-- First Page -->
+							<a th:href="@{/product(q=${keyword}, sort=${sort}, categoryIds=${selectedCategories}, page=0)}"
+							   th:if="${currentPage > 0}"
+							   class="page-link"
+							   title="Trang đầu">
+								<i class="fa fa-angle-double-left"></i>
+							</a>
+							
+							<!-- Previous Page -->
+							<a th:href="@{/product(q=${keyword}, sort=${sort}, categoryIds=${selectedCategories}, page=${currentPage - 1})}"
+							   th:if="${currentPage > 0}"
+							   class="page-link"
+							   title="Trang trước">
+								<i class="fa fa-angle-left"></i>
+							</a>
+							
+							<!-- Page Numbers -->
+							<span th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+								  th:if="${i >= (currentPage - 2) && i <= (currentPage + 2)}">
+								<a th:href="@{/product(q=${keyword}, sort=${sort}, categoryIds=${selectedCategories}, page=${i})}"
+								   th:text="${i + 1}"
+								   th:classappend="${i == currentPage} ? 'active' : ''"
+								   class="page-link"></a>
+							</span>
+							
+							<!-- Next Page -->
+							<a th:href="@{/product(q=${keyword}, sort=${sort}, categoryIds=${selectedCategories}, page=${currentPage + 1})}"
+							   th:if="${currentPage < totalPages - 1}"
+							   class="page-link"
+							   title="Trang sau">
+								<i class="fa fa-angle-right"></i>
+							</a>
+							
+							<!-- Last Page -->
+							<a th:href="@{/product(q=${keyword}, sort=${sort}, categoryIds=${selectedCategories}, page=${totalPages - 1})}"
+							   th:if="${currentPage < totalPages - 1}"
+							   class="page-link"
+							   title="Trang cuối">
+								<i class="fa fa-angle-double-right"></i>
+							</a>
+						</div>
+					</div>
+
 				</div>
 			</div>
 		</section>
