@@ -67,9 +67,19 @@ public class OrderServiceImpl implements OrderService {
             detail.setPromotionalPrice(product.getPromotionalPrice());
 			orderDetailRepo.save(detail);
 
-			// Trừ kho
-			product.setStock(product.getStock() - cartItem.getQuantity());
-			productRepo.save(product);
+            // Trừ kho và cộng sold (có kiểm tra)
+            int buyQty = cartItem.getQuantity();
+            Integer currentStock = product.getStock() == null ? 0 : product.getStock();
+            if (buyQty > currentStock) {
+                throw new IllegalStateException("Sản phẩm " + product.getProductName() + " không đủ tồn kho");
+            }
+            product.setStock(currentStock - buyQty);
+            Integer currentSold = product.getSold() == null ? 0 : product.getSold();
+            product.setSold(currentSold + buyQty);
+            if (product.getStock() <= 0) {
+                product.setIsAvailable(false);
+            }
+            productRepo.save(product);
 
             BigDecimal unit = (product.getPromotionalPrice() != null && product.getPromotionalPrice().compareTo(product.getPrice()) < 0)
                     ? product.getPromotionalPrice() : product.getPrice();
@@ -113,9 +123,18 @@ public class OrderServiceImpl implements OrderService {
 		detail.setPromotionalPrice(product.getPromotionalPrice());
 		orderDetailRepo.save(detail);
 
-		// Trừ tồn kho
-		product.setStock(product.getStock() - quantity);
-		productRepo.save(product);
+        // Trừ tồn kho và cộng sold (có kiểm tra)
+        Integer currentStock = product.getStock() == null ? 0 : product.getStock();
+        if (quantity > currentStock) {
+            throw new IllegalStateException("Sản phẩm " + product.getProductName() + " không đủ tồn kho");
+        }
+        product.setStock(currentStock - quantity);
+        Integer currentSold = product.getSold() == null ? 0 : product.getSold();
+        product.setSold(currentSold + quantity);
+        if (product.getStock() <= 0) {
+            product.setIsAvailable(false);
+        }
+        productRepo.save(product);
 
 		return savedOrder;
 	}

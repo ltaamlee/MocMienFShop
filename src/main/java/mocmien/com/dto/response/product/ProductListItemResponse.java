@@ -16,6 +16,7 @@ public class ProductListItemResponse {
     private BigDecimal price;
     private BigDecimal promotionalPrice;
     private Integer stock;
+    private Integer sold;
     private ProductStatus status;
     private String defaultImage; // ảnh đại diện (nếu có)
     private Boolean isActive;
@@ -73,6 +74,12 @@ public class ProductListItemResponse {
 	public void setStock(Integer stock) {
 		this.stock = stock;
 	}
+    public Integer getSold() {
+        return sold;
+    }
+    public void setSold(Integer sold) {
+        this.sold = sold;
+    }
 	public ProductStatus getStatus() {
 		return status;
 	}
