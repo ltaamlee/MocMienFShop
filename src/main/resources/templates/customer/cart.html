@@ -19,6 +19,11 @@
 	<div layout:fragment="content" class="home-page">
 
 		<section class="cart-page">
+			<!-- Toolbar: Select All -->
+			<div class="cart-toolbar" style="display:flex;align-items:center;gap:12px;margin-bottom:12px;padding:8px 12px;background:#f7f7f8;border-radius:8px;">
+				<input type="checkbox" id="selectAll">
+				<label for="selectAll" style="user-select:none;cursor:pointer;font-weight:600;color:#444;">Chọn tất cả</label>
+			</div>
 			<!-- 🛒 Danh sách sản phẩm -->
 			<div class="cart-items">
 				<!-- Nếu giỏ hàng trống -->
@@ -29,9 +34,10 @@
 					<a th:href="@{/product}" class="btn-continue">Tiếp tục mua sắm</a>
 				</div>
 
-				<!-- Lặp qua từng CartItem -->
-				<div th:each="c : ${items}" class="cart-item">
-					<input type="checkbox" name="cartItem" th:value="${c.id}" checked>
+                <!-- Lặp qua từng CartItem -->
+                <div th:each="c : ${items}" class="cart-item"
+                     th:attr="data-id=${c.id},data-price=${c.product.price},data-promo=${c.product.promotionalPrice}">
+                    <input type="checkbox" name="cartItem" class="selector" th:value="${c.id}" checked>
 
 					<!-- Ảnh sản phẩm -->
 					<img
@@ -59,10 +65,10 @@
 					</div>
 
 					<!-- Số lượng -->
-					<div class="quantity">
+                    <div class="quantity">
 						<button class="minus">−</button>
-						<input type="number" min="1" th:value="${c.quantity}"
-							th:data-id="${c.id}">
+                        <input type="number" min="1" th:value="${c.quantity}"
+                            th:data-id="${c.id}">
 						<button class="plus">+</button>
 					</div>
 
@@ -74,16 +80,21 @@
 			<!-- 💰 Tổng cộng -->
 			<div class="summary">
 				<h3>Thanh toán</h3>
-				<p>
-					Tạm tính: <span class="subtotal"
-						th:text="${#numbers.formatDecimal(total, 0, 'COMMA', 0, 'POINT')} + ' ₫'">0
-						₫</span>
-				</p>
-				<p class="total">
-					Tổng cộng: <strong
-						th:text="${#numbers.formatDecimal(total, 0, 'COMMA', 0, 'POINT')} + ' ₫'">0
-						₫</strong>
-				</p>
+                <p>
+                    Tạm tính: <span id="subtotalAmount" class="subtotal"
+                        th:text="${#numbers.formatDecimal(subtotalOriginal != null ? subtotalOriginal : 0, 0, 'COMMA', 0, 'POINT')} + ' ₫'"></span>
+                </p>
+                <p id="discountRow">
+                    Khuyến mãi (
+                    <span id="discountPercent"
+                          th:text="${#numbers.formatDecimal(discountPercent, 0, 'COMMA', 0, 'POINT')}"></span>%):
+                    <span id="discountAmount" style="color:#e53935; font-weight:600;"
+                        th:text="'- ' + ${#numbers.formatDecimal(discountAmount, 0, 'COMMA', 0, 'POINT')} + ' ₫'"></span>
+                </p>
+                <p class="total">
+                    Tổng cộng: <strong id="totalAmount"
+                        th:text="${#numbers.formatDecimal(finalTotal != null ? finalTotal : (subtotalOriginal - (discountAmount != null ? discountAmount : 0)), 0, 'COMMA', 0, 'POINT')} + ' ₫'"></strong>
+                </p>
 
 				<form id="checkoutForm" th:action="@{/checkout}" method="get">
 					<input type="hidden" name="selectedIds" id="selectedIds">
@@ -94,10 +105,90 @@
 
 	</div>
 
-	<th:block layout:fragment="scripts">
+    <th:block layout:fragment="scripts">
 		<script src="/styles/js/customer/header.js"></script>
 		<script th:src="@{/styles/js/customer/avatar.js}"></script>
-		<script th:src="@{/styles/js/customer/cart.js}"></script>
+        <script th:src="@{/styles/js/customer/cart.js}"></script>
+        <script>
+            (function() {
+                const fmt = new Intl.NumberFormat('vi-VN');
+                const selectAllEl = document.getElementById('selectAll');
+                const subtotalEl = document.getElementById('subtotalAmount');
+                const discountRow = document.getElementById('discountRow');
+                const discountPercentEl = document.getElementById('discountPercent');
+                const discountAmountEl = document.getElementById('discountAmount');
+                const totalEl = document.getElementById('totalAmount');
+                const selectedIdsEl = document.getElementById('selectedIds');
+
+                function getNumber(v) {
+                    if (v === null || v === undefined || v === '') return 0;
+                    return Number(v);
+                }
+
+                function recalc() {
+                    const items = Array.from(document.querySelectorAll('.cart-item'));
+                    let subtotal = 0;
+                    let discount = 0;
+                    const selectedIds = [];
+
+                    items.forEach(item => {
+                        const checkbox = item.querySelector('input.selector');
+                        const qtyInput = item.querySelector('.quantity input');
+                        if (!checkbox || !qtyInput) return;
+                        if (!checkbox.checked) return;
+                        const id = item.getAttribute('data-id');
+                        const price = getNumber(item.getAttribute('data-price'));
+                        const promo = getNumber(item.getAttribute('data-promo'));
+                        const qty = getNumber(qtyInput.value || 1);
+
+                        const unit = (promo && promo > 0 && promo < price) ? promo : price;
+                        subtotal += price * qty;
+                        discount += Math.max(0, price - unit) * qty;
+                        if (id) selectedIds.push(id);
+                    });
+
+                    const percent = subtotal > 0 ? Math.round((discount / subtotal) * 100) : 0;
+                    const total = Math.max(0, subtotal - discount);
+
+                    subtotalEl.textContent = fmt.format(Math.round(subtotal)) + ' ₫';
+                    // Luôn hiển thị khuyến mãi, nếu không chọn gì thì 0
+                    discountPercentEl.textContent = fmt.format(percent);
+                    discountAmountEl.textContent = '- ' + fmt.format(Math.round(discount)) + ' ₫';
+                    totalEl.textContent = fmt.format(Math.round(total)) + ' ₫';
+                    if (selectedIdsEl) selectedIdsEl.value = selectedIds.join(',');
+
+                    // cập nhật trạng thái select all
+                    const selectors = Array.from(document.querySelectorAll('input.selector'));
+                    if (selectors.length) {
+                        const allChecked = selectors.every(cb => cb.checked);
+                        const anyChecked = selectors.some(cb => cb.checked);
+                        selectAllEl.checked = allChecked;
+                        selectAllEl.indeterminate = !allChecked && anyChecked;
+                    }
+                }
+
+                // events
+                if (selectAllEl) {
+                    selectAllEl.addEventListener('change', function() {
+                        document.querySelectorAll('input.selector').forEach(cb => cb.checked = selectAllEl.checked);
+                        recalc();
+                    });
+                }
+                document.addEventListener('change', function(e) {
+                    if (e.target.matches('input.selector') || e.target.matches('.quantity input')) {
+                        recalc();
+                    }
+                });
+                document.addEventListener('click', function(e) {
+                    if (e.target.closest('.plus') || e.target.closest('.minus')) {
+                        setTimeout(recalc, 100);
+                    }
+                });
+
+                // initial
+                recalc();
+            })();
+        </script>
 	</th:block>
 </body>
 </html>
