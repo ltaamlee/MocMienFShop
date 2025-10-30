@@ -440,4 +440,102 @@ products.sort(Comparator.comparing(Product::getRating, Comparator.nullsLast(Comp
         }).collect(Collectors.toList());
     }
 
+	@Override
+	public Page<ProductRowVM> searchProductAdvancedWithPagination(
+			List<Integer> categoryIds, String keyword, String sort, Pageable pageable) {
+		
+		// Bước 1: Lấy danh sách product theo filter
+		List<Product> products;
+		if (categoryIds != null && !categoryIds.isEmpty()) {
+			// Tạo mutable copy
+			products = new java.util.ArrayList<>(productRepo.findByCategoryIds(categoryIds, Pageable.unpaged()).getContent());
+		} else {
+			// Tạo mutable copy
+			products = new java.util.ArrayList<>(productRepo.findAll());
+		}
+		
+		// Bước 2: Lọc theo keyword
+		if (keyword != null && !keyword.isBlank()) {
+			products = products.stream()
+				.filter(p -> p.getProductName() != null && 
+					p.getProductName().toLowerCase().contains(keyword.toLowerCase()))
+				.collect(Collectors.toList());
+		}
+		
+		// Bước 3: Sort
+		if (sort != null) {
+			switch(sort) {
+				case "asc":
+					products.sort(Comparator.comparing(Product::getPrice));
+					break;
+				case "desc":
+					products.sort(Comparator.comparing(Product::getPrice).reversed());
+					break;
+				case "newest":
+					products.sort(Comparator.comparing(Product::getCreatedAt, 
+						Comparator.nullsLast(Comparator.reverseOrder())));
+					break;
+				case "rating":
+					products.sort(Comparator.comparing(Product::getRating, 
+						Comparator.nullsLast(Comparator.reverseOrder())));
+					break;
+				case "promotion":
+					products.sort(Comparator.comparing((Product p) -> 
+						p.getPromotionalPrice() != null && 
+						p.getPromotionalPrice().compareTo(p.getPrice()) < 0 ? 0 : 1));
+					break;
+				default:
+					products.sort(Comparator.comparing(Product::getCreatedAt, 
+						Comparator.nullsLast(Comparator.reverseOrder())));
+			}
+		}
+		
+		// Bước 4: Convert sang ProductRowVM
+		List<ProductRowVM> allVMs = products.stream().map(p -> {
+			ProductRowVM vm = new ProductRowVM();
+			vm.setMaSP(p.getId());
+			vm.setTenSP(p.getProductName());
+			vm.setGiaGoc(p.getPrice());
+			
+			if (p.getPromotionalPrice() != null && p.getPromotionalPrice().compareTo(p.getPrice()) < 0) {
+				vm.setGiaKhuyenMai(p.getPromotionalPrice());
+			}
+			
+			String defaultImage = (p.getImages() != null) 
+				? p.getImages().stream()
+					.filter(img -> Boolean.TRUE.equals(img.getIsDefault()))
+					.map(img -> img.getImageUrl())
+					.findFirst()
+					.orElse("/styles/image/default.jpg") 
+				: "/styles/image/default.jpg";
+			vm.setHinhAnh(defaultImage);
+			
+			// Trạng thái
+			if (!p.getIsActive()) {
+				vm.setTrangThai(0);
+			} else if (!p.getIsAvailable()) {
+				vm.setTrangThai(-1);
+			} else {
+				vm.setTrangThai(1);
+			}
+			return vm;
+		}).collect(Collectors.toList());
+		
+		// Bước 5: Phân trang thủ công
+		int pageSize = pageable.getPageSize();
+		int currentPage = pageable.getPageNumber();
+		int startItem = currentPage * pageSize;
+		
+		List<ProductRowVM> pageContent;
+		if (allVMs.size() < startItem) {
+			pageContent = java.util.Collections.emptyList();
+		} else {
+			int toIndex = Math.min(startItem + pageSize, allVMs.size());
+			pageContent = allVMs.subList(startItem, toIndex);
+		}
+		
+		return new org.springframework.data.domain.PageImpl<>(
+			pageContent, pageable, allVMs.size());
+	}
+
 }

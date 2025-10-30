@@ -127,6 +127,15 @@
   margin-bottom: 5px;
 }
 
+.product-card h4 a {
+  color: #000;
+  text-decoration: none;
+}
+
+.product-card h4 a:hover {
+  color: var(--primary-color);
+}
+
 .price {
   color: var(--primary-color);
   font-weight: 600;

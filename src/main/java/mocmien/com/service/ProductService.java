@@ -64,4 +64,10 @@ public interface ProductService {
      * Nâng cao: Lọc, tìm kiếm, sort đa tiêu chí sản phẩm
      */
     List<mocmien.com.dto.response.product.ProductRowVM> searchProductAdvanced(List<Integer> categoryIds, String keyword, String sort);
+    
+    /**
+     * Nâng cao: Lọc, tìm kiếm, sort đa tiêu chí sản phẩm với phân trang
+     */
+    Page<mocmien.com.dto.response.product.ProductRowVM> searchProductAdvancedWithPagination(
+        List<Integer> categoryIds, String keyword, String sort, Pageable pageable);
 }

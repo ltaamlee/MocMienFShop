@@ -315,12 +315,17 @@ public class CheckoutController {
             HttpServletRequest request,
             Principal principal) {
 
+        System.out.println("🔔 MoMo Return - orderId: " + orderId + ", resultCode: " + resultCode);
+        
         boolean ok = momoService.handleMomoReturn(orderId, resultCode);
         if (ok) {
+            System.out.println("✅ MoMo thành công - redirect to success");
             removePurchasedItems(request, principal);
             return "redirect:/checkout/success";
         }
-        return "redirect:/checkout/error";
+        
+        System.out.println("❌ MoMo thất bại/hủy - redirect to error");
+        return "redirect:/checkout/error?msg=MomoError";
     }
 
     // === 4) Thành công ===
