@@ -54,7 +54,7 @@ async function loadOrders(page = 0) {
           <td>${o.customerName || '—'}</td>
           <td>${fmtDate(o.createdAt)}</td>
           <td>${fmtMoney(o.total)}</td>
-          <td>${o.paymentMethodDisplay || '—'}</td>
+          <td>${(o.paymentMethodDisplay || '—') + ' - ' + (o.paid ? 'Đã thanh toán' : 'Chưa thanh toán')}</td>
           <td>${badge(o.status)}</td>
           <td class="text-right">
             <div class="action-buttons">
@@ -128,7 +128,7 @@ async function openDetail(orderId) {
         <tr><th>Mã đơn</th><td>${d.id}</td></tr>
         <tr><th>Khách hàng</th><td>${d.customerName || '—'}</td></tr>
         <tr><th>SĐT</th><td>${d.customerPhone || '—'}</td></tr>
-        <tr><th>Thanh toán</th><td>${d.paymentMethodDisplay || '—'}</td></tr>
+        <tr><th>Thanh toán</th><td>${(d.paymentMethodDisplay || '—') + ' - ' + (d.paid ? 'Đã thanh toán' : 'Chưa thanh toán')}</td></tr>
         <tr><th>Trạng thái</th><td>${badge(d.status)}</td></tr>
         <tr><th>Ngày đặt</th><td>${fmtDate(d.createdAt)}</td></tr>
         <tr><th>Cập nhật</th><td>${fmtDate(d.updatedAt)}</td></tr>
@@ -137,7 +137,7 @@ async function openDetail(orderId) {
       <h3 class="mt-2 mb-1" style="font-size:18px;">Chi tiết sản phẩm</h3>
       <table class="table-detail">
         <thead>
-          <tr><th>#</th><th>Sản phẩm</th><th>SL</th><th>Giá</th><th>Thành tiền</th></tr>
+          <tr><th>#</th><th>Sản phẩm</th><th>SL</th><th>Giá (gốc)</th><th>Thành tiền (sau KM)</th></tr>
         </thead>
         <tbody>${itemsHtml}</tbody>
       </table>

@@ -23,10 +23,7 @@ public class VendorOrderServiceImpl implements VendorOrderService {
 	private final StoreRepository storeRepo;
 	private final OrdersRepository ordersRepo;
 
-	public VendorOrderServiceImpl(StoreRepository storeRepo, OrdersRepository ordersRepo) {
-		this.storeRepo = storeRepo;
-		this.ordersRepo = ordersRepo;
-	}
+    
 
 	private Store requireStoreOfVendor(Integer vendorUserId) {
 		return storeRepo.findByVendorUserId(vendorUserId)
@@ -67,8 +64,21 @@ public class VendorOrderServiceImpl implements VendorOrderService {
 		r.setId(o.getId());
 		r.setCustomerName(o.getCustomer() != null ? o.getCustomer().getFullName() : "(Khách)");
 		r.setCreatedAt(o.getCreatedAt());
-		r.setTotal(o.getAmountFromCustomer() == null ? BigDecimal.ZERO : o.getAmountFromCustomer());
+        // Tính tổng = tổng tiền hàng (ưu tiên giá khuyến mãi nếu có) + phí vận chuyển
+        BigDecimal itemsTotal = BigDecimal.ZERO;
+        if (o.getOrderDetails() != null) {
+            itemsTotal = o.getOrderDetails().stream()
+                    .map(d -> {
+                        BigDecimal unit = d.getPromotionalPrice() != null ? d.getPromotionalPrice() : d.getPrice();
+                        BigDecimal qty = d.getQuantity() == null ? BigDecimal.ZERO : BigDecimal.valueOf(d.getQuantity());
+                        return (unit == null ? BigDecimal.ZERO : unit).multiply(qty);
+                    })
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+        }
+        BigDecimal shippingFee = (o.getShippingFee() != null) ? o.getShippingFee() : BigDecimal.ZERO;
+        r.setTotal(itemsTotal.add(shippingFee));
 		r.setPaymentMethodDisplay(o.getPaymentMethod() != null ? o.getPaymentMethod().getDisplayName() : "—");
+        r.setPaid(Boolean.TRUE.equals(o.getIsPaid()));
 		r.setStatus(o.getStatus());
 		return r;
 	}
@@ -102,19 +112,22 @@ public class VendorOrderServiceImpl implements VendorOrderService {
 				it.setProductId(od.getProduct() != null ? od.getProduct().getId() : null);
 				it.setProductName(od.getProduct() != null ? od.getProduct().getProductName() : null);
 				it.setQuantity(od.getQuantity());
-				it.setPrice(od.getPrice());
-				BigDecimal amt = (od.getPrice() == null || od.getQuantity() == null) ? BigDecimal.ZERO
-						: od.getPrice().multiply(BigDecimal.valueOf(od.getQuantity()));
+                // Giá hiển thị: giá gốc
+                it.setPrice(od.getPrice());
+                // Thành tiền: theo giá sau khuyến mãi (nếu có), ngược lại dùng giá gốc
+                BigDecimal unit = od.getPromotionalPrice() != null ? od.getPromotionalPrice() : od.getPrice();
+                BigDecimal amt = (unit == null || od.getQuantity() == null) ? BigDecimal.ZERO
+                        : unit.multiply(BigDecimal.valueOf(od.getQuantity()));
 				it.setAmount(amt);
 				return it;
 			}).collect(Collectors.toList());
 			d.setItems(items);
-			itemsTotal = items.stream().map(VendorOrderDetailResponse.Item::getAmount).reduce(BigDecimal.ZERO,
-					BigDecimal::add);
+            itemsTotal = items.stream().map(VendorOrderDetailResponse.Item::getAmount)
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
 		}
 
 		d.setItemsTotal(itemsTotal);
-		BigDecimal shippingFee = (o.getDelivery() != null) ? o.getDelivery().getBasePrice() : BigDecimal.ZERO;
+        BigDecimal shippingFee = (o.getShippingFee() != null) ? o.getShippingFee() : BigDecimal.ZERO;
 		d.setShippingFee(shippingFee);
 		d.setGrandTotal(itemsTotal.add(shippingFee != null ? shippingFee : BigDecimal.ZERO));
 		return d;
