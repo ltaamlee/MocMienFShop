@@ -12,6 +12,7 @@ public class VendorOrderListItemResponse {
     private LocalDateTime createdAt;
     private BigDecimal total;               // amountFromCustomer
     private String paymentMethodDisplay;    // VNPAY/MOMO/COD...
+    private Boolean paid;                   // trạng thái thanh toán
     private OrderStatus status;
 	public String getId() {
 		return id;
@@ -43,6 +44,12 @@ public class VendorOrderListItemResponse {
 	public void setPaymentMethodDisplay(String paymentMethodDisplay) {
 		this.paymentMethodDisplay = paymentMethodDisplay;
 	}
+    public Boolean getPaid() {
+        return paid;
+    }
+    public void setPaid(Boolean paid) {
+        this.paid = paid;
+    }
 	public OrderStatus getStatus() {
 		return status;
 	}
