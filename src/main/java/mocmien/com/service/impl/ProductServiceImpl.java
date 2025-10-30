@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.ArrayList;
+// 
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -438,6 +439,48 @@ products.sort(Comparator.comparing(Product::getRating, Comparator.nullsLast(Comp
             }
             return vm;
         }).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<ProductRowVM> getRelatedTopRatedByCategory(Integer productId, int limit) {
+        Product current = productRepo.findById(productId).orElse(null);
+        if (current == null || current.getCategory() == null) {
+            return java.util.Collections.emptyList();
+        }
+
+        List<Product> sameCategory = productRepo.findByCategory(current.getCategory());
+        // Exclude current product and optionally inactive
+        sameCategory = sameCategory.stream()
+                .filter(p -> !p.getId().equals(current.getId()))
+                .filter(p -> Boolean.TRUE.equals(p.getIsActive()))
+                .collect(Collectors.toList());
+
+        // Sort by average rating desc
+        sameCategory.sort(Comparator.comparing((Product p) -> {
+            Double r = reviewService.getAverageRatingOfProduct(p);
+            return r == null ? 0.0 : r;
+        }).reversed());
+
+        return sameCategory.stream().limit(limit)
+                .map(p -> {
+                    ProductRowVM vm = new ProductRowVM();
+                    vm.setMaSP(p.getId());
+                    vm.setTenSP(p.getProductName());
+                    vm.setGiaGoc(p.getPrice());
+
+                    if (p.getPromotionalPrice() != null && p.getPromotionalPrice().compareTo(p.getPrice()) < 0) {
+                        vm.setGiaKhuyenMai(p.getPromotionalPrice());
+                    }
+
+                    String defaultImage = (p.getImages() != null) ? p.getImages().stream()
+                            .filter(img -> Boolean.TRUE.equals(img.getIsDefault()))
+                            .map(ProductImage::getImageUrl)
+                            .findFirst()
+                            .orElse("/styles/image/default.jpg") : "/styles/image/default.jpg";
+                    vm.setHinhAnh(defaultImage);
+                    return vm;
+                })
+                .collect(Collectors.toList());
     }
 
 	@Override

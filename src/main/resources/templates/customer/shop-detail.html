@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{customer/layout}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${shop.storeName} + ' - Shop'"></title>
+    
+    <th:block layout:fragment="styles">
+        <link rel="stylesheet" href="/styles/css/customer/base.css">
+        <link rel="stylesheet" href="/styles/css/customer/shop-detail.css">
+        <link rel="stylesheet" href="/styles/css/customer/product.css">
+    </th:block>
+</head>
+
+<body>
+    <div layout:fragment="content" class="shop-detail-page">
+        
+        <!-- ========== Shop Banner ========== -->
+        <section class="shop-banner">
+            <div class="banner-carousel" th:if="${shop.featureImages != null && !shop.featureImages.isEmpty()}">
+                <img th:each="banner : ${shop.featureImages}" 
+                     th:src="${banner}" 
+                     alt="Shop Banner"
+                     class="banner-image">
+            </div>
+            <div class="banner-placeholder" th:unless="${shop.featureImages != null && !shop.featureImages.isEmpty()}">
+                <img th:src="${shop.cover}" alt="Shop Cover">
+            </div>
+        </section>
+        
+        <!-- ========== Shop Info ========== -->
+        <section class="shop-info-section">
+            <div class="shop-info-container">
+                
+                <!-- Left: Shop Avatar & Basic Info -->
+                <div class="shop-info-left">
+                    <img th:src="${shop.avatar}" alt="Shop Logo" class="shop-avatar">
+                    <div class="shop-basic-info">
+                        <h1 th:text="${shop.storeName}"></h1>
+                        <div class="shop-status">
+                            <span class="status-badge" th:classappend="${shop.isOpen} ? 'online' : 'offline'">
+                                <i class="fa fa-circle"></i>
+                                <span th:text="${shop.isOpen} ? 'Đang hoạt động' : 'Đã đóng cửa'"></span>
+                            </span>
+                        </div>
+                        <div class="shop-rating">
+                            <i class="fa-solid fa-star" style="color: #f7b500;"></i>
+                            <span th:text="${#numbers.formatDecimal(shop.rating, 1, 'COMMA', 1, 'POINT')}"></span>
+                            <span class="rating-label">/ 5.0</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Right: Shop Stats -->
+                <div class="shop-info-right">
+                    <div class="shop-stat-item">
+                        <div class="stat-value" th:text="${shop.totalProducts}"></div>
+                        <div class="stat-label">Sản phẩm</div>
+                    </div>
+                    <div class="shop-stat-item">
+                        <div class="stat-value" th:text="${#numbers.formatDecimal(shop.rating, 1, 'COMMA', 1, 'POINT')}"></div>
+                        <div class="stat-label">Đánh giá</div>
+                    </div>
+                    <div class="shop-stat-item" th:if="${shop.phone != null}">
+                        <div class="stat-value">
+                            <i class="fa fa-phone"></i>
+                        </div>
+                        <div class="stat-label" th:text="${shop.phone}"></div>
+                    </div>
+                </div>
+                
+                <!-- Actions -->
+                <div class="shop-actions">
+                    <button class="btn-follow">
+                        <i class="fa fa-plus"></i> Theo dõi
+                    </button>
+                    <button class="btn-chat">
+                        <i class="fa fa-comment"></i> Chat
+                    </button>
+                </div>
+            </div>
+        </section>
+        
+        <!-- ========== Shop Address ========== -->
+        <section class="shop-address" th:if="${shop.address != null}">
+            <div class="address-container">
+                <i class="fa fa-map-marker-alt"></i>
+                <span th:text="${shop.address}"></span>
+            </div>
+        </section>
+        
+        <!-- ========== Shop Products ========== -->
+        <section class="shop-products-section">
+            <div class="section-header">
+                <h2>Sản phẩm của shop</h2>
+                <span class="product-count" th:text="${shop.totalProducts} + ' sản phẩm'"></span>
+            </div>
+            
+            <!-- Product Grid -->
+            <div class="product-grid" th:if="${shop.products != null && !shop.products.isEmpty()}">
+                <div class="product-card" th:each="product : ${shop.products}">
+                        <a th:href="@{'/product/' + ${product.id}}" class="product-link">
+                        <div class="product-image">
+                            <img th:src="${product.mainImage}" th:alt="${product.productName}">
+                            
+                            <!-- Badge: Hết hàng -->
+                            <span class="badge out-of-stock" th:if="${!product.isAvailable}">
+                                Hết hàng
+                            </span>
+                            
+                            <!-- Badge: Giảm giá -->
+                            <span class="badge discount" 
+                                  th:if="${product.promotionalPrice != null && product.promotionalPrice.compareTo(product.price) < 0}">
+                                <span th:text="${T(java.lang.Math).round((1 - product.promotionalPrice.doubleValue() / product.price.doubleValue()) * 100)}"></span>%
+                            </span>
+                        </div>
+                        
+                        <div class="product-info">
+                            <h4 th:text="${product.productName}"></h4>
+                            
+                            <!-- Giá -->
+                            <div class="product-price">
+                                <span class="current-price" 
+                                      th:text="${#numbers.formatDecimal(product.promotionalPrice != null && product.promotionalPrice.compareTo(product.price) < 0 ? product.promotionalPrice : product.price, 0, 'COMMA', 0, 'POINT')} + ' ₫'">
+                                </span>
+                                
+                                <span class="original-price" 
+                                      th:if="${product.promotionalPrice != null && product.promotionalPrice.compareTo(product.price) < 0}"
+                                      th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT')} + ' ₫'">
+                                </span>
+                            </div>
+                            
+                            <!-- Rating & Sold -->
+                            <div class="product-meta">
+                                <span class="rating" th:if="${product.rating != null}">
+                                    <i class="fa fa-star"></i>
+                                    <span th:text="${#numbers.formatDecimal(product.rating, 1, 'COMMA', 1, 'POINT')}"></span>
+                                </span>
+                                <span class="sold" th:if="${product.soldCount != null && product.soldCount > 0}">
+                                    Đã bán <span th:text="${product.soldCount}"></span>
+                                </span>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Empty State -->
+            <div class="empty-products" th:if="${shop.products == null || shop.products.isEmpty()}">
+                <i class="fa fa-box-open" style="font-size: 4rem; color: #ccc;"></i>
+                <p>Shop chưa có sản phẩm nào</p>
+            </div>
+        </section>
+        
+    </div>
+</body>
+</html>
+
