@@ -126,11 +126,6 @@
 			<artifactId>cloudinary-http44</artifactId>
 			<version>1.39.0</version>
 		</dependency>
-		<dependency>
-			<groupId>fourpetals.com</groupId>
-			<artifactId>4Petals</artifactId>
-			<version>1.1.0</version>
-		</dependency>
 	</dependencies>
 
 	<build>
