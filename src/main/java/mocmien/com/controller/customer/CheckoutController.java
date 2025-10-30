@@ -155,7 +155,22 @@ public class CheckoutController {
                 order = orderService.createOrderFromCart(profile, receiver, phone, address, note, ids);
                 request.getSession().setAttribute("selectedIds", cartItemIds);
             } else {
-                throw new RuntimeException("Không có sản phẩm nào được chọn để thanh toán!");
+                // Không có danh sách id cụ thể -> lấy toàn bộ giỏ hiện tại của user
+                List<CartItem> allItems = cartService.getCartByUser(user);
+                if (allItems == null || allItems.isEmpty()) {
+                    throw new RuntimeException("Không có sản phẩm nào được chọn để thanh toán!");
+                }
+
+                List<Integer> ids = allItems.stream()
+                        .map(CartItem::getId)
+                        .toList();
+
+                order = orderService.createOrderFromCart(profile, receiver, phone, address, note, ids);
+                request.getSession().setAttribute("selectedIds", ids.stream()
+                        .map(String::valueOf)
+                        .reduce((a, b) -> a + "," + b)
+                        .orElse("")
+                );
             }
         }
 

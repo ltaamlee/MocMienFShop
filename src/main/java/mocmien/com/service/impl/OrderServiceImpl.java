@@ -37,6 +37,17 @@ public class OrderServiceImpl implements OrderService {
 
 		BigDecimal total = BigDecimal.ZERO;
 
+		// Đảm bảo set Store cho Order trước khi lưu để tránh NULL store_id
+		if (cartItemIds != null && !cartItemIds.isEmpty()) {
+			Integer firstCartItemId = cartItemIds.get(0);
+			CartItem firstCartItem = cartItemRepo.findById(firstCartItemId)
+					.orElseThrow(() -> new RuntimeException("Không tìm thấy sản phẩm trong giỏ: " + firstCartItemId));
+			Product firstProduct = firstCartItem.getProduct();
+			if (firstProduct != null && firstProduct.getStore() != null) {
+				order.setStore(firstProduct.getStore());
+			}
+		}
+
 		Orders savedOrder = orderRepo.save(order);
 
 		for (Integer cartItemId : cartItemIds) {
@@ -45,10 +56,7 @@ public class OrderServiceImpl implements OrderService {
 
 			Product product = cartItem.getProduct();
 
-			// ✅ Lấy store từ product đầu tiên
-			if (savedOrder.getStore() == null) {
-				savedOrder.setStore(product.getStore());
-			}
+			// Store đã được set trước khi lưu order
 
 			OrderDetail detail = new OrderDetail();
 			detail.setOrder(savedOrder);
