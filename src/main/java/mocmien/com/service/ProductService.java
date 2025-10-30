@@ -16,6 +16,7 @@ import mocmien.com.entity.Store;
 import mocmien.com.enums.ProductStatus;
 import mocmien.com.dto.product.ProductRowVM;
 
+
 public interface ProductService {
 
 	Page<ProductListItemResponse> list(String keyword, Integer categoryId, ProductStatus status, Pageable pageable);
@@ -56,11 +57,11 @@ public interface ProductService {
     long countOutOfStock();
     BigDecimal averageRatingByStore(Store store);
     // ===================== HIỂN THỊ DANH SÁCH SẢN PHẨM (VM) =====================
-    List<ProductRowVM> getAllProductRows();
+    List<mocmien.com.dto.response.product.ProductRowVM> getAllProductRows();
     ProductDetailResponse getProductDetailById(Integer id);
 
     /**
      * Nâng cao: Lọc, tìm kiếm, sort đa tiêu chí sản phẩm
      */
-    List<ProductRowVM> searchProductAdvanced(List<Integer> categoryIds, String keyword, String sort);
+    List<mocmien.com.dto.response.product.ProductRowVM> searchProductAdvanced(List<Integer> categoryIds, String keyword, String sort);
 }

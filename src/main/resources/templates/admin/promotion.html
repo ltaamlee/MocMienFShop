@@ -24,13 +24,6 @@
 				<div class="value" id="activePromotionsStat"
 					th:text="${activePromotions} ?: '0'">0</div>
 			</div>
-
-			<div class="stat-card upcoming">
-				<h3>Sắp bắt đầu</h3>
-				<div class="value" id="upcomingPromotionsStat"
-					th:text="${upcomingPromotions} ?: '0'">0</div>
-			</div>
-
 			<div class="stat-card expiring">
 				<h3>Sắp hết hạn</h3>
 				<div class="value" id="expiringPromotionsStat"
@@ -57,7 +50,7 @@
 
 				<div class="filter-group">
 					<div class="filter-item">
-						<label for="type">Loại khuyến mãi:</label> <select id="type"
+						<label for="typeFilter">Loại khuyến mãi:</label> <select id="typeFilter"
 							name="type" required>
 							<option value="">Chọn loại khuyến mãi</option>
 							<option th:each="type : ${promotionTypes}"
@@ -148,9 +141,9 @@
 						</div>
 
 						<!-- Loại khuyến mãi -->
-						<div class="form-group">
-							<label for="type">Loại khuyến mãi:</label> <select id="type"
-								name="type" required>
+					<div class="form-group">
+						<label for="promoType">Loại khuyến mãi:</label> <select id="promoType"
+							name="type" required>
 								<option value="">Chọn loại khuyến mãi</option>
 								<option th:each="type : ${promotionTypes}"
 									th:value="${type.name()}" th:text="${type.displayName}"></option>
@@ -205,6 +198,85 @@
 				</div>
 			</div>
 		</div>
+		
+		<!-- CHỈNH SỬA KHUYẾN MÃI TOÀN SÀN -->
+		<div id="editPromotionModal" class="modal">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h2>Chỉnh Sửa Khuyến Mãi Toàn Sàn</h2>
+					<button type="button" class="close-modal"
+						onclick="closeModal('editPromotionModal')">&times;</button>
+				</div>
+				<div class="modal-body">
+					<form id="editPromotionForm" novalidate>
+						<input type="hidden" id="editPromotionId">
+						
+						<!-- Tên khuyến mãi -->
+						<div class="form-group">
+							<label for="editName">Tên khuyến mãi:</label> 
+							<input type="text" id="editName" name="name" required>
+						</div>
+
+						<!-- Loại khuyến mãi -->
+						<div class="form-group">
+							<label for="editPromoType">Loại khuyến mãi:</label> 
+							<select id="editPromoType" name="type" required>
+								<option value="">Chọn loại khuyến mãi</option>
+								<option th:each="type : ${promotionTypes}"
+									th:value="${type.name()}" th:text="${type.displayName}"></option>
+							</select>
+						</div>
+
+						<!-- Giá trị -->
+						<div class="form-group">
+							<label for="editValue">Giá trị:</label> 
+							<input type="number" id="editValue" name="value" min="0" step="0.01" required>
+						</div>
+
+						<!-- Banner hiện tại -->
+						<div class="form-group" id="currentBannerSection" style="display: none;">
+							<label>Banner hiện tại:</label>
+							<div id="currentBannerPreview" style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px;">
+								<!-- Hiển thị ảnh banner hiện tại -->
+							</div>
+						</div>
+
+						<!-- Upload banner mới -->
+						<div class="form-group">
+							<label for="editBanner">Thêm/Thay đổi Banner:</label> 
+							<input type="file" id="editBanner" name="banner" accept="image/*" multiple>
+							<small class="text-muted">Có thể chọn nhiều ảnh. Banner mới sẽ thay thế banner cũ.</small>
+						</div>
+
+						<!-- Ribbon -->
+						<div class="form-group">
+							<label for="editRibbon">Ribbon:</label> 
+							<input type="text" id="editRibbon" name="ribbon" placeholder="Ví dụ: HOT, GIẢM 50%">
+						</div>
+
+						<!-- Thời gian bắt đầu -->
+						<div class="form-group">
+							<label for="editStartDate">Thời gian bắt đầu:</label> 
+							<input type="datetime-local" id="editStartDate" name="startDate" required>
+						</div>
+
+						<!-- Thời gian kết thúc -->
+						<div class="form-group">
+							<label for="editEndDate">Thời gian kết thúc:</label> 
+							<input type="datetime-local" id="editEndDate" name="endDate" required>
+						</div>
+
+						<!-- Nút lưu -->
+						<div class="form-group text-right">
+							<button type="button" class="btn btn-secondary" onclick="closeModal('editPromotionModal')">Hủy</button>
+							<button type="submit" class="btn btn-primary">Cập Nhật</button>
+						</div>
+
+					</form>
+				</div>
+			</div>
+		</div>
+		
 		<th:block layout:fragment="scripts">
 			<script th:src="@{/styles/js/admin/promotion.js}"></script>
 		</th:block>

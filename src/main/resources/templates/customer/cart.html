@@ -47,9 +47,15 @@
 					<!-- Thông tin sản phẩm -->
 					<div class="info">
 						<h4 th:text="${c.product.productName}">Tên sản phẩm</h4>
-						<p
-							th:text="${#numbers.formatDecimal(c.product.price, 0, 'COMMA', 0, 'POINT')} + ' ₫'">
-							0 ₫</p>
+						<!-- Hiển thị giá khuyến mãi nếu có, ngược lại hiển thị giá gốc -->
+						<div th:if="${c.product.promotionalPrice != null and c.product.promotionalPrice < c.product.price}">
+							<p style="text-decoration: line-through; color: #999; font-size: 0.85em;"
+								th:text="${#numbers.formatDecimal(c.product.price, 0, 'COMMA', 0, 'POINT')} + ' ₫'">0 ₫</p>
+							<p style="color: #e53935; font-weight: bold;"
+								th:text="${#numbers.formatDecimal(c.product.promotionalPrice, 0, 'COMMA', 0, 'POINT')} + ' ₫'">0 ₫</p>
+						</div>
+						<p th:unless="${c.product.promotionalPrice != null and c.product.promotionalPrice < c.product.price}"
+							th:text="${#numbers.formatDecimal(c.product.price, 0, 'COMMA', 0, 'POINT')} + ' ₫'">0 ₫</p>
 					</div>
 
 					<!-- Số lượng -->

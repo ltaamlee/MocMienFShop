@@ -13,7 +13,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
@@ -61,7 +60,10 @@ public class Shipper {
     private BigDecimal eWallet = BigDecimal.ZERO; // Số dư ví điện tử
 
     @Column(name = "isActive", nullable = false)
-    private Boolean isActive = false; // Được cấp phép hoạt động hay không
+    private Boolean isActive = false; // Được cấp phép hoạt động (duyệt tài khoản)
+
+    @Column(name = "isOnline", nullable = false)
+    private Boolean isOnline = false; // Trạng thái trực tuyến để nhận đơn
     
     @OneToMany(mappedBy = "shipper", fetch = FetchType.LAZY)
     private List<Orders> orders; // Danh sách đơn hàng mà shipper đang phụ trách
@@ -148,6 +150,14 @@ public class Shipper {
 
 	public void setRating(BigDecimal rating) {
 		this.rating = rating;
+	}
+
+    public Boolean getIsOnline() {
+        return isOnline;
+    }
+
+    public void setIsOnline(Boolean isOnline) {
+        this.isOnline = isOnline;
 	}
 
 	public Integer getTotalDelivery() {

@@ -117,6 +117,8 @@ public class AdminController {
 
 		model.addAttribute("promotionTypes", PromotionType.values());
 		model.addAttribute("promotionStatuses", PromotionStatus.values());
+		List<Store> allStores = storeService.getAll();
+		model.addAttribute("allStores", allStores);
 		return "admin/promotion";
 	}
 

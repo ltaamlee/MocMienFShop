@@ -75,7 +75,12 @@ public class CheckoutController {
             temp.setProduct(product);
             temp.setQuantity(quantity);
             cartItems = List.of(temp);
-            total = product.getPrice().multiply(BigDecimal.valueOf(quantity));
+            
+            // Tính tổng với giá khuyến mãi nếu có
+            BigDecimal unitPrice = (product.getPromotionalPrice() != null && product.getPromotionalPrice().compareTo(product.getPrice()) < 0)
+                    ? product.getPromotionalPrice()
+                    : product.getPrice();
+            total = unitPrice.multiply(BigDecimal.valueOf(quantity));
         } else if (selectedIds != null && !selectedIds.isBlank()) {
             // Mua các item đã tick trong giỏ (id là id của CartItem)
             List<Integer> ids = Arrays.stream(selectedIds.split(","))
@@ -88,14 +93,29 @@ public class CheckoutController {
                     .filter(i -> ids.contains(i.getId()))
                     .toList();
 
+            // Tính tổng với giá khuyến mãi nếu có
             total = cartItems.stream()
-                    .map(i -> i.getProduct().getPrice().multiply(BigDecimal.valueOf(i.getQuantity())))
+                    .map(i -> {
+                        Product p = i.getProduct();
+                        BigDecimal unitPrice = (p.getPromotionalPrice() != null && p.getPromotionalPrice().compareTo(p.getPrice()) < 0)
+                                ? p.getPromotionalPrice()
+                                : p.getPrice();
+                        return unitPrice.multiply(BigDecimal.valueOf(i.getQuantity()));
+                    })
                     .reduce(BigDecimal.ZERO, BigDecimal::add);
         } else {
             // fallback: toàn bộ giỏ
             cartItems = cartService.getCartByUser(user);
+            
+            // Tính tổng với giá khuyến mãi nếu có
             total = cartItems.stream()
-                    .map(i -> i.getProduct().getPrice().multiply(BigDecimal.valueOf(i.getQuantity())))
+                    .map(i -> {
+                        Product p = i.getProduct();
+                        BigDecimal unitPrice = (p.getPromotionalPrice() != null && p.getPromotionalPrice().compareTo(p.getPrice()) < 0)
+                                ? p.getPromotionalPrice()
+                                : p.getPrice();
+                        return unitPrice.multiply(BigDecimal.valueOf(i.getQuantity()));
+                    })
                     .reduce(BigDecimal.ZERO, BigDecimal::add);
         }
 
@@ -228,13 +248,20 @@ public class CheckoutController {
             }
         }
 
-        // Sau khi tạo order: tính lại phí ship và cập nhật tổng thanh toán
+        // Sau khi tạo order: tính lại phí ship, gán delivery và cập nhật tổng thanh toán
         try {
             CustomerAddress defaultAddr = addressService.getDefaultAddress(profile);
             Store storeForFee = (order.getStore() != null) ? order.getStore() : null;
             int estWeight = order.getOrderDetails() != null && !order.getOrderDetails().isEmpty() ?
                     order.getOrderDetails().stream().mapToInt(d -> d.getQuantity() * 500).sum() : 500;
             if (storeForFee != null && defaultAddr != null) {
+                // Tìm delivery phù hợp
+                mocmien.com.entity.Delivery delivery = shippingService.findDeliveryForDistance(storeForFee, defaultAddr);
+                if (delivery != null) {
+                    order.setDelivery(delivery);
+                }
+                
+                // Tính phí ship
                 BigDecimal fee = shippingService.calculateShippingFee(storeForFee, defaultAddr, estWeight);
                 order.setShippingFee(fee);
                 if (order.getAmountFromCustomer() != null) {

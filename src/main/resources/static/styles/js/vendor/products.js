@@ -94,7 +94,12 @@ function renderTable(items) {
       <td><strong>${p.productName}</strong></td>
       <td>${p.categoryName || ''}</td>
       <td>${fmtMoney(p.promotionalPrice || p.price)}</td>
-      <td>${p.stock}</td>
+      <td>
+        <div style="display: flex; flex-direction: column; gap: 5px;">
+          <div><i class="fa-solid fa-box" style="color: #3b82f6;"></i> Tồn kho: <strong>${p.stock != null ? p.stock : 0}</strong></div>
+          <div><i class="fa-solid fa-shopping-bag" style="color: #059669;"></i> Đã bán: <strong>${p.soldCount != null ? p.soldCount : 0}</strong></div>
+        </div>
+      </td>
       <td>${renderStatusBadge(p.status)}</td>
       <td class="text-right">
         <div class="action-buttons">

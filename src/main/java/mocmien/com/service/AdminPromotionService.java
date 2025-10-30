@@ -2,6 +2,7 @@ package mocmien.com.service;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.web.multipart.MultipartFile;
 
 import jakarta.validation.Valid;
 import mocmien.com.dto.request.promotion.AdminPromitonCreateRequest;
@@ -29,5 +30,10 @@ public interface AdminPromotionService {
     void activate(Integer id);
 
     void deactivate(Integer id);
+    
+    AdminPromotionResponse getPromotionById(Integer id);
+    
+    void updatePromotion(Integer id, String name, String type, Double value, String ribbon, 
+                        String startDate, String endDate, MultipartFile[] banners);
 
 }

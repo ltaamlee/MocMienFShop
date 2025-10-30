@@ -5,72 +5,78 @@ import java.math.RoundingMode;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import mocmien.com.entity.CustomerAddress;
+import mocmien.com.entity.Delivery;
 import mocmien.com.entity.Store;
-import mocmien.com.integration.ghn.GhnClient;
 import mocmien.com.integration.geocoding.GeocodingService;
+import mocmien.com.repository.DeliveryRepository;
 import mocmien.com.service.ShippingService;
+import mocmien.com.util.DistanceUtil;
+
+import java.util.Optional;
 
 @Service
 public class ShippingServiceImpl implements ShippingService {
 
 	@Autowired
-	private GhnClient ghnClient;
-
-	@Autowired
 	private GeocodingService geocodingService;
 
-	@Value("${shipping.free_radius_km:3}")
-	private BigDecimal freeRadiusKm;
-
-	@Value("${shipping.max_radius_km:100}")
-	private BigDecimal maxRadiusKm;
-
-	@Value("${shipping.fallback_fee:30000}")
-	private BigDecimal fallbackFee;
+	@Autowired
+	private DeliveryRepository deliveryRepository;
 
 	@Override
 	public BigDecimal calculateShippingFee(Store store, CustomerAddress toAddress, int totalWeightGram) {
+		// Bước 1: Tính khoảng cách
 		BigDecimal distance = calculateDistanceKm(store, toAddress);
 		
-		// Nếu không tính được khoảng cách, dùng phí mặc định
+		// Nếu không tính được khoảng cách, báo lỗi
 		if (distance == null) {
-			System.err.println("⚠️ WARNING: Không tính được khoảng cách. Dùng phí mặc định.");
+			System.err.println("⚠️ WARNING: Không tính được khoảng cách.");
 			System.err.println("   - Shop: " + (store != null ? store.getStoreName() : "null"));
 			System.err.println("   - Shop address: " + (store != null ? store.getAddress() : "null"));
 			System.err.println("   - Customer address: " + (toAddress != null ? 
 				toAddress.getLine() + ", " + toAddress.getWard() + ", " + toAddress.getDistrict() : "null"));
 			
-			// Dùng phí fallback thay vì throw exception
-			return fallbackFee;
+			throw new IllegalArgumentException("Không xác định được khoảng cách. Vui lòng kiểm tra lại địa chỉ.");
 		}
 
-		// Miễn phí ship trong bán kính freeRadiusKm (mặc định 3km)
-		if (distance.compareTo(freeRadiusKm) <= 0) {
-			return BigDecimal.ZERO;
+		System.out.println("📍 Khoảng cách: " + distance + "km");
+
+		// Bước 2: Tìm nhà vận chuyển phù hợp với khoảng cách
+		Integer distanceKm = distance.intValue();
+		Optional<Delivery> deliveryOpt = deliveryRepository.findFirstAvailableForDistance(distanceKm);
+		
+		if (deliveryOpt.isEmpty()) {
+			System.err.println("❌ Không có nhà vận chuyển nào hỗ trợ khoảng cách " + distanceKm + "km");
+			throw new IllegalArgumentException(
+				"Đơn hàng không áp dụng tại địa chỉ của bạn (khoảng cách " + distanceKm + 
+				"km vượt quá giới hạn của tất cả nhà vận chuyển)"
+			);
 		}
 
-		// Không giao hàng quá xa (mặc định 100km)
-		if (distance.compareTo(maxRadiusKm) > 0) {
-			throw new IllegalArgumentException("Đơn hàng không áp dụng tại vị trí của bạn (vượt quá " + maxRadiusKm + "km)");
-		}
+		Delivery delivery = deliveryOpt.get();
+		System.out.println("🚚 Nhà vận chuyển: " + delivery.getDeliveryName());
+		System.out.println("   - Phí cơ bản: " + delivery.getBasePrice() + "đ");
+		System.out.println("   - Giá/km: " + delivery.getPricePerKM() + "đ");
+		System.out.println("   - Max distance: " + delivery.getMaxDistance() + "km");
 
-		// Tính phí ship dựa trên khoảng cách và trọng lượng
-		// Công thức: phí cơ bản + (khoảng cách * 3000) + (trọng lượng/1000 * 2000)
-		BigDecimal baseFee = BigDecimal.valueOf(15000); // Phí cơ bản 15k
-		BigDecimal distanceFee = distance.multiply(BigDecimal.valueOf(3000)); // 3k/km
-		BigDecimal weightFee = BigDecimal.valueOf(totalWeightGram)
-				.divide(BigDecimal.valueOf(1000), 2, RoundingMode.HALF_UP)
-				.multiply(BigDecimal.valueOf(2000)); // 2k/kg
+		// Bước 3: Tính phí ship
+		// Công thức: basePrice + (distance * pricePerKM)
+		BigDecimal baseFee = delivery.getBasePrice() != null ? delivery.getBasePrice() : BigDecimal.ZERO;
+		BigDecimal pricePerKM = delivery.getPricePerKM() != null ? delivery.getPricePerKM() : BigDecimal.ZERO;
+		BigDecimal distanceFee = distance.multiply(pricePerKM);
 
-		BigDecimal totalFee = baseFee.add(distanceFee).add(weightFee);
+		BigDecimal totalFee = baseFee.add(distanceFee);
 
 		// Làm tròn lên nghìn
-		return totalFee.divide(BigDecimal.valueOf(1000), 0, RoundingMode.UP)
+		BigDecimal roundedFee = totalFee.divide(BigDecimal.valueOf(1000), 0, RoundingMode.UP)
 				.multiply(BigDecimal.valueOf(1000));
+
+		System.out.println("💰 Phí ship: " + roundedFee + "đ (= " + baseFee + " + " + distance + " × " + pricePerKM + ")");
+
+		return roundedFee;
 	}
 
 	@Override
@@ -124,19 +130,22 @@ public class ShippingServiceImpl implements ShippingService {
 			}
 		}
 
-		// Tính khoảng cách bằng công thức Haversine
-		return BigDecimal.valueOf(haversine(storeLat, storeLon, customerLat, customerLon))
-				.setScale(2, RoundingMode.HALF_UP);
+		// Tính khoảng cách bằng DistanceUtil (Haversine formula)
+		double distanceKm = DistanceUtil.calculateDistance(storeLat, storeLon, customerLat, customerLon);
+		return BigDecimal.valueOf(distanceKm).setScale(2, RoundingMode.HALF_UP);
 	}
 
-	private double haversine(double lat1, double lon1, double lat2, double lon2) {
-		final int R = 6371; // Earth radius in KM
-		double dLat = Math.toRadians(lat2 - lat1);
-		double dLon = Math.toRadians(lon2 - lon1);
-		double a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-				Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2)) *
-				Math.sin(dLon / 2) * Math.sin(dLon / 2);
-		double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-		return R * c;
+	@Override
+	public Delivery findDeliveryForDistance(Store store, CustomerAddress toAddress) {
+		// Tính khoảng cách
+		BigDecimal distance = calculateDistanceKm(store, toAddress);
+		
+		if (distance == null) {
+			return null;
+		}
+
+		// Tìm delivery phù hợp
+		Integer distanceKm = distance.intValue();
+		return deliveryRepository.findFirstAvailableForDistance(distanceKm).orElse(null);
 	}
 }

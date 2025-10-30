@@ -30,24 +30,60 @@ function renderStorePromotionTable(items) {
         const tr = document.createElement('tr');
         const stt = idx + 1 + (spCurrentPage * spPageSize);
         const statusText = p.status || '';
-        const isBanned = statusText.toUpperCase() === 'BANNED';
-        const isActive = statusText.toUpperCase() === 'ACTIVE';
+        const statusUpper = statusText.toUpperCase();
+        const isBanned = statusUpper === 'BANNED';
+        const isActive = statusUpper === 'ACTIVE';
+        
+        // Xác định status class và text
+        let statusClass = 'status-badge ';
+        let displayStatus = statusText;
+        if (isBanned) {
+            statusClass += 'status-banned';
+            displayStatus = 'Đã cấm';
+        } else if (isActive) {
+            statusClass += 'status-active';
+            displayStatus = 'Đang hoạt động';
+        } else if (statusUpper === 'EXPIRED') {
+            statusClass += 'status-expired';
+            displayStatus = 'Đã hết hạn';
+        } else if (statusUpper === 'SCHEDULED') {
+            statusClass += 'status-upcoming';
+            displayStatus = 'Sắp bắt đầu';
+        } else {
+            statusClass += 'status-inactive';
+            displayStatus = 'Chưa kích hoạt';
+        }
+        
+        // Render action buttons
+        let actionButtons = `<div class="action-buttons">
+            <label class="switch" title="Kích hoạt/Vô hiệu hóa">
+                <input type="checkbox" class="store-promo-toggle" data-id="${p.id}" ${isActive ? 'checked' : ''} ${isBanned ? 'disabled' : ''} />
+                <span class="slider round"></span>
+            </label>`;
+        
+        if (isBanned) {
+            actionButtons += `
+                <button class="btn-unban" data-id="${p.id}" title="Bỏ cấm khuyến mãi">
+                    <i class="fas fa-check-circle"></i> Bỏ cấm
+                </button>`;
+        } else {
+            actionButtons += `
+                <button class="btn-ban" data-id="${p.id}" title="Cấm khuyến mãi">
+                    <i class="fas fa-ban"></i> Cấm
+                </button>`;
+        }
+        
+        actionButtons += `</div>`;
+        
         tr.innerHTML = `
             <td>${stt}</td>
             <td>${escapeHTML(p.storeName || '')}</td>
             <td>${escapeHTML(p.name || '')}</td>
             <td>${escapeHTML(p.type || '')}</td>
-            <td>${escapeHTML(statusText)}</td>
+            <td><span class="${statusClass}">${displayStatus}</span></td>
             <td>${formatDateTime(p.startDate)}</td>
             <td>${formatDateTime(p.endDate)}</td>
-            <td>
-                <label class="switch" title="Kích hoạt/Nhấc kích hoạt">
-                    <input type="checkbox" class="store-promo-toggle" data-id="${p.id}" ${isActive ? 'checked' : ''} ${isBanned ? 'disabled' : ''} />
-                    <span class="slider round"></span>
-                </label>
-                <button class="btn-ban" data-id="${p.id}" ${isBanned ? 'disabled' : ''}>Cấm</button>
-                <button class="btn-unban" data-id="${p.id}" ${isBanned ? '' : 'disabled'}>Bỏ cấm</button>
-            </td>
+            <td>${actionButtons}</td>
         `;
         spTableBody.appendChild(tr);
     });
@@ -69,13 +105,39 @@ function renderStorePagination(data) {
 }
 
 async function ban(id) {
-    await fetch(`/api/admin/promotion/${id}/ban`, { method: 'PATCH' });
-    loadStorePromotions(spCurrentPage);
+    if (!confirm('Bạn có chắc muốn CẤM khuyến mãi này của cửa hàng?')) return;
+    
+    try {
+        const res = await fetch(`/api/admin/promotion/${id}/ban`, { method: 'PATCH' });
+        if (res.ok) {
+            alert('✅ Đã cấm khuyến mãi thành công!');
+            loadStorePromotions(spCurrentPage);
+        } else {
+            const error = await res.text();
+            alert('❌ Lỗi: ' + error);
+        }
+    } catch (error) {
+        console.error('Error banning store promotion:', error);
+        alert('❌ Lỗi kết nối');
+    }
 }
 
 async function unban(id) {
-    await fetch(`/api/admin/promotion/${id}/unban`, { method: 'PATCH' });
-    loadStorePromotions(spCurrentPage);
+    if (!confirm('Bạn có chắc muốn BỎ CẤM khuyến mãi này của cửa hàng?')) return;
+    
+    try {
+        const res = await fetch(`/api/admin/promotion/${id}/unban`, { method: 'PATCH' });
+        if (res.ok) {
+            alert('✅ Đã bỏ cấm khuyến mãi thành công!');
+            loadStorePromotions(spCurrentPage);
+        } else {
+            const error = await res.text();
+            alert('❌ Lỗi: ' + error);
+        }
+    } catch (error) {
+        console.error('Error unbanning store promotion:', error);
+        alert('❌ Lỗi kết nối');
+    }
 }
 
 document.addEventListener('DOMContentLoaded', () => {

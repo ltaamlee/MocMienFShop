@@ -13,16 +13,14 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import mocmien.com.enums.RoleName;
-import mocmien.com.dto.response.product.ProductDetailResponse;
 import mocmien.com.entity.Review;
-import mocmien.com.entity.User;
 import mocmien.com.security.CustomUserDetails;
 import mocmien.com.service.CartService;
 import mocmien.com.service.ProductService;
 import mocmien.com.service.ReviewService;
 import mocmien.com.service.UserService;
 import mocmien.com.dto.response.product.ProductDetailResponse;
-import mocmien.com.entity.Product;
+import mocmien.com.repository.AdminPromotionRepository;
 import mocmien.com.entity.User;
 
 
@@ -34,6 +32,7 @@ public class ProductController {
     @Autowired private CartService cartService;
     @Autowired private UserService userService;
     @Autowired private ReviewService reviewService;
+    @Autowired private AdminPromotionRepository adminPromotionRepository;
 
     // 🔹 Trang chi tiết sản phẩm
     @GetMapping("/{id}")
@@ -45,6 +44,11 @@ public class ProductController {
 
         model.addAttribute("product", product);
         model.addAttribute("title", product.getProductName()); // ✅ để <title> hoạt động
+
+        var globals = adminPromotionRepository.findActiveGlobalPromotions();
+        if (globals != null && !globals.isEmpty()) {
+            model.addAttribute("globalPromoName", globals.get(0).getName());
+        }
 
         List<Review> reviews = reviewService.getReviewsByProductId(id);
         model.addAttribute("reviews", reviews);

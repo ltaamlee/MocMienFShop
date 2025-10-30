@@ -3,8 +3,7 @@ package mocmien.com.enums;
 public enum PromotionType {
     PERCENT("Giảm theo %"),
     AMOUNT("Giảm tiền"),   
-    FREESHIP("Miễn phí vận chuyển"),
-    GIFT("Quà tặng");
+    FREESHIP("Miễn phí vận chuyển");
 
 	private final String displayName;
 

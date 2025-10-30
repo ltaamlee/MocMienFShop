@@ -1,5 +1,6 @@
 package mocmien.com.service.impl;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -100,7 +101,14 @@ public class CartServiceImpl implements CartService {
     public double getTotal(User user) {
         List<CartItem> items = cartItemRepository.findByCart_User(user);
         return items.stream()
-                .mapToDouble(i -> i.getProduct().getPrice().doubleValue() * i.getQuantity())
+                .mapToDouble(i -> {
+                    Product p = i.getProduct();
+                    // Dùng giá khuyến mãi nếu có, ngược lại dùng giá gốc
+                    BigDecimal unitPrice = (p.getPromotionalPrice() != null && p.getPromotionalPrice().compareTo(p.getPrice()) < 0)
+                            ? p.getPromotionalPrice()
+                            : p.getPrice();
+                    return unitPrice.doubleValue() * i.getQuantity();
+                })
                 .sum();
     }
 }

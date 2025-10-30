@@ -11,41 +11,10 @@ import lombok.NoArgsConstructor;
 public class ProductRowVM {
 	private Integer maSP;
 	private String tenSP;
-	private BigDecimal gia;
+	private BigDecimal giaGoc;
+    private BigDecimal giaKhuyenMai; // null if no discount
 	private String hinhAnh;
 	private Integer trangThai;
-	
-	
-	public Integer getMaSP() {
-		return maSP;
-	}
-	public void setMaSP(Integer maSP) {
-		this.maSP = maSP;
-	}
-	public String getTenSP() {
-		return tenSP;
-	}
-	public void setTenSP(String tenSP) {
-		this.tenSP = tenSP;
-	}
-	public String getHinhAnh() {
-		return hinhAnh;
-	}
-	public void setHinhAnh(String hinhAnh) {
-		this.hinhAnh = hinhAnh;
-	}
-	public BigDecimal getGia() {
-		return gia;
-	}
-	public void setGia(BigDecimal gia) {
-		this.gia = gia;
-	}
-	public Integer getTrangThai() {
-		return trangThai;
-	}
-	public void setTrangThai(Integer trangThai) {
-		this.trangThai = trangThai;
-	}
-	
-	
+    private Integer discountPercent; // rounded down
+    private String ribbonText; // e.g: "-20%" or promotion name
 }

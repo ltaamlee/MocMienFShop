@@ -44,7 +44,7 @@ public class ShipperApiController {
             "vehicleNumber", s.getVehicleNumber(),
             "vehicleType", s.getVehicleType(),
             "license", s.getLicense(),
-            "available", Boolean.TRUE.equals(s.getIsActive())
+            "available", Boolean.TRUE.equals(s.getIsOnline())
         );
     }
 
@@ -52,7 +52,7 @@ public class ShipperApiController {
     public ResponseEntity<?> availability(@AuthenticationPrincipal CustomUserDetails ud, @RequestBody Map<String, Object> body) {
         Shipper s = me(ud);
         boolean available = body != null && Boolean.TRUE.equals(body.get("available"));
-        s.setIsActive(available);
+        s.setIsOnline(available);
         shipperRepo.save(s);
         return ResponseEntity.noContent().build();
     }
@@ -73,6 +73,9 @@ public class ShipperApiController {
     @GetMapping("/orders/available")
     public List<Map<String, Object>> available(@AuthenticationPrincipal CustomUserDetails ud) {
         Shipper s = me(ud);
+        if (!Boolean.TRUE.equals(s.getIsOnline())) {
+            return java.util.List.of();
+        }
         List<Orders> list = ordersRepo.findByDelivery_IdAndStatusAndShipperIsNull(s.getDelivery().getId(), OrderStatus.CONFIRMED);
         return list.stream().map(this::toListItem).collect(Collectors.toList());
     }
@@ -87,10 +90,14 @@ public class ShipperApiController {
     @PatchMapping("/orders/{id}/accept")
     public ResponseEntity<?> accept(@AuthenticationPrincipal CustomUserDetails ud, @PathVariable String id) {
         Shipper s = me(ud);
+        if (!Boolean.TRUE.equals(s.getIsOnline())) {
+            return ResponseEntity.status(403).body("Vui lòng bật Trực tuyến để nhận đơn");
+        }
         Orders o = ordersRepo.findById(id).orElseThrow();
         if (o.getDelivery() == null || !o.getDelivery().getId().equals(s.getDelivery().getId()))
             return ResponseEntity.status(403).build();
         if (o.getShipper() != null) return ResponseEntity.status(409).build();
+        if (o.getStatus() != OrderStatus.CONFIRMED) return ResponseEntity.status(409).build();
         o.setShipper(s);
         o.setStatus(OrderStatus.SHIPPING);
         ordersRepo.save(o);

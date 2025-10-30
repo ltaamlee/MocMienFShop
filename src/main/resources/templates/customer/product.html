@@ -10,6 +10,7 @@
 	<link rel="stylesheet" href="/styles/css/customer/base.css">
 	<link rel="stylesheet" href="/styles/css/customer/product.css">
 	<link rel="stylesheet" href="/styles/css/customer/banner.css">
+	<link rel="stylesheet" href="/styles/css/component/ribbon.css">
 	<link rel="stylesheet"
 		href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
 </th:block>
@@ -19,7 +20,11 @@
 		<!-- Banner Slider -->
 		<section class="banner-slider">
 			<div class="slides">
-				<div class="slide active">
+				<!-- Ưu tiên banner khuyến mãi toàn sàn nếu có -->
+				<div class="slide" th:each="b,iter : ${globalPromoBanners}" th:classappend="${iter.index == 0} ? ' active'">
+					<img th:src="${b}" alt="Promo Banner">
+				</div>
+				<div class="slide active" th:if="${globalPromoBanners == null or #lists.isEmpty(globalPromoBanners)}">
 					<img src="/styles/image/customer/banner1.jpg" alt="Banner 1">
 				</div>
 				<div class="slide">
@@ -102,6 +107,10 @@
                        (${p.trangThai == 0} ? ' stopped-sale' : '')">
 
 							<div class="product-image">
+                                <!-- Ribbon KM toàn sàn (đỏ) -->
+                                <div class="ribbon sale" th:if="${globalPromoName != null and p.giaKhuyenMai != null and p.giaKhuyenMai < p.giaGoc}">
+                                    <span th:text="${globalPromoName}"></span>
+                                </div>
 								<!-- Link chỉ click được khi đang bán -->
 								<a th:href="@{'/product/' + ${p.maSP}}"
 									th:if="${p.trangThai == 1}"> <img th:src="@{${p.hinhAnh}}"
@@ -110,11 +119,11 @@
 									th:alt="${p.tenSP}">
 
 								<!-- Overlay trạng thái -->
-								<div class="overlay" th:if="${p.trangThai == -1}">
-									<span>Hết hàng</span>
+								<div class="out-of-stock-overlay" th:if="${p.trangThai == -1}">
+									<span>HẾT HÀNG</span>
 								</div>
-								<div class="overlay stopped" th:if="${p.trangThai == 0}">
-									<span>Ngừng bán</span>
+								<div class="out-of-stock-overlay" th:if="${p.trangThai == 0}">
+									<span>NGỪNG BÁN</span>
 								</div>
 							</div>
 
@@ -125,9 +134,13 @@
 									</a>
 								</h4>
 
-								<!-- Giá: chỉ lấy giá thường -->
-								<p class="price"
-									th:text="${#numbers.formatDecimal(p.gia, 0, 'COMMA', 0, 'POINT')} + ' ₫'"></p>
+                            <!-- Giá: hiển thị giá sau khuyến mãi nếu có -->
+                            <p class="price sale" th:if="${p.giaKhuyenMai != null and p.giaKhuyenMai < p.giaGoc}">
+                                <span class="old-price" th:text="${#numbers.formatDecimal(p.giaGoc, 0, 'COMMA', 0, 'POINT')} + ' ₫'"></span>
+                                <span class="new-price" th:text="${#numbers.formatDecimal(p.giaKhuyenMai, 0, 'COMMA', 0, 'POINT')} + ' ₫'"></span>
+                            </p>
+                            <p class="price" th:if="${p.giaKhuyenMai == null or p.giaKhuyenMai >= p.giaGoc}"
+                                th:text="${#numbers.formatDecimal(p.giaGoc, 0, 'COMMA', 0, 'POINT')} + ' ₫'"></p>
 
 								<!-- Dòng trạng thái -->
 								<p class="status-text"
@@ -146,7 +159,6 @@
 	<th:block layout:fragment="scripts">
 		<script src="/styles/js/customer/header.js"></script>
 		<script th:src="@{/styles/js/customer/avatar.js}"></script>
-		<script th:src="@{/styles/js/chat.js}"></script>
 		<script>
 			document.querySelectorAll('input[name="categoryIds"]').forEach(cb => {
 				cb.addEventListener('change', () => {

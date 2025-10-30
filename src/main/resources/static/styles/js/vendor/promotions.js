@@ -1,4 +1,3 @@
-// public/styles/js/vendor/promotions.js
 let currentPage = 0;
 const pageSize = 10;
 let pendingToggle = null;

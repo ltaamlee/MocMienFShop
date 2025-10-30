@@ -149,3 +149,4 @@ public interface ProductRepository extends JpaRepository<Product, Integer>, JpaS
 
     List<Product> findByStore_Id(Integer id);
 }
+

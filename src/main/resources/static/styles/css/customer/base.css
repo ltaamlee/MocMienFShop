@@ -600,6 +600,33 @@ footer {
 .badge-out { color: red; font-weight: bold; }
 .badge-stopped { color: gray; font-weight: bold; }
 
+/* 🌸 Logo + Tên thương hiệu */
+.logo-link {
+  display: flex;
+  align-items: center;
+  gap: 10px; /* khoảng cách giữa logo và chữ */
+  text-decoration: none;
+  color: inherit;
+}
+
+.logo-link img {
+  height: 55px; /* tuỳ chỉnh cho cân đối */
+  width: auto;
+}
+
+.shop-name {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 600;
+  font-size: 1.5rem;
+  color: var(--primary-color, #b32c1a); /* Hồng thương hiệu */
+  letter-spacing: 1px;
+  transition: color 0.2s ease;
+}
+
+/* Hover nhẹ cho tinh tế */
+.logo-link:hover .shop-name {
+  color: #e05a5a;
+}
 
 /* ===== ANIMATIONS ===== */
 @keyframes fadeInScale {

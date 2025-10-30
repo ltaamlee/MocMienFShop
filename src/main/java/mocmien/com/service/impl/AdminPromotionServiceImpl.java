@@ -5,31 +5,44 @@ import mocmien.com.dto.response.admin.AdminPromotionStats;
 import mocmien.com.dto.response.promotion.AdminPromotionResponse;
 import mocmien.com.dto.response.promotion.AdminStorePromotionResponse;
 import mocmien.com.entity.Promotion;
+import mocmien.com.entity.Product;
 import mocmien.com.enums.PromotionStatus;
 import mocmien.com.enums.PromotionType;
 import mocmien.com.repository.AdminPromotionRepository;
-import mocmien.com.repository.PromotionRepository;
+import mocmien.com.repository.ProductRepository;
 import mocmien.com.service.AdminPromotionService;
+import mocmien.com.service.CloudinaryService;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.validation.Valid;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@Transactional
 public class AdminPromotionServiceImpl implements AdminPromotionService {
 
 	@Autowired
 	private AdminPromotionRepository adminPromotionRepo;
+
+	@Autowired
+	private ProductRepository productRepo;
+	
+	@Autowired
+	private CloudinaryService cloudinaryService;
 
 	private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
@@ -127,6 +140,10 @@ public class AdminPromotionServiceImpl implements AdminPromotionService {
         if (p.getStatus() == PromotionStatus.BANNED) {
             throw new IllegalStateException("Khuyến mãi đã bị cấm, không thể kích hoạt");
         }
+        
+        // Kiểm tra nếu là khuyến mãi toàn sàn (store == null)
+        boolean isGlobalPromotion = (p.getStore() == null);
+        
         // Chỉ cho ACTIVE nếu đang trong khung thời gian hợp lệ
         LocalDateTime now = LocalDateTime.now();
         if (p.getStartDate() != null && p.getEndDate() != null && !now.isBefore(p.getStartDate()) && !now.isAfter(p.getEndDate())) {
@@ -140,14 +157,73 @@ public class AdminPromotionServiceImpl implements AdminPromotionService {
             p.setIsActive(false);
         }
         adminPromotionRepo.save(p);
+        
+        // ✅ Nếu là KM toàn sàn và đang ACTIVE → Cập nhật promotionalPrice cho TẤT CẢ sản phẩm
+        if (isGlobalPromotion && p.getStatus() == PromotionStatus.ACTIVE) {
+            updateAllProductPrices(p);
+        }
     }
 
     @Override
     public void deactivate(Integer id) {
         Promotion p = adminPromotionRepo.findById(id).orElseThrow(() -> new IllegalArgumentException("Khuyến mãi không tồn tại"));
+        
+        // Kiểm tra nếu là khuyến mãi toàn sàn (store == null)
+        boolean isGlobalPromotion = (p.getStore() == null);
+        
         p.setStatus(PromotionStatus.INACTIVE);
         p.setIsActive(false);
         adminPromotionRepo.save(p);
+        
+        // ✅ Nếu là KM toàn sàn → Reset promotionalPrice về giá gốc cho TẤT CẢ sản phẩm
+        if (isGlobalPromotion) {
+            resetAllProductPrices();
+        }
+    }
+    
+    /**
+     * Cập nhật promotionalPrice cho tất cả sản phẩm khi bật khuyến mãi toàn sàn
+     */
+    private void updateAllProductPrices(Promotion promotion) {
+        List<Product> allProducts = productRepo.findAll();
+        
+        for (Product product : allProducts) {
+            BigDecimal newPrice = calculatePromotionalPrice(product.getPrice(), promotion);
+            product.setPromotionalPrice(newPrice);
+        }
+        
+        productRepo.saveAll(allProducts);
+    }
+    
+    /**
+     * Reset promotionalPrice về giá gốc cho tất cả sản phẩm khi tắt khuyến mãi toàn sàn
+     */
+    private void resetAllProductPrices() {
+        List<Product> allProducts = productRepo.findAll();
+        
+        for (Product product : allProducts) {
+            product.setPromotionalPrice(product.getPrice());
+        }
+        
+        productRepo.saveAll(allProducts);
+    }
+    
+    /**
+     * Tính giá sau khuyến mãi dựa trên loại và giá trị khuyến mãi
+     */
+    private BigDecimal calculatePromotionalPrice(BigDecimal originalPrice, Promotion promotion) {
+        if (promotion.getType() == PromotionType.PERCENT) {
+            // Giảm theo phần trăm
+            BigDecimal discount = originalPrice.multiply(promotion.getValue())
+                    .divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP);
+            return originalPrice.subtract(discount);
+        } else if (promotion.getType() == PromotionType.AMOUNT) {
+            // Giảm theo số tiền cố định
+            BigDecimal newPrice = originalPrice.subtract(promotion.getValue());
+            // Đảm bảo giá không âm
+            return newPrice.compareTo(BigDecimal.ZERO) > 0 ? newPrice : BigDecimal.ZERO;
+        }
+        return originalPrice;
     }
 
 	// --- Logic tạo Specification ---
@@ -281,6 +357,60 @@ public class AdminPromotionServiceImpl implements AdminPromotionService {
             resp.setStoreName(promotion.getStore().getStoreName());
         }
         return resp;
+    }
+    
+    // ==================== LẤY CHI TIẾT 1 KHUYẾN MÃI ====================
+    @Override
+    public AdminPromotionResponse getPromotionById(Integer id) {
+        Promotion promotion = adminPromotionRepo.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy khuyến mãi với ID: " + id));
+        return mapToAdminPromotionResponse(promotion);
+    }
+    
+    // ==================== CẬP NHẬT KHUYẾN MÃI ====================
+    @Override
+    public void updatePromotion(Integer id, String name, String type, Double value, String ribbon,
+                               String startDate, String endDate, MultipartFile[] banners) {
+        Promotion promotion = adminPromotionRepo.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy khuyến mãi với ID: " + id));
+        
+        // Cập nhật thông tin cơ bản
+        promotion.setName(name);
+        promotion.setType(PromotionType.valueOf(type));
+        promotion.setValue(BigDecimal.valueOf(value));
+        // Note: Promotion entity không có field ribbon riêng, ribbon chỉ dùng trong DTO
+        
+        // Parse dates (định dạng: "yyyy-MM-ddTHH:mm" từ datetime-local input)
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
+        promotion.setStartDate(LocalDateTime.parse(startDate, formatter));
+        promotion.setEndDate(LocalDateTime.parse(endDate, formatter));
+        
+        // Upload banners nếu có
+        if (banners != null && banners.length > 0) {
+            List<String> bannerUrls = new ArrayList<>();
+            for (MultipartFile file : banners) {
+                if (!file.isEmpty()) {
+                    try {
+                        String url = cloudinaryService.upload(file);
+                        bannerUrls.add(url);
+                    } catch (Exception e) {
+                        throw new IllegalArgumentException("Lỗi upload banner: " + e.getMessage());
+                    }
+                }
+            }
+            
+            if (!bannerUrls.isEmpty()) {
+                // Ghép các URL bằng dấu phẩy
+                promotion.setBanner(String.join(",", bannerUrls));
+            }
+        }
+        
+        adminPromotionRepo.save(promotion);
+        
+        // Nếu khuyến mãi đang ACTIVE và là toàn sàn, cập nhật lại giá sản phẩm
+        if (promotion.getStatus() == PromotionStatus.ACTIVE && promotion.getStore() == null) {
+            updateAllProductPrices(promotion);
+        }
     }
 
 }

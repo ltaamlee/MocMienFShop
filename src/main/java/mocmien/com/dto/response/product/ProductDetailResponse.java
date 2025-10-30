@@ -6,11 +6,8 @@ import java.util.List;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import mocmien.com.enums.ProductStatus;
 
-@Data
-@Builder
-@NoArgsConstructor
+import mocmien.com.enums.ProductStatus;
 
 public class ProductDetailResponse {
     private Integer id;
@@ -39,6 +36,11 @@ public class ProductDetailResponse {
     private java.math.BigDecimal storeRating;
     private java.math.BigDecimal productRating;
     private Long productRatingCount;
+
+    private BigDecimal giaKhuyenMai;
+    private Integer discountPercent;
+    private String ribbonText;
+    private Integer promotionId;
 
     public String getMainImage() { return mainImage; }
     public void setMainImage(String mainImage) { this.mainImage = mainImage; }
@@ -167,6 +169,38 @@ public class ProductDetailResponse {
 	public void setImageUrls(List<String> imageUrls) {
 		this.imageUrls = imageUrls;
 	}
+
+	public BigDecimal getGiaKhuyenMai() {
+		return giaKhuyenMai;
+	}
+
+	public void setGiaKhuyenMai(BigDecimal giaKhuyenMai) {
+		this.giaKhuyenMai = giaKhuyenMai;
+	}
+
+	public Integer getDiscountPercent() {
+		return discountPercent;
+	}
+
+	public void setDiscountPercent(Integer discountPercent) {
+		this.discountPercent = discountPercent;
+	}
+
+	public String getRibbonText() {
+		return ribbonText;
+	}
+
+	public void setRibbonText(String ribbonText) {
+		this.ribbonText = ribbonText;
+	}
+
+	public Integer getPromotionId() {
+		return promotionId;
+	}
+
+	public void setPromotionId(Integer promotionId) {
+		this.promotionId = promotionId;
+	}
     
 	public static class Builder {
         private final ProductDetailResponse dto = new ProductDetailResponse();
@@ -243,6 +277,26 @@ public class ProductDetailResponse {
 
         public Builder mainImage(String mainImage) {
             dto.setMainImage(mainImage);
+            return this;
+        }
+
+        public Builder giaKhuyenMai(BigDecimal giaKhuyenMai) {
+            dto.setGiaKhuyenMai(giaKhuyenMai);
+            return this;
+        }
+
+        public Builder discountPercent(Integer discountPercent) {
+            dto.setDiscountPercent(discountPercent);
+            return this;
+        }
+
+        public Builder ribbonText(String ribbonText) {
+            dto.setRibbonText(ribbonText);
+            return this;
+        }
+
+        public Builder promotionId(Integer promotionId) {
+            dto.setPromotionId(promotionId);
             return this;
         }
 

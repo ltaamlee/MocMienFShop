@@ -27,13 +27,11 @@ const paginationContainer = document.getElementById("promotionPagination");
 const searchFilterForm = document.getElementById("searchFilterForm");
 
 const addPromotionModal = document.getElementById("addPromotionModal");
-
-
 const promotionForm = document.getElementById("promotionForm");
 
 // Input Fields for Modal (Thêm/Sửa)
 const nameInput = document.getElementById("name");
-const typeInput = document.getElementById("type");
+const typeInput = document.getElementById("promoType");
 const valueInput = document.getElementById("value");
 const bannerInput = document.getElementById("banner");
 const ribbonInput = document.getElementById("ribbon");
@@ -48,7 +46,7 @@ async function loadPromotions(page = 0) {
 	currentPage = page;
 	// Lấy giá trị từ các bộ lọc
 	const keyword = document.querySelector('input[name="keyword"]')?.value || '';
-	const typeValue = document.querySelector('#type')?.value || '';
+    const typeValue = document.querySelector('#typeFilter')?.value || '';
 	const statusValue = document.querySelector('#statusFilter')?.value || '';
 
 	const sortValue = document.querySelector('#sortFilter')?.value || 'createdAt,desc';
@@ -169,13 +167,18 @@ function renderPromotionTable(promotions) {
             <td>${formatDateTime(promo.startDate)}</td>
             <td>${formatDateTime(promo.endDate)}</td>
             <td>
-            <label class="switch" title="Kích hoạt/Nhấc kích hoạt">
-                <input type="checkbox" class="promo-toggle" data-id="${promo.id}" ${isActive ? 'checked' : ''} ${isBanned ? 'disabled' : ''}>
-                <span class="slider round"></span>
-            </label>
+            <div class="action-buttons">
+                <label class="switch" title="Kích hoạt/Nhấc kích hoạt">
+                    <input type="checkbox" class="promo-toggle" data-id="${promo.id}" ${isActive ? 'checked' : ''} ${isBanned ? 'disabled' : ''}>
+                    <span class="slider round"></span>
+                </label>
+                <button class="btn-view" data-id="${promo.id}" title="Chỉnh sửa">
+                    <i class="fas fa-edit"></i> Sửa
+                </button>
                 <button class="btn-delete" data-id="${promo.id}" data-name="${escapeHTML(promo.name)}" title="Xóa">
                     <i class="fas fa-trash"></i>
                 </button>
+            </div>
             </td>
         `;
 		tableBody.appendChild(tr);
@@ -279,6 +282,7 @@ async function savePromotion(e) {
 	}
 }
 
+
 async function confirmDeletePromotion(id, name) {
 	const confirmAction = confirm(`Bạn có chắc muốn xóa khuyến mãi "${escapeHTML(name)}"?`);
 	if (!confirmAction) return;
@@ -319,7 +323,7 @@ document.addEventListener("DOMContentLoaded", function() {
 		loadPromotions(0);
 	});
 
-	document.getElementById("type")?.addEventListener("change", function(e) {
+    document.getElementById("typeFilter")?.addEventListener("change", function(e) {
 		e.preventDefault();
 		loadPromotions(0);
 	});
@@ -368,11 +372,13 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     });
 
-    // Ban / Unban / Delete
+    // Ban / Unban / Edit / Delete
     tableBody?.addEventListener('click', async function(e) {
         const banBtn = e.target.closest('.btn-ban');
         const unbanBtn = e.target.closest('.btn-unban');
+        const editBtn = e.target.closest('.btn-view');
         const deleteBtn = e.target.closest('.btn-delete');
+        
         if (banBtn) {
             const id = banBtn.dataset.id;
             const res = await fetch(`/api/admin/promotion/${id}/ban`, { method: 'PATCH' });
@@ -383,12 +389,16 @@ document.addEventListener("DOMContentLoaded", function() {
             const res = await fetch(`/api/admin/promotion/${id}/unban`, { method: 'PATCH' });
             if (!res.ok) alert(await handleFetchError(res));
             loadPromotions(currentPage); fetchPromotionStats();
+        } else if (editBtn) {
+            const id = editBtn.dataset.id;
+            openEditModal(id);
         } else if (deleteBtn) {
             const id = deleteBtn.dataset.id;
             const name = deleteBtn.dataset.name;
             confirmDeletePromotion(id, name);
         }
     });
+
 
 	// Đóng modal khi click ra ngoài (nếu dùng modal custom)
 	window.addEventListener('click', function(event) {
@@ -505,3 +515,103 @@ function escapeHTML(str) {
 		}[m];
 	});
 }
+
+/* ==========================
+   CHỈNH SỬA KHUYẾN MÃI
+========================== */
+async function openEditModal(id) {
+    try {
+        const res = await fetch(`/api/admin/promotion/${id}`);
+        if (!res.ok) throw new Error('Không thể tải thông tin khuyến mãi');
+        
+        const promo = await res.json();
+        
+        // Populate form
+        document.getElementById('editPromotionId').value = promo.id;
+        document.getElementById('editName').value = promo.name;
+        document.getElementById('editPromoType').value = promo.type;
+        document.getElementById('editValue').value = promo.value;
+        document.getElementById('editRibbon').value = promo.ribbon || '';
+        
+        // Format datetime cho input datetime-local
+        if (promo.startDate) {
+            const start = new Date(promo.startDate);
+            document.getElementById('editStartDate').value = start.toISOString().slice(0, 16);
+        }
+        if (promo.endDate) {
+            const end = new Date(promo.endDate);
+            document.getElementById('editEndDate').value = end.toISOString().slice(0, 16);
+        }
+        
+        // Hiển thị banner hiện tại nếu có
+        const currentBannerSection = document.getElementById('currentBannerSection');
+        const currentBannerPreview = document.getElementById('currentBannerPreview');
+        
+        if (promo.banner) {
+            // Banner có thể là chuỗi nhiều URL phân cách bởi dấu phẩy
+            const banners = promo.banner.split(',').map(b => b.trim()).filter(b => b);
+            if (banners.length > 0) {
+                currentBannerSection.style.display = 'block';
+                currentBannerPreview.innerHTML = banners.map(url => `
+                    <div style="position: relative;">
+                        <img src="${url}" style="width: 150px; height: 100px; object-fit: cover; border-radius: 8px; border: 2px solid #ddd;">
+                    </div>
+                `).join('');
+            } else {
+                currentBannerSection.style.display = 'none';
+            }
+        } else {
+            currentBannerSection.style.display = 'none';
+        }
+        
+        // Mở modal
+        document.getElementById('editPromotionModal').style.display = 'block';
+        document.getElementById('editPromotionModal').classList.add('show');
+    } catch (error) {
+        console.error('Error loading promotion:', error);
+        alert('❌ Lỗi: ' + error.message);
+    }
+}
+
+// Xử lý submit form edit
+document.getElementById('editPromotionForm')?.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const id = document.getElementById('editPromotionId').value;
+    const formData = new FormData();
+    
+    formData.append('name', document.getElementById('editName').value);
+    formData.append('type', document.getElementById('editPromoType').value);
+    formData.append('value', document.getElementById('editValue').value);
+    formData.append('ribbon', document.getElementById('editRibbon').value);
+    formData.append('startDate', document.getElementById('editStartDate').value);
+    formData.append('endDate', document.getElementById('editEndDate').value);
+    
+    // Upload files nếu có
+    const fileInput = document.getElementById('editBanner');
+    if (fileInput.files.length > 0) {
+        for (let i = 0; i < fileInput.files.length; i++) {
+            formData.append('banners', fileInput.files[i]);
+        }
+    }
+    
+    try {
+        const res = await fetch(`/api/admin/promotion/${id}`, {
+            method: 'PUT',
+            body: formData
+        });
+        
+        if (res.ok) {
+            showSuccessAlert('✅ Cập nhật khuyến mãi thành công!');
+            closeModal('editPromotionModal');
+            loadPromotions(currentPage);
+            fetchPromotionStats();
+        } else {
+            const error = await res.text();
+            showErrorAlert('❌ Lỗi: ' + error);
+        }
+    } catch (error) {
+        console.error('Error updating promotion:', error);
+        showErrorAlert('❌ Lỗi kết nối');
+    }
+});

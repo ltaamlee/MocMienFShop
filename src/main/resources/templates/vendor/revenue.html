@@ -7,12 +7,173 @@
 <th:block layout:fragment="styles">
 	<link rel="stylesheet" href="/styles/css/vendor/header.css">
 	<link rel="stylesheet" href="/styles/css/vendor/main.css">
+	<style>
+/* ====== SCOPED FIXES CHO TRANG REVENUE ====== */
+.revenue-page .page-header {
+	margin-bottom: 16px;
+}
+/* Huỷ mọi "đẩy nổi"/margin âm/translate nếu có từ main.css */
+.revenue-page .push-up-1 {
+	margin-top: 0 !important;
+	transform: none !important;
+}
+
+.revenue-page .stats-cards {
+	margin-top: 16px !important;
+	position: relative;
+	z-index: 1; /* tránh bị banner đè */
+	gap: 16px;
+}
+
+.revenue-page .stat-card {
+	position: relative;
+	z-index: 1;
+}
+
+.revenue-page .chart-section {
+	margin-top: 20px;
+}
+
+.revenue-page .store-section {
+	margin-top: 20px;
+}
+
+/* ====== STYLE GỐC CỦA TRANG (giữ nguyên nhưng scope vào revenue-page) ====== */
+.revenue-page #revenueChart {
+	width: 100%;
+	height: 360px;
+}
+
+.revenue-page .chart-section {
+	grid-column: 1/-1;
+	background: #fff;
+	padding: 20px 24px;
+	border-radius: 16px;
+	box-shadow: 0 6px 24px rgba(0, 0, 0, .06);
+	max-width: 100%;
+}
+
+.revenue-page .filters {
+	display: flex;
+	gap: 12px;
+	flex-wrap: wrap;
+	align-items: center;
+}
+
+.revenue-page .filters input, .revenue-page .filters select {
+	padding: 10px 12px;
+	border: 1px solid #ddd;
+	border-radius: 6px;
+}
+
+.revenue-page .filters button {
+	padding: 10px 16px;
+}
+
+.revenue-page .table-wrapper {
+	background: #fff;
+	border-radius: 16px;
+	box-shadow: 0 6px 24px rgba(0, 0, 0, .06);
+	overflow: auto;
+}
+
+.revenue-page .money {
+	font-variant-numeric: tabular-nums;
+}
+</style>
+	<!-- Chart.js CDN -->
+	<script
+		src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 </th:block>
 </head>
 <body>
-	<div layout:fragment="content">
-		<h1>Chào mừng đến với trang quản lý</h1>
-		<p>Đây là trang chủ dành cho quản lý!</p>
+
+
+
+	<div layout:fragment="content" class="revenue-page">
+
+		<!-- STAT CARDS -->
+		<section class="stats-cards">
+			<div class="stat-card total">
+				<h3>Tổng doanh thu (Gross)</h3>
+				<div class="value money" id="grossStat">0</div>
+			</div>
+			<div class="stat-card active">
+				<h3>Đơn đã giao</h3>
+				<div class="value" id="ordersStat">0</div>
+			</div>
+			<div class="stat-card pending">
+				<h3>Giá trị TB/đơn</h3>
+				<div class="value money" id="avgStat">0</div>
+			</div>
+			<div class="stat-card blocked">
+				<h3>Phí hệ thống</h3>
+				<div class="value money" id="feeStat">0</div>
+			</div>
+			<div class="stat-card">
+				<h3>Net về cửa hàng</h3>
+				<div class="value money" id="netStat">0</div>
+			</div>
+		</section>
+
+
+
+
+		<div class="page-header">
+			<h1>Doanh thu cửa hàng</h1>
+			<div class="filters">
+				<label>Từ: <input type="date" id="fromDate"></label> <label>Đến:
+					<input type="date" id="toDate">
+				</label> <select id="chartMode">
+					<option value="daily">Theo ngày</option>
+					<option value="monthly">Theo tháng (năm)</option>
+				</select> <input type="number" id="yearInput" placeholder="Năm"
+					style="width: 110px; display: none;">
+				<button class="btn-submit" id="applyBtn">Áp dụng</button>
+			</div>
+		</div>
+
+
+
+		<!-- CHART -->
+		<section class="chart-section">
+			<div class="section-header">
+				<div>
+					<h2 class="section-title">Biểu đồ doanh thu</h2>
+					<p class="section-subtitle" id="chartSubtitle">—</p>
+				</div>
+			</div>
+			<canvas id="revenueChart"></canvas>
+		</section>
+
+		<!-- RECENT ORDERS -->
+		<section class="store-section">
+			<div class="section-header">
+				<h2 class="section-title">Đơn gần đây</h2>
+			</div>
+			<div class="table-wrapper">
+				<table class="table-stores">
+					<thead>
+						<tr>
+							<th>Mã đơn</th>
+							<th>Ngày tạo</th>
+							<th class="text-right">Tổng tiền</th>
+							<th>Trạng thái</th>
+							<th>Thanh toán</th>
+						</tr>
+					</thead>
+					<tbody id="recentTbody">
+						<tr>
+							<td colspan="5" class="text-center">Đang tải…</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</section>
 	</div>
+
+	<th:block layout:fragment="scripts">
+		<script src="/styles/js/vendor/revenue.js"></script>
+	</th:block>
 </body>
 </html>

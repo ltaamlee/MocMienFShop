@@ -7,23 +7,34 @@ public class ProductRowVM {
 	private String tenSP;
 	private String hinhAnh;
 	private BigDecimal giaGoc;
+	private BigDecimal giaKhuyenMai;
 	private Integer trangThai;
 	private String trangThaiText;
 
 	public ProductRowVM() {
-	}
-
-	public ProductRowVM(Integer maSP, String tenSP, String hinhAnh, BigDecimal giaGoc, Integer trangThai,
-			String trangThaiText) {
+	}	
+	
+	public ProductRowVM(Integer maSP, String tenSP, String hinhAnh, BigDecimal giaGoc, BigDecimal giaKhuyenMai,
+			Integer trangThai, String trangThaiText) {
+		super();
 		this.maSP = maSP;
 		this.tenSP = tenSP;
 		this.hinhAnh = hinhAnh;
 		this.giaGoc = giaGoc;
+		this.giaKhuyenMai = giaKhuyenMai;
 		this.trangThai = trangThai;
 		this.trangThaiText = trangThaiText;
 	}
-	
-	
+
+
+
+	public BigDecimal getGiaKhuyenMai() {
+		return giaKhuyenMai;
+	}
+
+	public void setGiaKhuyenMai(BigDecimal giaKhuyenMai) {
+		this.giaKhuyenMai = giaKhuyenMai;
+	}
 
 	public Integer getMaSP() {
 		return maSP;
@@ -74,5 +85,6 @@ public class ProductRowVM {
 	}
 	
 
+	
 
 }
