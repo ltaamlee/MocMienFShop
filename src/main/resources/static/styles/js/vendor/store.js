@@ -122,16 +122,47 @@ submitBtn?.addEventListener("click", async () => {
 		const vendorId = vendorIdInput?.value?.trim();
         const storeName = storeNameInput.value.trim();
         const line = (lineInput?.value || '').trim();
-        const province = provinceSelect && provinceSelect.value ? provinceSelect.options[provinceSelect.selectedIndex].text : '';
-        const district = districtSelect && districtSelect.value ? districtSelect.options[districtSelect.selectedIndex].text : '';
-        const ward = wardSelect && wardSelect.value ? wardSelect.options[wardSelect.selectedIndex].text : '';
+        
+        // Validate và lấy giá trị từ các select
+        // Kiểm tra xem select có tồn tại, có value và selectedIndex > 0 (không phải placeholder)
+        const provinceValue = provinceSelect?.value?.trim() || '';
+        const districtValue = districtSelect?.value?.trim() || '';
+        const wardValue = wardSelect?.value?.trim() || '';
+        
+        // Kiểm tra selectedIndex để đảm bảo không phải option placeholder
+        const hasProvince = provinceValue && provinceSelect.selectedIndex > 0 && !provinceSelect.disabled;
+        const hasDistrict = districtValue && districtSelect.selectedIndex > 0 && !districtSelect.disabled;
+        const hasWard = wardValue && wardSelect.selectedIndex > 0 && !wardSelect.disabled;
+        
+        // Lấy text từ option được chọn (nếu có value và đã chọn đúng)
+        const province = hasProvince ? provinceSelect.options[provinceSelect.selectedIndex].text : '';
+        const district = hasDistrict ? districtSelect.options[districtSelect.selectedIndex].text : '';
+        const ward = hasWard ? wardSelect.options[wardSelect.selectedIndex].text : '';
+        
         const latitude = latitudeInput?.value ? parseFloat(latitudeInput.value) : null;
         const longitude = longitudeInput?.value ? parseFloat(longitudeInput.value) : null;
 
-        if (!storeName || !line || !province || !district || !ward) {
-            alert("Vui lòng nhập Tên cửa hàng, địa chỉ và chọn khu vực.");
-			return;
-		}
+        // Validation với thông báo rõ ràng
+        if (!storeName) {
+            alert("Vui lòng nhập Tên cửa hàng.");
+            return;
+        }
+        if (!line) {
+            alert("Vui lòng nhập Địa chỉ chi tiết (số nhà, tên đường).");
+            return;
+        }
+        if (!hasProvince || !province) {
+            alert("Vui lòng chọn Tỉnh/Thành phố.");
+            return;
+        }
+        if (!hasDistrict || !district) {
+            alert("Vui lòng chọn Quận/Huyện.");
+            return;
+        }
+        if (!hasWard || !ward) {
+            alert("Vui lòng chọn Phường/Xã.");
+            return;
+        }
 
 		// Upload ảnh
 		const avatarUrl = await uploadImage(avatarFileInput.files[0], "store/avatar");

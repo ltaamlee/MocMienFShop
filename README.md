@@ -1,2 +1,6 @@
-# MocMienFShop
-MocMien’s Shop – A simple and elegant flower shop website. Order flowers online, manage bouquets, and share the beauty of blossoms.
+# XÂY DỰNG WEBSITE BÁN HOA ONLINE MỘC MIÊN
+
+Thành viên nhóm 10:
+23110312 - Lê Thị Thanh Tâm
+23110330 - Nguyễn Phương Thi
+23110347 - Đoàn Thị Thu Trang
