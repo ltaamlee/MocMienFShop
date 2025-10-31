@@ -15,9 +15,6 @@ Thành viên nhóm 10:
 4. [Cấu Trúc Database](#4-cấu-trúc-database)
 5. [Hướng Dẫn Cài Đặt](#5-hướng-dẫn-cài-đặt)
 6. [Cấu Trúc Source Code](#6-cấu-trúc-source-code)
-7. [Chi Tiết Các Chức Năng](#7-chi-tiết-các-chức-năng)
-8. [API Documentation](#8-api-documentation)
-9. [Hướng Dẫn Phát Triển](#9-hướng-dẫn-phát-triển)
 
 ---
 
